@@ -1,0 +1,35 @@
+H:\C++\CreateMatrix\CreateMatrix\bin\Debug\CreateMatrix.exe
+H:\C++\CreateMatrix\CreateMatrix\bin\Debug\CreateMatrix.pdb
+H:\C++\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.exe
+H:\C++\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.pdb
+H:\C++\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.csprojResolveAssemblyReference.cache
+G:\C++\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.exe
+G:\C++\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.pdb
+G:\C++\CreateMatrix\CreateMatrix\bin\Debug\CreateMatrix.exe
+G:\C++\CreateMatrix\CreateMatrix\bin\Debug\CreateMatrix.pdb
+G:\C++\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.csprojResolveAssemblyReference.cache
+F:\C++\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.exe
+F:\C++\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.pdb
+F:\C++\CreateMatrix\CreateMatrix\bin\Debug\CreateMatrix.exe
+F:\C++\CreateMatrix\CreateMatrix\bin\Debug\CreateMatrix.pdb
+F:\C++\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.csprojResolveAssemblyReference.cache
+E:\C++\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.exe
+E:\C++\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.pdb
+E:\C++\CreateMatrix\CreateMatrix\bin\Debug\CreateMatrix.exe
+E:\C++\CreateMatrix\CreateMatrix\bin\Debug\CreateMatrix.pdb
+E:\C++\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.csprojResolveAssemblyReference.cache
+C:\Users\user\Desktop\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.exe
+C:\Users\user\Desktop\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.pdb
+C:\Users\user\Desktop\CreateMatrix\CreateMatrix\bin\Debug\CreateMatrix.exe
+C:\Users\user\Desktop\CreateMatrix\CreateMatrix\bin\Debug\CreateMatrix.pdb
+C:\Users\user\Desktop\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.csprojResolveAssemblyReference.cache
+C:\Users\karne\OneDrive\Магистратура\Диссертация (Мищенко В.К.)\Исходники\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.exe
+C:\Users\karne\OneDrive\Магистратура\Диссертация (Мищенко В.К.)\Исходники\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.pdb
+C:\Users\karne\OneDrive\Магистратура\Диссертация (Мищенко В.К.)\Исходники\CreateMatrix\CreateMatrix\bin\Debug\CreateMatrix.exe
+C:\Users\karne\OneDrive\Магистратура\Диссертация (Мищенко В.К.)\Исходники\CreateMatrix\CreateMatrix\bin\Debug\CreateMatrix.pdb
+C:\Users\karne\OneDrive\Магистратура\Диссертация (Мищенко В.К.)\Исходники\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.csprojResolveAssemblyReference.cache
+C:\Users\karne\Desktop\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.exe
+C:\Users\karne\Desktop\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.pdb
+C:\Users\karne\Desktop\CreateMatrix\CreateMatrix\bin\Debug\CreateMatrix.exe
+C:\Users\karne\Desktop\CreateMatrix\CreateMatrix\bin\Debug\CreateMatrix.pdb
+C:\Users\karne\Desktop\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.csprojResolveAssemblyReference.cache
