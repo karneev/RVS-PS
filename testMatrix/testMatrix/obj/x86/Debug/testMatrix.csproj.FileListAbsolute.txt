@@ -1,0 +1,21 @@
+H:\C++\testMatrix\testMatrix\bin\Debug\testMatrix.exe
+H:\C++\testMatrix\testMatrix\bin\Debug\testMatrix.pdb
+H:\C++\testMatrix\testMatrix\obj\x86\Debug\testMatrix.exe
+H:\C++\testMatrix\testMatrix\obj\x86\Debug\testMatrix.pdb
+E:\C++\testMatrix\testMatrix\obj\x86\Debug\testMatrix.exe
+E:\C++\testMatrix\testMatrix\obj\x86\Debug\testMatrix.pdb
+H:\C++\testMatrix\testMatrix\obj\x86\Debug\testMatrix.csprojResolveAssemblyReference.cache
+F:\C++\testMatrix\testMatrix\obj\x86\Debug\testMatrix.exe
+F:\C++\testMatrix\testMatrix\obj\x86\Debug\testMatrix.pdb
+F:\C++\testMatrix\testMatrix\bin\Debug\testMatrix.exe
+F:\C++\testMatrix\testMatrix\bin\Debug\testMatrix.pdb
+F:\C++\testMatrix\testMatrix\obj\x86\Debug\testMatrix.csprojResolveAssemblyReference.cache
+C:\Users\user\Desktop\testMatrix\testMatrix\obj\x86\Debug\testMatrix.exe
+C:\Users\user\Desktop\testMatrix\testMatrix\obj\x86\Debug\testMatrix.pdb
+I:\testMatrix\testMatrix\obj\x86\Debug\testMatrix.exe
+I:\testMatrix\testMatrix\obj\x86\Debug\testMatrix.pdb
+C:\Users\karne\OneDrive\Магистратура\Диссертация (Мищенко В.К.)\Исходники\testMatrix\testMatrix\obj\x86\Debug\testMatrix.exe
+C:\Users\karne\OneDrive\Магистратура\Диссертация (Мищенко В.К.)\Исходники\testMatrix\testMatrix\obj\x86\Debug\testMatrix.pdb
+C:\Users\karne\OneDrive\Магистратура\Диссертация (Мищенко В.К.)\Исходники\testMatrix\testMatrix\bin\Debug\testMatrix.exe
+C:\Users\karne\OneDrive\Магистратура\Диссертация (Мищенко В.К.)\Исходники\testMatrix\testMatrix\bin\Debug\testMatrix.pdb
+C:\Users\karne\OneDrive\Магистратура\Диссертация (Мищенко В.К.)\Исходники\testMatrix\testMatrix\obj\x86\Debug\testMatrix.csprojResolveAssemblyReference.cache

@@ -1,0 +1,3 @@
+C:\Users\karne\OneDrive\Магистратура\Диссертация (Мищенко В.К.)\Исходники\testMatrix\testMatrix\bin\x64\Release\testMatrix.exe
+C:\Users\karne\OneDrive\Магистратура\Диссертация (Мищенко В.К.)\Исходники\testMatrix\testMatrix\obj\x64\Release\testMatrix.exe
+C:\Users\karne\OneDrive\Магистратура\Диссертация (Мищенко В.К.)\Исходники\testMatrix\testMatrix\obj\x64\Release\testMatrix.csprojResolveAssemblyReference.cache
