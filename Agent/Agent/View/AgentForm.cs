@@ -36,7 +36,7 @@ namespace Agent.View
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message, "Error2", MessageBoxButtons.OK);
+                MessageBox.Show(e.Message, "Error", MessageBoxButtons.OK);
             }
             //th.Join();
             //this.agent.InitConnect();
