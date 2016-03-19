@@ -1,0 +1,122 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
+using System.Windows.Forms;
+
+namespace Agent.Model
+{
+    public class Contractor : ILockeded   // класс информации о исполнителях
+    {
+        AgentSystem agent;
+        public event getMessage newMessage;    // событие получения нового сообщения
+        TcpClient client;                      // связь с инициатором
+        MachineInfo info;                      //информация о исполнителе
+        bool selected;                         // выбран ли этот исполнитель для вычислений
+        bool locked;
+        Thread th;                             // основной поток исполнителя
+        BinaryFormatter bf = new BinaryFormatter();
+        NetworkStream mainStream;
+
+        public bool Locked
+        {
+            set { locked = value; }
+            get { return locked; }
+        }
+
+        public bool Selected
+        {
+            get { return selected; }
+            set { selected = value; }
+        }
+        public MachineInfo Info
+        {
+            get { return info; }
+        }
+
+        public Contractor(AgentSystem agent, TcpClient client)
+        {
+            this.agent = agent;
+            this.client = client;
+            mainStream = this.client.GetStream();
+            selected = false;
+            locked = false;
+            this.info = (MachineInfo)bf.Deserialize(mainStream);
+            th = new Thread(RunPacketExchange);
+            th.IsBackground = true;
+            th.Start();
+        }
+        void RunPacketExchange()
+        {
+            try
+            {
+                Packet pkt;
+                while (client.Connected)
+                {
+                    if (locked == false)
+                    {
+                        pkt = (Packet)bf.Deserialize(mainStream);          // получаем пакет от исполнителя и
+                        locked = true;
+                        newMessage(this, pkt.ToString());                  // зажигаем событие "новое сообщение"
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Исполнитель потерялся с ообщением" + e.Message);
+            }
+        }
+        public bool Connected
+        {
+            get { return client.Connected; }
+        }
+        public IPAddress GetIpServer() // получить IP исполнителя
+        {
+            return ((IPEndPoint)client.Client.RemoteEndPoint).Address;
+        }
+
+        public void SendMessage(Packet pkt) // передать сообщение исполнителю
+        {
+            bf.Serialize(mainStream, pkt);
+        }
+        public void SetExeAndDataFile() // отослать exe и data
+        {
+            lock (agent)
+            {
+                bf.Serialize(mainStream, new Packet() { type = PacketType.Run, id = agent.InfoMe.id }); // сообщаем о том, что будет передача EXE
+                sendFile(agent.ExeFile); // передача exe
+
+                foreach (var t in agent.DataFile) // передача dataFiles
+                {
+                    bf.Serialize(mainStream, new Packet() { type = PacketType.Data, id = agent.InfoMe.id }); // сообщаем о том, что будет передача Data
+                    sendFile(t);
+                }
+            }
+            //MessageBox.Show("файлы исполнителю отправили");
+        }
+        private void sendFile(FileInfo file) // отправка файла
+        {
+            FileStream fin = file.OpenRead(); // открываем файл для передачи
+            HandleFile hf = new HandleFile() { fileName = file.Name, size = fin.Length };
+            bf.Serialize(mainStream, hf);
+            while (fin.Position != fin.Length) // передаем файл
+            {
+                PartFile pf = new PartFile() { part = new byte[1024] };
+                pf.len = fin.Read(pf.part, 0, 1024);
+                bf.Serialize(mainStream, pf);
+            }
+            fin.Close();
+        }
+        public void Close()
+        {
+            if (client.Connected)
+            {
+                SendMessage(new Packet() { type = PacketType.Free, id = agent.InfoMe.id });
+                client.Close();
+            }
+        }
+    }
+}

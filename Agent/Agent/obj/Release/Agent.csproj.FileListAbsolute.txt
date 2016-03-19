@@ -1,0 +1,11 @@
+D:\SystemDir\Visual Studio 2015\Projects\Agent\Agent\bin\Release\Agent.exe.config
+D:\SystemDir\Visual Studio 2015\Projects\Agent\Agent\bin\Release\Agent.exe
+D:\SystemDir\Visual Studio 2015\Projects\Agent\Agent\bin\Release\Agent.pdb
+D:\SystemDir\Visual Studio 2015\Projects\Agent\Agent\obj\Release\Agent.AboutBox.resources
+D:\SystemDir\Visual Studio 2015\Projects\Agent\Agent\obj\Release\Agent.AgentForm.resources
+D:\SystemDir\Visual Studio 2015\Projects\Agent\Agent\obj\Release\Agent.CalculateForm.resources
+D:\SystemDir\Visual Studio 2015\Projects\Agent\Agent\obj\Release\Agent.Properties.Resources.resources
+D:\SystemDir\Visual Studio 2015\Projects\Agent\Agent\obj\Release\Agent.SettingForm.resources
+D:\SystemDir\Visual Studio 2015\Projects\Agent\Agent\obj\Release\Agent.csproj.GenerateResource.Cache
+D:\SystemDir\Visual Studio 2015\Projects\Agent\Agent\obj\Release\Agent.exe
+D:\SystemDir\Visual Studio 2015\Projects\Agent\Agent\obj\Release\Agent.pdb
