@@ -53,11 +53,15 @@ namespace Agent.View
                 try
                 {
                     agent.ConnectToContractor(findIP);
-                    this.Close();
                 }
                 catch
                 {
                     connectButton.Text = "Машина не найдена";
+                    System.Threading.Thread.Sleep(4000);
+                }
+                finally
+                {
+                    this.Close();
                 }
             }
             else

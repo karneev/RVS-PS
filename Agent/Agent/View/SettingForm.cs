@@ -83,9 +83,9 @@ namespace Agent.View
         {
             if (((TextBox)sender).Text.Length != 0)
             {
-                try
+                int dec;
+                if (Int32.TryParse(((TextBox)sender).Text, out dec))
                 {
-                    int dec = Convert.ToInt32(((TextBox)sender).Text);
                     if (dec >= Int32.MinValue && dec <= Int32.MaxValue)
                     {
                         oldString = ((TextBox)sender).Text;
@@ -95,7 +95,7 @@ namespace Agent.View
                         ((TextBox)sender).Text = oldString;
                     }
                 }
-                catch
+                else
                 {
                     ((TextBox)sender).Text = oldString;
                 }
@@ -109,32 +109,20 @@ namespace Agent.View
         private void saveButton_Click(object sender, EventArgs e)
         {
             StringBuilder mask = new StringBuilder("");
+            IPAddress ip;
             int port =0;
             mask.Append(maskBox1.Text).Append('.').Append(maskBox2.Text).Append('.').Append(maskBox3.Text).Append('.').Append(maskBox4.Text);
-            try
-            {
-                this.agent.IP = IPAddress.Parse(ipComboBox.SelectedItem.ToString());
-            }
-            catch (Exception)
-            {
-                this.agent.IP = IPAddress.Parse(ipComboBox.Items[0].ToString());
-            }
-            try
-            {
-                this.agent.Mask = IPAddress.Parse(mask.ToString());
-            }
-            catch
-            {
-                this.agent.Mask = IPAddress.Parse("255.255.255.0");
-            }
-            try
-            {
-                port = Convert.ToInt32(portBox1.Text);
-            }
-            catch (System.FormatException)
-            {
-                port = 56000;
-            }
+
+            if(!IPAddress.TryParse(ipComboBox.SelectedItem.ToString(), out ip))
+                if (!IPAddress.TryParse(ipComboBox.Items[0].ToString(), out ip))
+                    ip = IPAddress.Parse("127.0.0.1");
+            this.agent.IP = ip;
+            if (!IPAddress.TryParse(mask.ToString(), out ip))
+                ip = IPAddress.Parse("255.255.255.0");
+            this.agent.Mask = ip;
+
+            if (!Int32.TryParse(portBox1.Text, out port))
+                port = 56001;
             this.agent.Port = port;
             this.Close();            
         }

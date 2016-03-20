@@ -149,6 +149,7 @@
             this.portBox1.Name = "portBox1";
             this.portBox1.Size = new System.Drawing.Size(38, 13);
             this.portBox1.TabIndex = 8;
+            this.portBox1.Text = "56001";
             this.portBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.portBox1.TextChanged += new System.EventHandler(this.portBox_TextChanged);
             // 
