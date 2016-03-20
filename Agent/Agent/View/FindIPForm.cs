@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Agent.Model;
+using System.Threading;
 
 namespace Agent.View
 {
@@ -57,7 +58,7 @@ namespace Agent.View
                 catch
                 {
                     connectButton.Text = "Машина не найдена";
-                    System.Threading.Thread.Sleep(4000);
+                    Thread.Sleep(4000);
                 }
                 finally
                 {

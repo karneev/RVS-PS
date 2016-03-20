@@ -120,7 +120,6 @@ namespace Agent.View
             if (!IPAddress.TryParse(mask.ToString(), out ip))
                 ip = IPAddress.Parse("255.255.255.0");
             this.agent.Mask = ip;
-
             if (!Int32.TryParse(portBox1.Text, out port))
                 port = 56001;
             this.agent.Port = port;
