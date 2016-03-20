@@ -60,6 +60,9 @@ namespace Agent.Model
                 string[] words = str.Split(' ');
                 switch(words[1])
                 {
+                    case "Hello":
+                        type = PacketType.Hello;
+                        break;
                     case "Run":
                         type = PacketType.Run;
                         break;
@@ -85,7 +88,7 @@ namespace Agent.Model
                 id = Convert.ToInt64(words[2]);
                 return true;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
                 //MessageBox.Show(e.Message + " in Parse");
             }

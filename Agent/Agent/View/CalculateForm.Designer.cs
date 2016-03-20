@@ -47,13 +47,13 @@
             this.startCalculateButton = new System.Windows.Forms.Button();
             this.exitButton = new System.Windows.Forms.Button();
             this.filePanel = new System.Windows.Forms.Panel();
+            this.startInInitiator = new System.Windows.Forms.CheckBox();
             this.dataFileList = new System.Windows.Forms.ListBox();
             this.dataFileLabel = new System.Windows.Forms.Label();
             this.selectRunFileButton = new System.Windows.Forms.Button();
             this.fileNameLabel = new System.Windows.Forms.Label();
             this.runFileLabel = new System.Windows.Forms.Label();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.startInInitiator = new System.Windows.Forms.CheckBox();
             this.machineSelectPanel.SuspendLayout();
             this.machineInfoPanel.SuspendLayout();
             this.filePanel.SuspendLayout();
@@ -97,7 +97,7 @@
             this.refreshButton.Name = "refreshButton";
             this.refreshButton.Size = new System.Drawing.Size(188, 23);
             this.refreshButton.TabIndex = 3;
-            this.refreshButton.Text = "Обновить список";
+            this.refreshButton.Text = "Поиск в локальной сети";
             this.refreshButton.UseVisualStyleBackColor = true;
             this.refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
             // 
@@ -258,6 +258,16 @@
             this.filePanel.Size = new System.Drawing.Size(233, 312);
             this.filePanel.TabIndex = 2;
             // 
+            // startInInitiator
+            // 
+            this.startInInitiator.AutoSize = true;
+            this.startInInitiator.Location = new System.Drawing.Point(30, 247);
+            this.startInInitiator.Name = "startInInitiator";
+            this.startInInitiator.Size = new System.Drawing.Size(155, 17);
+            this.startInInitiator.TabIndex = 14;
+            this.startInInitiator.Text = "Запустить на инициаторе";
+            this.startInInitiator.UseVisualStyleBackColor = true;
+            // 
             // dataFileList
             // 
             this.dataFileList.FormattingEnabled = true;
@@ -306,16 +316,6 @@
             this.runFileLabel.Size = new System.Drawing.Size(108, 13);
             this.runFileLabel.TabIndex = 0;
             this.runFileLabel.Text = "Исполняемый файл";
-            // 
-            // startInInitiator
-            // 
-            this.startInInitiator.AutoSize = true;
-            this.startInInitiator.Location = new System.Drawing.Point(30, 247);
-            this.startInInitiator.Name = "startInInitiator";
-            this.startInInitiator.Size = new System.Drawing.Size(155, 17);
-            this.startInInitiator.TabIndex = 14;
-            this.startInInitiator.Text = "Запустить на инициаторе";
-            this.startInInitiator.UseVisualStyleBackColor = true;
             // 
             // CalculateForm
             // 

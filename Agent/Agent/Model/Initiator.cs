@@ -43,8 +43,6 @@ namespace Agent.Model
                 server.Start();                      // запускаем сервер
                 client = server.AcceptTcpClient();   // ожидаем инициатора
                 mainStream = client.GetStream();     // как инициатор подключился
-                bf.Serialize(mainStream, agent.InfoMe);       // отправляем инфо о себе
-                newMessage(this, "ConnectToInit");   // сообщаем во вне, что подключились к инициатору
                 while (client.Connected)             // пока клиент подключен - получаем от него сообщения
                 {
                     if (locked == false)
@@ -68,18 +66,18 @@ namespace Agent.Model
             {
                 lock(agent)
                 {
-                    agent.ExeFile = getFile();    // принимаем исполняемый файл
+                    agent.ExeFile = GetFile();    // принимаем исполняемый файл
                 }
             }
             else
             {
                 lock (agent)
                 {
-                    agent.DataFile.Add(getFile()); // принимаем файл данных
+                    agent.DataFile.Add(GetFile()); // принимаем файл данных
                 }
             }
         }
-        private FileInfo getFile() // считать файл с сети
+        private FileInfo GetFile() // считать файл с сети
         {
             //MessageBox.Show("Начали принимать файл с сети"); // отладочный вывод
 
@@ -116,6 +114,10 @@ namespace Agent.Model
             {
                 MessageBox.Show("Клиент потерялся в sendMessage с сообщением " + ex.Message); // отладочный вывод
             }
+        }
+        public void SendInfoMe()    // сообщить информацию о себе
+        {
+            bf.Serialize(mainStream, agent.InfoMe);       // отправляем инфо о себе
         }
         public void Start() // запуск сервера
         {

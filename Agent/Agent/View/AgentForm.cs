@@ -25,18 +25,10 @@ namespace Agent.View
             {
                 this.agent.LoadSettings();
             }
-            catch (FormatException)
+            catch (Exception ex)
             {
-                MessageBox.Show("Файл настроек поврежден! Задайте настройки заново.", "Error", MessageBoxButtons.OK);
+                MessageBox.Show("Файл настроек не найден или повержден!\nЗадайте настройки заново!", "Ошибка", MessageBoxButtons.OK);
                 (new SettingForm(ref this.agent)).ShowDialog();
-            }
-            catch (FileNotFoundException)
-            {
-                (new SettingForm(ref this.agent)).ShowDialog();
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message, "Error", MessageBoxButtons.OK);
             }
             //th.Join();
             //this.agent.InitConnect();

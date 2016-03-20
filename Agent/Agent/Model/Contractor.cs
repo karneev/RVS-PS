@@ -43,6 +43,7 @@ namespace Agent.Model
             mainStream = this.client.GetStream();
             selected = false;
             locked = false;
+            bf.Serialize(mainStream, new Packet(){ type=PacketType.Hello, id=agent.InfoMe.id });
             this.info = (MachineInfo)bf.Deserialize(mainStream);
             th = new Thread(RunPacketExchange);
             th.IsBackground = true;

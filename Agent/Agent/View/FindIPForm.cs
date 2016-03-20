@@ -57,8 +57,7 @@ namespace Agent.View
                 }
                 catch
                 {
-                    connectButton.Text = "Машина не найдена";
-                    Thread.Sleep(4000);
+                    MessageBox.Show("Машина не найдена","Ошибка",MessageBoxButtons.OK);
                 }
                 finally
                 {

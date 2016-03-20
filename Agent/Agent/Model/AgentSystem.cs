@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+ 
 namespace Agent.Model
 {
     public class AgentSystem
@@ -165,53 +165,29 @@ namespace Agent.Model
                 settingSystem.port = Convert.ToUInt16(buf);
                 sr.Close();
             }
-            catch (FormatException ex)
-            {
-                settingSystem.ip = IPAddress.Parse("0.0.0.0");
-                settingSystem.mask = IPAddress.Parse("255.255.255.0");
-                settingSystem.port = 0;
-                sr.Close();
-                throw ex;
-            }
-            catch (IOException ex)
-            {
-                settingSystem.ip = IPAddress.Parse("0.0.0.0");
-                settingSystem.mask = IPAddress.Parse("255.255.255.0");
-                settingSystem.port = 0;
-                throw ex;
-            }
             catch (Exception ex)
             {
-                //MessageBox.Show(e.Message, "Error1", MessageBoxButtons.OK);
+                if (ex is FormatException)
+                    sr.Close();
+                settingSystem.ip = IPAddress.Parse("127.0.0.1");
+                settingSystem.mask = IPAddress.Parse("255.255.255.0");
+                settingSystem.port = 0;
+                throw ex;
             }
             Status = StatusMachine.Free;
         }
         public void NetworkSettingsChange() // сетевые настройки изменены
         {
             Status = StatusMachine.LoadSettings;
-            try
-            {
-                this.initiator.Restart(); // перезапускаем сервер
-            }
-            catch (Exception ex)
-            {
-                //MessageBox.Show(ex.Message + " in networkSettingsChange");
-            }
+            this.initiator.Restart(); // перезапускаем сервер
             Status = StatusMachine.Free;
         }
         public void InitConnect() // начальный запуск сервера
         {
-            try
+            if (initiator == null)
             {
-                if (initiator == null)
-                {
-                    initiator = new Initiator(this); // 56000
-                    initiator.newMessage += GetPacket;
-                }
-            }
-            catch (Exception ex)
-            {
-                //MessageBox.Show(ex.Message + " in InitConnect");
+                initiator = new Initiator(this); // 56000
+                initiator.newMessage += GetPacket;
             }
         }
         public void Stop() // остановить всё
@@ -281,12 +257,12 @@ namespace Agent.Model
                 StringBuilder headIP = new StringBuilder(); // начало IP
                 Byte[] ipInBytes = IP.GetAddressBytes();
                 headIP.Append(ipInBytes[0].ToString()).Append(".").Append(ipInBytes[1].ToString()).Append(".").Append(ipInBytes[2].ToString()).Append("."); // на время пока маска 255.255.255.0
-                foreach (Contractor i in allContractor) // закрываем все соединения, кроме тех, что уже выбраны
+                foreach (var t in allContractor) // закрываем все соединения
                 {
-                    if (i.Connected && i.Selected == false)
-                        i.Close();
-                    allContractor.Remove(i);
+                    if (t.Connected)
+                        t.Close();
                 }
+                allContractor.Clear();
                 MessageBox.Show("Обновляем список");
                 Parallel.For(2, 254, tail => // перебираем все адреса с 2 до 254
                 {
@@ -441,8 +417,8 @@ namespace Agent.Model
                     foreach (var t in dataFile)
                         t.Delete();
                     dataFile.Clear();
+                    Status = StatusMachine.Free;
                 }
-                Status = StatusMachine.Free;
             }
             catch (Exception ex)
             {
@@ -463,6 +439,8 @@ namespace Agent.Model
                 switch (pkt.type)
                 {
                     case PacketType.Hello:
+                        Status = StatusMachine.Wait;
+                        ((Initiator)sender).SendInfoMe();
                         sender.Locked = false;
                         break;
                     case PacketType.Run:
