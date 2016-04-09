@@ -66,7 +66,7 @@ namespace Agent.Model
             }
             catch (Exception e)
             {
-                MessageBox.Show("Исполнитель потерялся с ообщением" + e.Message);
+                Programm.ShowMessage("Исполнитель потерялся с ообщением" + e.Message);
             }
         }
         public bool Connected
@@ -95,7 +95,7 @@ namespace Agent.Model
                     sendFile(t);
                 }
             }
-            //MessageBox.Show("файлы исполнителю отправили");
+            //Programm.ShowMessage("файлы исполнителю отправили");
         }
         private void sendFile(FileInfo file) // отправка файла
         {

@@ -2,9 +2,11 @@
 using System.Windows.Forms;
 using System.Net;
 using System.Text;
+using System.Threading;
 
 namespace Agent.Model
 {
+
     public delegate void refreshData(); // делегат изменения представления
     public delegate void setStat(StatusMachine status); // делегат изменение статуса
     public delegate void getMessage(ILockeded sender, string message); // делегат получение сообщения
@@ -90,7 +92,7 @@ namespace Agent.Model
             }
             catch (Exception ex)
             {
-                //MessageBox.Show(e.Message + " in Parse");
+                //Programm.ShowMessage(e.Message + " in Parse");
             }
             return false;
         }
@@ -137,8 +139,17 @@ namespace Agent.Model
         }
     }
 
-    static class Programm 
+    public static class Programm 
     {
+        public static void ShowMessage(String text)
+        {
+            Thread th = new Thread(delegate ()
+              {
+                  Programm.ShowMessage(text);
+              });
+            th.IsBackground = true;
+            th.Start();
+        }
         /// <summary>
         /// Главная точка входа для приложения.
         /// </summary>

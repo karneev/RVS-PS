@@ -170,7 +170,7 @@ namespace Agent.View
             }
             catch (Exception ex)
             {
-                //MessageBox.Show(ex.Message + " in startCalculateButton_Click");
+                //Programm.ShowMessage(ex.Message + " in startCalculateButton_Click");
             }
         }
 

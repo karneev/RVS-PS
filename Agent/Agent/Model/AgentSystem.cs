@@ -263,13 +263,13 @@ namespace Agent.Model
                         t.Close();
                 }
                 allContractor.Clear();
-                MessageBox.Show("Обновляем список");
+                Programm.ShowMessage("Обновляем список");
                 Parallel.For(2, 254, tail => // перебираем все адреса с 2 до 254
                 {
                     cureIP = IPAddress.Parse(headIP.ToString() + tail.ToString()); // формируем конечный IP
                     try
                     {
-                        //MessageBox.Show("Заход №"+tail);
+                        //Programm.ShowMessage("Заход №"+tail);
                         TcpClient client = new TcpClient();
 
                         if (client.ConnectAsync(cureIP, Port).Wait(1500)) // пытаемся с ним соединиться в течение 1,5 секунды
@@ -280,11 +280,11 @@ namespace Agent.Model
                     }
                     catch (Exception ex)
                     {
-                        //MessageBox.Show("В процессе обновления произошла ошибка "+ex.Message+"\nПодробности:\n"+e.ToString());
+                        //Programm.ShowMessage("В процессе обновления произошла ошибка "+ex.Message+"\nПодробности:\n"+ex.ToString());
                     }
 
                 });
-                MessageBox.Show("Нажмите ОК, чтоб закончить обновление списка");
+                Programm.ShowMessage("Нажмите ОК, чтоб закончить обновление списка");
             });
             th.IsBackground = true;
             th.Start();
@@ -348,13 +348,17 @@ namespace Agent.Model
             initiator.Restart();
         }
 
-        void CreateFileIP() // собрать файл из всех IP в системе
+        void CreateFileIP(bool startInInitiator) // собрать файл из всех IP в системе
         {
-            FileInfo ipfile = new FileInfo("iplist.txt");
+            int countMachines;
+            FileInfo ipfile = new FileInfo("Index.txt");
             if (ipfile.Exists) // если файл уже есть - пересоздать
                 ipfile.Delete();
             StreamWriter sw = new StreamWriter(ipfile.Create());
-            sw.WriteLine(IP); // записываем IP инцииатора
+            countMachines = allContractor.Count + (startInInitiator?1:0); // количество машин в подсистеме
+            sw.WriteLine(countMachines);
+            if (startInInitiator == true) // Если инициатор участвует в вычислениях
+                sw.WriteLine(IP); // записываем IP инцииатора
             foreach (var t in allContractor) // IP исполнителей
             {
                 sw.WriteLine(t.GetIpServer().ToString());
@@ -368,7 +372,7 @@ namespace Agent.Model
             isInitiator = true;
             isCalculate = true;
             refreshView();
-            CreateFileIP(); // получаем сипсок машин
+            CreateFileIP(startInInitiator); // получаем сипсок машин
             foreach (var t in allContractor) // всем выбранным отправляем файлы
             {
                 if (t.Selected == true)
@@ -422,9 +426,9 @@ namespace Agent.Model
             }
             catch (Exception ex)
             {
-                MessageBox.Show("endProc потерялся с сообщением " + ex.Message); // отладочный вывод
-                MessageBox.Show("endProc потерялся из-за " + ex.Source); // отладочный вывод
-                //MessageBox.Show("endProc потерялся  " + ex.ToString()); // отладочный вывод
+                Programm.ShowMessage("endProc потерялся с сообщением " + ex.Message); // отладочный вывод
+                Programm.ShowMessage("endProc потерялся из-за " + ex.Source); // отладочный вывод
+                //Programm.ShowMessage("endProc потерялся  " + ex.ToString()); // отладочный вывод
             }
         }
         // работа с пакетами
@@ -435,7 +439,7 @@ namespace Agent.Model
                 Status = StatusMachine.Wait;
             if (pkt.Parse(message) == true)
             {
-                MessageBox.Show("Код " + pkt.type.ToString() + " | id " + pkt.id.ToString());
+                Programm.ShowMessage("Код " + pkt.type.ToString() + " | id " + pkt.id.ToString());
                 switch (pkt.type)
                 {
                     case PacketType.Hello:

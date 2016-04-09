@@ -55,9 +55,9 @@ namespace Agent.Model
             }
             catch (Exception e)
             {
-                MessageBox.Show("Инициатор потерялся с сообщением " + e.Message + "\nПодробности: "+e.ToString()); // отладочный вывод
-                //MessageBox.Show("Инициатор потерялся из-за " + e.Source); // отладочный вывод
-                //MessageBox.Show("Инициатор потерялся  " + e.ToString()); // отладочный вывод
+                Programm.ShowMessage("Инициатор потерялся с сообщением " + e.Message + "\nПодробности: "+e.ToString()); // отладочный вывод
+                //Programm.ShowMessage("Инициатор потерялся из-за " + e.Source); // отладочный вывод
+                //Programm.ShowMessage("Инициатор потерялся  " + e.ToString()); // отладочный вывод
             }
         }
         public void GetExeAndDataFile(bool isExe) // получить файл true-exe, false-data
@@ -79,7 +79,7 @@ namespace Agent.Model
         }
         private FileInfo GetFile() // считать файл с сети
         {
-            //MessageBox.Show("Начали принимать файл с сети"); // отладочный вывод
+            //Programm.ShowMessage("Начали принимать файл с сети"); // отладочный вывод
 
             FileStream fout;
             HandleFile hf = (HandleFile)bf.Deserialize(mainStream); // считываем загаловок файла
@@ -97,7 +97,7 @@ namespace Agent.Model
             }
             fout.Close();
             
-            //MessageBox.Show("Закончили принимать файл с сети"); // отладочный вывод
+            //Programm.ShowMessage("Закончили принимать файл с сети"); // отладочный вывод
             return file;
 
         }
@@ -112,7 +112,7 @@ namespace Agent.Model
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Клиент потерялся в sendMessage с сообщением " + ex.Message); // отладочный вывод
+                Programm.ShowMessage("Клиент потерялся в sendMessage с сообщением " + ex.Message); // отладочный вывод
             }
         }
         public void SendInfoMe()    // сообщить информацию о себе
