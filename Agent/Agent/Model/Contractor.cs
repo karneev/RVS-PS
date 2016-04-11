@@ -67,6 +67,7 @@ namespace Agent.Model
             catch (Exception e)
             {
                 Programm.ShowMessage("Исполнитель потерялся с ообщением" + e.Message);
+                mainStream.Close();
             }
         }
         public bool Connected
@@ -115,6 +116,7 @@ namespace Agent.Model
             if (client.Connected)
             {
                 SendMessage(new Packet() { type = PacketType.Free, id = agent.InfoMe.id });
+                mainStream.Close();
                 client.Close();
             }
         }

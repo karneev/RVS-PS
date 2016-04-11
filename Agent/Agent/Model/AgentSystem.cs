@@ -125,8 +125,8 @@ namespace Agent.Model
         {
             infoMe.Status = StatusMachine.Testing; // начало тестирования
             infoMe.id = getMachineGuid().GetHashCode(); // получение хеш-кода GUID 
-            infoMe.vRam = 1;
-            infoMe.vCPU = 2;
+            infoMe.vRam = (new Random()).Next(100,200);
+            infoMe.vCPU = (new Random()).Next(200,250);
             Thread.Sleep(1000); // имитация теста
             InitConnect();      // инициализируем подключение
             infoMe.Status = StatusMachine.Free; // свободен           
@@ -315,7 +315,6 @@ namespace Agent.Model
                     break;
                 }
             }
-            refreshView();          // обновить отображение;
         }
         public void UnSelectContractor(int n) // снять выбор с машины n для вычислений
         {
@@ -330,7 +329,6 @@ namespace Agent.Model
                     break;
                 }
             }
-            refreshView();          // обновить отображение;
         }
         public void UnSelectAll() // снять выбор со всех машин
         {
@@ -338,7 +336,6 @@ namespace Agent.Model
             {
                 t.Selected = false;
             }
-            refreshView();          // обновить отображение;
         }
         public void EndCalculate() // освобождаем всех, кого занимали
         {
@@ -421,7 +418,7 @@ namespace Agent.Model
                     foreach (var t in dataFile)
                         t.Delete();
                     dataFile.Clear();
-                    Status = StatusMachine.Free;
+                    //Status = StatusMachine.Free;
                 }
             }
             catch (Exception ex)

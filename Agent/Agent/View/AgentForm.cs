@@ -27,7 +27,7 @@ namespace Agent.View
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Файл настроек не найден или повержден!\nЗадайте настройки заново!");
+                MessageBox.Show("Файл настроек не найден или поврежден!\nЗадайте настройки заново!");
                 (new SettingForm(ref this.agent)).ShowDialog();
             }
             //th.Join();

@@ -80,7 +80,7 @@ namespace Agent.View
                     }
                 }
                 ramTextBox.Text = sumRam.ToString();
-                cpuTextBox.Text = sumRam.ToString();
+                cpuTextBox.Text = sumCpu.ToString();
                 this.unselectAllButton.Enabled = this.selectedMachineListBox.Items.Count == 0 ? false : true;
             }
         }
@@ -187,11 +187,13 @@ namespace Agent.View
                 Arr[i] = col[i];
             for (int i = Arr.Length - 1; i >= 0; i--)
                 agent.SelectContractor(Arr[i]);
+            this.refreshForm();
         }
 
         private void unchekedAllButton_Click(object sender, EventArgs e) // снять всё выделение
         {
-            foreach (int t in checkedMechineListBox.CheckedIndices)
+            CheckedListBox.CheckedIndexCollection coll= checkedMechineListBox.CheckedIndices;
+            foreach (int t in coll)
                 checkedMechineListBox.SetItemChecked(t, false);
         }
 
@@ -249,11 +251,13 @@ namespace Agent.View
             CheckedListBox.CheckedIndexCollection col = checkedMechineListBox.CheckedIndices;
             for (int i = 0; i < col.Count; i++)
                 agent.UnSelectContractor(col[i]);
+            this.refreshForm();
         }
 
         private void unselectAllButton_Click(object sender, EventArgs e) // отменить выбор всех машин
         {
             agent.UnSelectAll();
+            this.refreshForm();
         }
 
         private void CalculateForm_FormClosing(object sender, FormClosingEventArgs e)

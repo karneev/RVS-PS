@@ -145,7 +145,7 @@ namespace Agent.Model
         {
             Thread th = new Thread(delegate ()
               {
-                  Programm.ShowMessage(text);
+                  MessageBox.Show(text);
               });
             th.IsBackground = true;
             th.Start();

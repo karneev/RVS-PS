@@ -56,6 +56,8 @@ namespace Agent.Model
             catch (Exception e)
             {
                 Programm.ShowMessage("Инициатор потерялся с сообщением " + e.Message + "\nПодробности: "+e.ToString()); // отладочный вывод
+                if(mainStream!=null)
+                    mainStream.Close();
                 //Programm.ShowMessage("Инициатор потерялся из-за " + e.Source); // отладочный вывод
                 //Programm.ShowMessage("Инициатор потерялся  " + e.ToString()); // отладочный вывод
             }
@@ -126,7 +128,7 @@ namespace Agent.Model
                 if (th == null || th.IsAlive == false)   // если потока нет или он не запущен, то запускаем
                 {
                     started = true;
-                    server = new TcpListener(agent.IP, agent.Port);
+                    server = new TcpListener(System.Net.IPAddress.Any, agent.Port);
                     th = new Thread(run);
                     th.IsBackground = true;
                     th.Start();
@@ -138,6 +140,8 @@ namespace Agent.Model
             if (started == true)
             {
                 started = false;
+                if(mainStream!=null)
+                    mainStream.Close();
                 server.Stop();
                 th.Join();
             }
