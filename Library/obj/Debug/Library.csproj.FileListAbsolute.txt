@@ -1,0 +1,6 @@
+E:\Projects\DCN\Library\bin\Debug\Library.exe.config
+E:\Projects\DCN\Library\obj\Debug\Library.csprojResolveAssemblyReference.cache
+E:\Projects\DCN\Library\bin\Debug\Library.exe
+E:\Projects\DCN\Library\bin\Debug\Library.pdb
+E:\Projects\DCN\Library\obj\Debug\Library.exe
+E:\Projects\DCN\Library\obj\Debug\Library.pdb
