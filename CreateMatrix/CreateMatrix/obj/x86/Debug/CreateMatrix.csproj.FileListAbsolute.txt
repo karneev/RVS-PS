@@ -33,3 +33,8 @@ C:\Users\karne\Desktop\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.pdb
 C:\Users\karne\Desktop\CreateMatrix\CreateMatrix\bin\Debug\CreateMatrix.exe
 C:\Users\karne\Desktop\CreateMatrix\CreateMatrix\bin\Debug\CreateMatrix.pdb
 C:\Users\karne\Desktop\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.csprojResolveAssemblyReference.cache
+C:\Users\karne\Documents\GitHub\RVS-PS\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.exe
+C:\Users\karne\Documents\GitHub\RVS-PS\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.pdb
+C:\Users\karne\Documents\GitHub\RVS-PS\CreateMatrix\CreateMatrix\bin\Debug\CreateMatrix.exe
+C:\Users\karne\Documents\GitHub\RVS-PS\CreateMatrix\CreateMatrix\bin\Debug\CreateMatrix.pdb
+C:\Users\karne\Documents\GitHub\RVS-PS\CreateMatrix\CreateMatrix\obj\x86\Debug\CreateMatrix.csprojResolveAssemblyReference.cache

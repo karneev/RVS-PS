@@ -8,11 +8,12 @@ namespace CreateMatrix
 {
     class Program
     {
-        static int N = 1000;
         static double er = 0.0000001;
         static int max = 10000000;
         static void Main(string[] args)
         {
+            int N;
+            N = Int32.Parse(Console.ReadLine());
             Random r = new Random((int)System.DateTime.Now.Ticks);
             double dd = 0;
             StreamWriter R = new StreamWriter("Work.txt");
@@ -21,7 +22,11 @@ namespace CreateMatrix
             double[] A=new double[N];
             for (int i = 0; i < N; i++)
             {
-                Console.WriteLine("I crete col {0:D}", i);
+                if ((N>100)&&(i % (N/100) == 0))
+                {
+                    Console.Clear();
+                    Console.WriteLine((i / (N / 100)+1).ToString() + " % ready");
+                }
                 double Aii = r.Next((int)(max * 0.7), max);
                 int summ=0;
                 for (int j = 0; j < N; j++)
@@ -41,7 +46,6 @@ namespace CreateMatrix
                     }
                     R.WriteLine();
                 }
-                Console.WriteLine("creted");
             }
             for (int i = 0; i < N; i++)
             {
@@ -49,12 +53,8 @@ namespace CreateMatrix
                 if (i != N - 1) R.Write(" ");
             }
             R.Close();
-            /*  for (int i = 0; i < N; i++)
-              {
-                  for (int j = 0; j < N; j++)
-                      Console.Write("{0:F}, ",A[i][j]);
-                  Console.WriteLine();
-              }*/
+            Console.WriteLine("Done!");
+            Console.ReadLine();
         }
     }
 }
