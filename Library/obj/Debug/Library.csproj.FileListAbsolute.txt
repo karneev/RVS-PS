@@ -4,3 +4,6 @@ E:\Projects\DCN\Library\bin\Debug\Library.exe
 E:\Projects\DCN\Library\bin\Debug\Library.pdb
 E:\Projects\DCN\Library\obj\Debug\Library.exe
 E:\Projects\DCN\Library\obj\Debug\Library.pdb
+C:\Users\karne\Documents\GitHub\RVS-PS\Library\bin\Debug\Library.exe.config
+C:\Users\karne\Documents\GitHub\RVS-PS\Library\obj\Debug\Library.exe
+C:\Users\karne\Documents\GitHub\RVS-PS\Library\obj\Debug\Library.pdb
