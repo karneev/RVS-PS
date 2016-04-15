@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Library;
 using System.IO;
@@ -14,9 +14,9 @@ class mainFrame : Work
     /// </summary>
     public override void slaveFun()
     {
-        double checker = 0;
-        DateTime check;
+        DateTime time1 = System.DateTime.Now;
         #region Чтение из файла
+        Console.WriteLine("Reading");
         StreamReader R = new StreamReader("Work.txt");
         double er = (double)Convert.ToDouble(R.ReadLine());
         int N = Convert.ToInt32(R.ReadLine());
@@ -37,26 +37,25 @@ class mainFrame : Work
         int JJJ1 = getIndex() * JJJ;
         #endregion
         Console.WriteLine("Start");
-        DateTime time = System.DateTime.Now;
+        DateTime time2 = System.DateTime.Now;
         int it = 0;
         int pred = (getIndex() == 0) ? getCount() - 1 : getIndex() - 1, next = (getIndex() == getCount() - 1) ? 0 : getIndex() + 1;
         int iterr = 0;
         do
         {
-            //check = DateTime.Now;
+            Console.Clear();
+            Console.WriteLine("Iteration: " + it.ToString());
             for (int i = 0; i < F.Length; i++)
             {
                 timeX[i] = F[i];
             }
             buffer = X;
             int w = getIndex();
-            //checker += (System.DateTime.Now - check).TotalMilliseconds;
             for (int m = 0; m < getCount(); m++)
             {
                 int JJJ2 = w * JJJ;
                 Work.DiscretRecipientData R1 = GetData(pred);
                 Work.DiscretSendData R2 = Send(next, buffer);
-                check = System.DateTime.Now;
                 for (int i = 0; i < timeX.Length; i++)
                 {
                     for (int j = 0; j < buffer.Length; j++)
@@ -66,32 +65,29 @@ class mainFrame : Work
                     }
                 }
                 w = (w + 1 == getCount()) ? 0 : w + 1;
-                checker += (System.DateTime.Now - check).TotalMilliseconds;
                 R1.block();
 
-                buffer = (double[])R1.getData();// Thread.Sleep(5000);
+                buffer = (double[])R1.getData();
 
             }
             end = true;
-            // check = DateTime.Now;
             for (int i = 0; i < JJJ; i++)
             {
                 timeX[i] /= A[i][i + JJJ * getIndex()];
                 end = end && (er > Math.Abs(X[i] - timeX[i]));
                 X[i] = timeX[i];
             }
-            // checker += (System.DateTime.Now - check).TotalMilliseconds;
             it++;
         } while (!SGCJ(end));
-        DateTime time1 = System.DateTime.Now;
+        DateTime time3 = System.DateTime.Now;
         for (int i = 0; i < JJJ; i++)
         {
             Console.WriteLine("X{0:D}:{1:E}", getIndex() * JJJ + i, X[i]);
         }
-        Console.Write("Time work: ");
-        Console.WriteLine((time1 - time).TotalMilliseconds);
-        Console.WriteLine(checker);
-        Console.WriteLine(iterr);
+        Console.Write("Total (computing and reading) - seconds: ");
+        Console.WriteLine((time3 - time1).TotalSeconds);
+        Console.Write("Only computing - seconds: ");
+        Console.WriteLine((time3 - time2).TotalSeconds);
         Console.ReadLine();
     }
 }
