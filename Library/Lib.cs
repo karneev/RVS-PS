@@ -25,16 +25,24 @@ namespace Library
             Iplist = new List<IPEndPoint>();
             if (File.Exists("iplist.txt"))
             {
+                List<string> myIP = new List<string>();
                 StreamReader R = new StreamReader("iplist.txt");
                 int count = Convert.ToInt32(R.ReadLine());
                 // Получение имени компьютера.
                 string host = Dns.GetHostName();
                 // Получение ip-адреса.
-                string myIp = Dns.GetHostEntry(host).AddressList[2].ToString();
+                IPHostEntry iphostentry = Dns.GetHostEntry(Dns.GetHostName());
+                foreach (IPAddress ipaddress in iphostentry.AddressList)
+                {
+                    if (ipaddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) // если адрес ipv4
+                    {
+                        myIP.Add(ipaddress.ToString());
+                    }
+                }
                 for (int i = 0; i < count; i++)
                 {
                     string s = R.ReadLine();
-                    if (s.Equals(myIp) || s.Equals("127.0.0.1")) currentIndex = i;
+                    if (myIP.Contains(s) || s.Equals("127.0.0.1")) currentIndex = i;
                     Iplist.Add(new IPEndPoint(IPAddress.Parse(s), 8002));
                 }
                 R.Close();
