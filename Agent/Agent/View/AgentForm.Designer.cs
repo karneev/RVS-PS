@@ -41,6 +41,7 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.infoButton = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -94,6 +95,7 @@
             this.fileToolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.fileToolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.startCalculateToolStripMenuItem,
+            this.resetToolStripMenuItem,
             this.settingsToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -105,14 +107,14 @@
             // 
             this.startCalculateToolStripMenuItem.Name = "startCalculateToolStripMenuItem";
             this.startCalculateToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.startCalculateToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.startCalculateToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.startCalculateToolStripMenuItem.Text = "Начать вычисления";
             this.startCalculateToolStripMenuItem.Click += new System.EventHandler(this.startCalcButton_Click);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.settingsToolStripMenuItem.Text = "Настройки";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsButton_Click);
             // 
@@ -120,7 +122,7 @@
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.exitToolStripMenuItem.Text = "Выход";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -143,6 +145,14 @@
             this.toolStrip1.Size = new System.Drawing.Size(251, 25);
             this.toolStrip1.TabIndex = 4;
             this.toolStrip1.Text = "toolStrip1";
+            // 
+            // resetToolStripMenuItem
+            // 
+            this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
+            this.resetToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.resetToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.resetToolStripMenuItem.Text = "Перезапуск приложения";
+            this.resetToolStripMenuItem.Click += new System.EventHandler(this.перезапускПриложенияToolStripMenuItem_Click);
             // 
             // AgentForm
             // 
@@ -180,6 +190,7 @@
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton infoButton;
         private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem;
     }
 }
 

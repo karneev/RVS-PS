@@ -56,6 +56,8 @@ namespace Agent.Model
             catch (Exception e)
             {
                 Programm.ShowMessage("Инициатор потерялся с сообщением " + e.Message + "\nПодробности: "+e.ToString()); // отладочный вывод
+                if (agent.Status == StatusMachine.Wait)
+                    Programm.Reset();
                 if(mainStream!=null)
                     mainStream.Close();
                 //Programm.ShowMessage("Инициатор потерялся из-за " + e.Source); // отладочный вывод
@@ -75,7 +77,7 @@ namespace Agent.Model
             {
                 lock (agent)
                 {
-                    agent.DataFile.Add(GetFile()); // принимаем файл данных
+                    agent.NotDiffDataFile.Add(GetFile()); // принимаем файл данных
                 }
             }
         }
@@ -85,7 +87,7 @@ namespace Agent.Model
 
             FileStream fout;
             HandleFile hf = (HandleFile)bf.Deserialize(mainStream); // считываем загаловок файла
-            FileInfo file = new FileInfo(hf.fileName);
+            FileInfo file = new FileInfo(Application.StartupPath + "\\Temp\\"+hf.fileName);
             if (file.Exists) // Создаем файл с заданным именем
                 file.Delete();
             fout = file.Create();

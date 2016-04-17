@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -19,6 +20,7 @@ namespace Agent.Model
         Thread th;                             // основной поток исполнителя
         BinaryFormatter bf = new BinaryFormatter();
         NetworkStream mainStream;
+        List<FileInfo> dataFile = new List<FileInfo>();
 
         public bool Locked
         {
@@ -79,6 +81,15 @@ namespace Agent.Model
             return ((IPEndPoint)client.Client.RemoteEndPoint).Address;
         }
 
+        public void AddFile(FileInfo file)
+        {
+            dataFile.Add(file);
+        }
+        public void AddFileList(List<FileInfo> fileList)
+        {
+            foreach(var t in fileList)
+                AddFile(t);
+        }
         public void SendMessage(Packet pkt) // передать сообщение исполнителю
         {
             bf.Serialize(mainStream, pkt);
@@ -87,10 +98,10 @@ namespace Agent.Model
         {
             lock (agent)
             {
-                bf.Serialize(mainStream, new Packet() { type = PacketType.Run, id = agent.InfoMe.id }); // сообщаем о том, что будет передача EXE
+                bf.Serialize(mainStream, new Packet() { type = PacketType.RunFile, id = agent.InfoMe.id }); // сообщаем о том, что будет передача EXE
                 sendFile(agent.ExeFile); // передача exe
 
-                foreach (var t in agent.DataFile) // передача dataFiles
+                foreach (var t in dataFile) // передача dataFiles
                 {
                     bf.Serialize(mainStream, new Packet() { type = PacketType.Data, id = agent.InfoMe.id }); // сообщаем о том, что будет передача Data
                     sendFile(t);

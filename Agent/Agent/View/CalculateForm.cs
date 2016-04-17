@@ -25,12 +25,18 @@ namespace Agent.View
             }
             else
             {
-                this.dataFileList.Items.Clear(); // очищаем старый список
-                foreach (FileInfo i in agent.GetAllDataFile()) // выводим всё, что есть в агенте
+                this.dataDiffFileList.Items.Clear(); // очищаем старый список
+                this.dataNotDiffFileList.Items.Clear(); // очищаем старый список
+                foreach (FileInfo i in agent.GetAllDiffDataFile()) // выводим всё, что есть в агенте
                 {
-                    this.dataFileList.Items.Add(i.Name);
+                    this.dataDiffFileList.Items.Add(i.Name);
                 }
-                this.dataFileList.Items.Add("Добавить файл"); // добавляем опцию "Добавить файл"
+                foreach (FileInfo i in agent.GetAllNotDiffDataFile()) // выводим всё, что есть в агенте
+                {
+                    this.dataNotDiffFileList.Items.Add(i.Name);
+                }
+                this.dataDiffFileList.Items.Add("Добавить файл"); // добавляем опцию "Добавить файл"
+                this.dataNotDiffFileList.Items.Add("Добавить файл"); // добавляем опцию "Добавить файл"
             }
         }
         private void refreshMachineSelectPanel() // обновить панель выбора машин
@@ -55,6 +61,20 @@ namespace Agent.View
                 {
                     this.acceptButton.Enabled = true;
                     this.unchekedAllButton.Enabled = true;
+                }
+                if(agent.refreshContractor==false)
+                {
+                    this.machineInfoPanel.Enabled = true;
+                    this.filePanel.Enabled = true;
+                    this.refreshButton.Enabled = true;
+                    this.refreshButton.Text = "Обновить список";
+                }
+                else
+                {
+                    this.machineInfoPanel.Enabled = false;
+                    this.filePanel.Enabled = false;
+                    this.refreshButton.Enabled = false;
+                    this.refreshButton.Text = "Идет обновление списка";
                 }
             }
         }
@@ -129,6 +149,8 @@ namespace Agent.View
         private void CalculateForm_FormClosed(object sender, FormClosedEventArgs e) // закрытие формы рассчетов (не закончено)
         {
             agent.Status = StatusMachine.Free; // меняем статус на "свободен"
+            if(started == true)
+                Programm.Reset();
         }
 
         private void selectRunFileButton_Click(object sender, EventArgs e) // установка файла exe
@@ -156,14 +178,14 @@ namespace Agent.View
                 if(agent.IsCalculate==false) // если они не запущены ранее
                 {
                     this.selectRunFileButton.Enabled = false;
-                    this.dataFileList.Enabled = false;
+                    this.dataDiffFileList.Enabled = false;
                     this.startCalculateButton.Enabled = false;
                     this.exitButton.Enabled = false;
                     this.machineInfoPanel.Enabled = false;
                     this.machineSelectPanel.Enabled = false;
                     this.startCalculateButton.Text = "Идут вычисления";
                     this.started = true;
-                    agent.StartCalculate(startInInitiator.Checked);
+                    agent.StartCalculate(notDeleteFilesCheckBox.CheckState.Equals(CheckState.Checked));
                     this.exitButton.Enabled = true;
                     this.startCalculateButton.Text = "Вычисления завершаются";
                 }
@@ -172,11 +194,6 @@ namespace Agent.View
             {
                 //Programm.ShowMessage(ex.Message + " in startCalculateButton_Click");
             }
-        }
-
-        private void controlButton_Click(object sender, EventArgs e) // НЕ РАБОТАЕТ
-        {
-
         }
 
         private void acceptButton_Click(object sender, EventArgs e) // выбрать выделенные машины для вычислений
@@ -199,15 +216,7 @@ namespace Agent.View
 
         private void refreshButton_Click(object sender, EventArgs e) // обновить список машин
         {
-            this.machineInfoPanel.Enabled = false;
-            this.filePanel.Enabled = false;
-            this.refreshButton.Enabled = false;
-            this.refreshButton.Text = "Идет обновление списка";
             agent.RefreshContractorList();
-            this.machineInfoPanel.Enabled = true;
-            this.filePanel.Enabled = true;
-            this.refreshButton.Enabled = true;
-            this.refreshButton.Text = "Обновить список";
         }
 
         private void exitButton_Click(object sender, EventArgs e)
@@ -215,7 +224,7 @@ namespace Agent.View
             this.Close();
         }
 
-        private void dataFileList_MouseDoubleClick(object sender, MouseEventArgs e) // Пытаемся добавить или заменить файл данных
+        private void dataDiffFileList_MouseDoubleClick(object sender, MouseEventArgs e) // Пытаемся добавить или заменить файл данных
         {
             this.openFileDialog.Filter = "txt files (*.txt)|*.txt";
             if (this.openFileDialog.ShowDialog() == DialogResult.OK)
@@ -223,12 +232,12 @@ namespace Agent.View
                 FileInfo txt = new FileInfo(openFileDialog.FileName);
                 if (txt.Exists)
                 {
-                    if (this.dataFileList.Text.CompareTo("Добавить файл") == 0)
-                        agent.AddDataFile(txt);             // добавляем файл
+                    if (this.dataDiffFileList.Text.CompareTo("Добавить файл") == 0)
+                        agent.AddDiffDataFile(txt);             // добавляем файл
                     else
                     {
-                        string old = this.dataFileList.Text;
-                        agent.ReplaseDataFile(old, txt);   // заменяем файл
+                        string old = this.dataDiffFileList.Text;
+                        agent.ReplaceDiffDataFile(old, txt);   // заменяем файл
                     }
                 }
                 else
@@ -238,11 +247,41 @@ namespace Agent.View
             }
         }
 
-        private void dataFileList_KeyDown(object sender, KeyEventArgs e) // Пытаемся удалить файл данных
+        private void dataDiffFileList_KeyDown(object sender, KeyEventArgs e) // Пытаемся удалить файл данных
         {
-            if(e.KeyCode==Keys.Delete && this.dataFileList.Text.CompareTo("Добавить файл") != 0) // нажали на Delete, но при этом выбрал не "Добавить файл"
+            if(e.KeyCode==Keys.Delete && this.dataDiffFileList.Text.CompareTo("Добавить файл") != 0) // нажали на Delete, но при этом выбрал не "Добавить файл"
             {
-                agent.RemoveDataFile(this.dataFileList.Text);   // удаляем файл
+                agent.RemoveDiffDataFile(this.dataDiffFileList.Text);   // удаляем файл
+            }
+        }
+        private void dataNotDiffFileList_MouseDoubleClick(object sender, MouseEventArgs e) // Пытаемся добавить или заменить файл данных
+        {
+            this.openFileDialog.Filter = "txt files (*.txt)|*.txt";
+            if (this.openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                FileInfo txt = new FileInfo(openFileDialog.FileName);
+                if (txt.Exists)
+                {
+                    if (this.dataDiffFileList.Text.CompareTo("Добавить файл") == 0)
+                        agent.AddNotDiffDataFile(txt);             // добавляем файл
+                    else
+                    {
+                        string old = this.dataDiffFileList.Text;
+                        agent.ReplaceNotDiffDataFile(old, txt);   // заменяем файл
+                    }
+                }
+                else
+                {
+                    MessageBox.Show(this, "Файла не существует.", "Ошибка.", MessageBoxButtons.OK);
+                }
+            }
+        }
+
+        private void dataNotDiffFileList_KeyDown(object sender, KeyEventArgs e) // Пытаемся удалить файл данных
+        {
+            if (e.KeyCode == Keys.Delete && this.dataDiffFileList.Text.CompareTo("Добавить файл") != 0) // нажали на Delete, но при этом выбрал не "Добавить файл"
+            {
+                agent.RemoveNotDiffDataFile(this.dataDiffFileList.Text);   // удаляем файл
             }
         }
 
@@ -275,6 +314,13 @@ namespace Agent.View
         {
             new FindIPForm(agent).ShowDialog();
             this.refreshMachineInfoPanel();
+        }
+
+        private void checkedMechineListBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            CheckedListBox clb = (CheckedListBox)sender;
+            if(clb.SelectedIndex!=-1)
+                checkedMechineListBox.SetItemChecked(clb.SelectedIndex, !clb.GetItemChecked(clb.SelectedIndex));
         }
     }
 }

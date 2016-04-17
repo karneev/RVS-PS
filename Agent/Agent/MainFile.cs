@@ -3,8 +3,10 @@ using System.Windows.Forms;
 using System.Net;
 using System.Text;
 using System.Threading;
+using Agent.Model;
+using Agent.View;
 
-namespace Agent.Model
+namespace Agent
 {
 
     public delegate void refreshData(); // делегат изменения представления
@@ -18,17 +20,18 @@ namespace Agent.Model
         Calculate,
         Testing,
         LoadSettings,
-        UploadResult
+        WaitEndCalc
     }
     public enum PacketType
     {
         Hello,
-        Run,
+        RunFile,
         Data,
         FinishCalc,
         StartCalc,
         StopCalc,
         Free,
+        NotDeleteFiles,
         Empty
     }
 
@@ -66,7 +69,7 @@ namespace Agent.Model
                         type = PacketType.Hello;
                         break;
                     case "Run":
-                        type = PacketType.Run;
+                        type = PacketType.RunFile;
                         break;
                     case "Data":
                         type = PacketType.Data;
@@ -141,6 +144,8 @@ namespace Agent.Model
 
     public static class Programm 
     {
+        static AgentSystem ags;
+        static AgentForm agf;
         public static void ShowMessage(String text)
         {
             Thread th = new Thread(delegate ()
@@ -150,15 +155,24 @@ namespace Agent.Model
             th.IsBackground = true;
             th.Start();
         }
+        static void Run()
+        {
+            ags = new AgentSystem();
+            agf = new AgentForm(ags);
+            Application.Run(agf);
+        }
+        public static void Reset()
+        {
+            Application.Restart();
+            System.Environment.Exit(0);
+        }
         /// <summary>
         /// Главная точка входа для приложения.
         /// </summary>
         [STAThread]
         static void Main()
         {
-            AgentSystem ags = new AgentSystem();
-            Agent.View.AgentForm agf = new Agent.View.AgentForm(ags);
-            Application.Run(agf);
+            Run();
         }
     }
 }

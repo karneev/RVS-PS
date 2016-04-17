@@ -123,5 +123,10 @@ namespace Agent.View
         {
             (new AboutBox()).Show();
         }
+
+        private void перезапускПриложенияToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Programm.Reset();
+        }
     }
 }

@@ -47,13 +47,15 @@
             this.startCalculateButton = new System.Windows.Forms.Button();
             this.exitButton = new System.Windows.Forms.Button();
             this.filePanel = new System.Windows.Forms.Panel();
-            this.startInInitiator = new System.Windows.Forms.CheckBox();
-            this.dataFileList = new System.Windows.Forms.ListBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.dataNotDiffFileList = new System.Windows.Forms.ListBox();
+            this.dataDiffFileList = new System.Windows.Forms.ListBox();
             this.dataFileLabel = new System.Windows.Forms.Label();
             this.selectRunFileButton = new System.Windows.Forms.Button();
             this.fileNameLabel = new System.Windows.Forms.Label();
             this.runFileLabel = new System.Windows.Forms.Label();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.notDeleteFilesCheckBox = new System.Windows.Forms.CheckBox();
             this.machineSelectPanel.SuspendLayout();
             this.machineInfoPanel.SuspendLayout();
             this.filePanel.SuspendLayout();
@@ -85,7 +87,7 @@
             // checkLabel
             // 
             this.checkLabel.AutoSize = true;
-            this.checkLabel.Location = new System.Drawing.Point(43, 3);
+            this.checkLabel.Location = new System.Drawing.Point(43, 1);
             this.checkLabel.Name = "checkLabel";
             this.checkLabel.Size = new System.Drawing.Size(111, 13);
             this.checkLabel.TabIndex = 4;
@@ -130,6 +132,7 @@
             this.checkedMechineListBox.Name = "checkedMechineListBox";
             this.checkedMechineListBox.Size = new System.Drawing.Size(188, 202);
             this.checkedMechineListBox.TabIndex = 0;
+            this.checkedMechineListBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.checkedMechineListBox_MouseClick);
             // 
             // machineInfoPanel
             // 
@@ -225,7 +228,7 @@
             // 
             // startCalculateButton
             // 
-            this.startCalculateButton.Location = new System.Drawing.Point(15, 220);
+            this.startCalculateButton.Location = new System.Drawing.Point(15, 257);
             this.startCalculateButton.Name = "startCalculateButton";
             this.startCalculateButton.Size = new System.Drawing.Size(189, 23);
             this.startCalculateButton.TabIndex = 10;
@@ -235,7 +238,7 @@
             // 
             // exitButton
             // 
-            this.exitButton.Location = new System.Drawing.Point(15, 270);
+            this.exitButton.Location = new System.Drawing.Point(15, 283);
             this.exitButton.Name = "exitButton";
             this.exitButton.Size = new System.Drawing.Size(189, 23);
             this.exitButton.TabIndex = 12;
@@ -245,8 +248,10 @@
             // 
             // filePanel
             // 
-            this.filePanel.Controls.Add(this.startInInitiator);
-            this.filePanel.Controls.Add(this.dataFileList);
+            this.filePanel.Controls.Add(this.notDeleteFilesCheckBox);
+            this.filePanel.Controls.Add(this.label1);
+            this.filePanel.Controls.Add(this.dataNotDiffFileList);
+            this.filePanel.Controls.Add(this.dataDiffFileList);
             this.filePanel.Controls.Add(this.exitButton);
             this.filePanel.Controls.Add(this.dataFileLabel);
             this.filePanel.Controls.Add(this.selectRunFileButton);
@@ -258,36 +263,47 @@
             this.filePanel.Size = new System.Drawing.Size(233, 312);
             this.filePanel.TabIndex = 2;
             // 
-            // startInInitiator
+            // label1
             // 
-            this.startInInitiator.AutoSize = true;
-            this.startInInitiator.Location = new System.Drawing.Point(30, 247);
-            this.startInInitiator.Name = "startInInitiator";
-            this.startInInitiator.Size = new System.Drawing.Size(155, 17);
-            this.startInInitiator.TabIndex = 14;
-            this.startInInitiator.Text = "Запустить на инициаторе";
-            this.startInInitiator.UseVisualStyleBackColor = true;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(10, 147);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(157, 13);
+            this.label1.TabIndex = 16;
+            this.label1.Text = "Файлы данных (не делимые):";
             // 
-            // dataFileList
+            // dataNotDiffFileList
             // 
-            this.dataFileList.FormattingEnabled = true;
-            this.dataFileList.Items.AddRange(new object[] {
+            this.dataNotDiffFileList.FormattingEnabled = true;
+            this.dataNotDiffFileList.Items.AddRange(new object[] {
             "Добавить файл"});
-            this.dataFileList.Location = new System.Drawing.Point(6, 93);
-            this.dataFileList.Name = "dataFileList";
-            this.dataFileList.Size = new System.Drawing.Size(223, 121);
-            this.dataFileList.TabIndex = 13;
-            this.dataFileList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataFileList_KeyDown);
-            this.dataFileList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.dataFileList_MouseDoubleClick);
+            this.dataNotDiffFileList.Location = new System.Drawing.Point(4, 163);
+            this.dataNotDiffFileList.Name = "dataNotDiffFileList";
+            this.dataNotDiffFileList.Size = new System.Drawing.Size(223, 69);
+            this.dataNotDiffFileList.TabIndex = 15;
+            this.dataNotDiffFileList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataNotDiffFileList_KeyDown);
+            this.dataNotDiffFileList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.dataNotDiffFileList_MouseDoubleClick);
+            // 
+            // dataDiffFileList
+            // 
+            this.dataDiffFileList.FormattingEnabled = true;
+            this.dataDiffFileList.Items.AddRange(new object[] {
+            "Добавить файл"});
+            this.dataDiffFileList.Location = new System.Drawing.Point(6, 89);
+            this.dataDiffFileList.Name = "dataDiffFileList";
+            this.dataDiffFileList.Size = new System.Drawing.Size(223, 56);
+            this.dataDiffFileList.TabIndex = 13;
+            this.dataDiffFileList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataDiffFileList_KeyDown);
+            this.dataDiffFileList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.dataDiffFileList_MouseDoubleClick);
             // 
             // dataFileLabel
             // 
             this.dataFileLabel.AutoSize = true;
-            this.dataFileLabel.Location = new System.Drawing.Point(3, 77);
+            this.dataFileLabel.Location = new System.Drawing.Point(3, 73);
             this.dataFileLabel.Name = "dataFileLabel";
-            this.dataFileLabel.Size = new System.Drawing.Size(87, 13);
+            this.dataFileLabel.Size = new System.Drawing.Size(142, 13);
             this.dataFileLabel.TabIndex = 3;
-            this.dataFileLabel.Text = "Файлы данных:";
+            this.dataFileLabel.Text = "Файлы данных (делимые):";
             // 
             // selectRunFileButton
             // 
@@ -316,6 +332,16 @@
             this.runFileLabel.Size = new System.Drawing.Size(108, 13);
             this.runFileLabel.TabIndex = 0;
             this.runFileLabel.Text = "Исполняемый файл";
+            // 
+            // notDeleteFilesCheckBox
+            // 
+            this.notDeleteFilesCheckBox.AutoSize = true;
+            this.notDeleteFilesCheckBox.Location = new System.Drawing.Point(15, 239);
+            this.notDeleteFilesCheckBox.Name = "notDeleteFilesCheckBox";
+            this.notDeleteFilesCheckBox.Size = new System.Drawing.Size(217, 17);
+            this.notDeleteFilesCheckBox.TabIndex = 17;
+            this.notDeleteFilesCheckBox.Text = "Не удалять файлы после вычислений";
+            this.notDeleteFilesCheckBox.UseVisualStyleBackColor = true;
             // 
             // CalculateForm
             // 
@@ -357,7 +383,7 @@
         private System.Windows.Forms.Button startCalculateButton;
         private System.Windows.Forms.Button exitButton;
         private System.Windows.Forms.Panel filePanel;
-        private System.Windows.Forms.ListBox dataFileList;
+        private System.Windows.Forms.ListBox dataDiffFileList;
         private System.Windows.Forms.Label dataFileLabel;
         private System.Windows.Forms.Button selectRunFileButton;
         private System.Windows.Forms.Label fileNameLabel;
@@ -367,6 +393,8 @@
         private System.Windows.Forms.Button unselectAllButton;
         private System.Windows.Forms.Button unselectButton;
         private System.Windows.Forms.Button findIP;
-        private System.Windows.Forms.CheckBox startInInitiator;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ListBox dataNotDiffFileList;
+        private System.Windows.Forms.CheckBox notDeleteFilesCheckBox;
     }
 }
