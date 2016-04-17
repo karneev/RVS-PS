@@ -504,7 +504,8 @@ namespace Agent.Model
             CreateFileIP(); // получаем сипсок машин
             foreach (var t in allContractor) // всем отправляем файлы
             {
-                t.SendMessage(new Packet() { type = PacketType.NotDeleteFiles, id = infoMe.id });
+                if(notDeleteFiles)
+                    t.SendMessage(new Packet() { type = PacketType.NotDeleteFiles, id = infoMe.id });
                 t.AddFileList(notDiffDataFile); // добавляем к отправке не делимые файлы (в т.ч. iplist.txt)
                 // TODO: добавление части
                 t.SetExeAndDataFile(); // отправляем файлы
