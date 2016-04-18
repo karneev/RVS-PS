@@ -8,9 +8,6 @@ namespace Library
     partial class Work
     {
         /// <summary>
-        /// Дескриптор данных для передачи данных по дифференцированной схеме обмена
-        /// </summary>
-        /// <summary>
         /// Дескриптор данных для передачи данных по коллекторной схеме обмена
         /// </summary>
         public class CollectSendData

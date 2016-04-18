@@ -10,7 +10,7 @@ namespace Library
     /// <summary>
     /// Базовый класс библиотеки
     /// </summary>
-    partial class Work
+    public partial class Work
     {
         /// <summary>
         /// Делегат для функции прерывания

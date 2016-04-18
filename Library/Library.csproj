@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{3F0F58A1-ABDC-4F99-B7C8-B39F3224F2A8}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Library</RootNamespace>
     <AssemblyName>Library</AssemblyName>
@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -53,7 +56,6 @@
     <Compile Include="Truns\TrunsRecipientData.cs" />
     <Compile Include="Discret\DiscretRecipientData.cs" />
     <Compile Include="Truns\TrunsSendData.cs" />
-    <Compile Include="mainFrame.cs" />
     <Compile Include="Discret\DiscretSendData.cs" />
     <Compile Include="Spindle.cs" />
     <Compile Include="Recipient.cs" />
