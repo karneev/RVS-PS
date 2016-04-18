@@ -1,0 +1,7 @@
+E:\Projects\DCN\Algorithms\SLE\bin\Debug\SLE.exe.config
+E:\Projects\DCN\Algorithms\SLE\bin\Debug\SLE.exe
+E:\Projects\DCN\Algorithms\SLE\bin\Debug\SLE.pdb
+E:\Projects\DCN\Algorithms\SLE\bin\Debug\Library.dll
+E:\Projects\DCN\Algorithms\SLE\obj\Debug\SLE.csprojResolveAssemblyReference.cache
+E:\Projects\DCN\Algorithms\SLE\obj\Debug\SLE.exe
+E:\Projects\DCN\Algorithms\SLE\obj\Debug\SLE.pdb
