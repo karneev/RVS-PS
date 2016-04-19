@@ -55,9 +55,9 @@ namespace Agent.Model
             }
             catch (Exception e)
             {
-                Programm.ShowMessage("Инициатор потерялся с сообщением " + e.Message + "\nПодробности: "+e.ToString()); // отладочный вывод
-                if (agent.Status == StatusMachine.Wait)
-                    Programm.Reset();
+                MessageBox.Show("Инициатор потерялся с сообщением " + e.ToString()); // отладочный вывод
+                //if (agent.Status == StatusMachine.Wait)
+                //    Programm.Reset();
                 if(mainStream!=null)
                     mainStream.Close();
                 //Programm.ShowMessage("Инициатор потерялся из-за " + e.Source); // отладочный вывод

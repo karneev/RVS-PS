@@ -55,49 +55,8 @@ namespace Agent
         public override string ToString()
         {
             StringBuilder str = new StringBuilder();
-            str.Append("pkt ").Append(type).Append(" ").Append(id);
+            str.Append(type).Append(" ").Append(id);
             return str.ToString();
-        }
-        public bool Parse(string str) // придумать, как уйти от констант
-        {
-            try
-            {
-                string[] words = str.Split(' ');
-                switch(words[1])
-                {
-                    case "Hello":
-                        type = PacketType.Hello;
-                        break;
-                    case "Run":
-                        type = PacketType.RunFile;
-                        break;
-                    case "Data":
-                        type = PacketType.Data;
-                        break;
-                    case "FinishCalc":
-                        type = PacketType.FinishCalc;
-                        break;
-                    case "StartCalc":
-                        type = PacketType.StartCalc;
-                        break;
-                    case "StopCalc":
-                        type = PacketType.StopCalc;
-                        break;
-                    case "Free":
-                        type = PacketType.Free;
-                        break;
-                    default:
-                        type = PacketType.Empty;
-                        break;
-                }
-                id = Convert.ToInt64(words[2]);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                //Programm.ShowMessage(e.Message + " in Parse");
-            }
-            return false;
         }
     }
     [Serializable]

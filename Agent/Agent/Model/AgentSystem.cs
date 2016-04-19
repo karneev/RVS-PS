@@ -346,44 +346,47 @@ namespace Agent.Model
             refreshView();
             Thread th = new Thread(delegate () // поток обновления
             {
-                IPAddress cureIP;                           // очередной IP
-                StringBuilder headIP = new StringBuilder(); // начало IP
-                Byte[] ipInBytes = IP.GetAddressBytes();
-                headIP.Append(ipInBytes[0].ToString()).Append(".").Append(ipInBytes[1].ToString()).Append(".").Append(ipInBytes[2].ToString()).Append("."); // на время пока маска 255.255.255.0
-                foreach (var t in allContractor) // закрываем все соединения
+                lock(allContractor)
                 {
-                    if (t.Connected)
-                        t.Close();
-                }
-                allContractor.Clear();
-                Programm.ShowMessage("Обновляем список");
-                Parallel.For(2, 254, tail => // перебираем все адреса с 2 до 254
-                {
-                    cureIP = IPAddress.Parse(headIP.ToString() + tail.ToString()); // формируем конечный IP
-                    try
+                    IPAddress cureIP;                           // очередной IP
+                    StringBuilder headIP = new StringBuilder(); // начало IP
+                    Byte[] ipInBytes = IP.GetAddressBytes();
+                    headIP.Append(ipInBytes[0].ToString()).Append(".").Append(ipInBytes[1].ToString()).Append(".").Append(ipInBytes[2].ToString()).Append("."); // на время пока маска 255.255.255.0
+                    foreach (var t in allContractor) // закрываем все соединения
                     {
+                        if (t.Connected)
+                            t.Close();
+                    }
+                    allContractor.Clear();
+                    Programm.ShowMessage("Обновляем список");
+                    Parallel.For(2, 254, tail => // перебираем все адреса с 2 до 254
+                    {
+                        cureIP = IPAddress.Parse(headIP.ToString() + tail.ToString()); // формируем конечный IP
+                    try
+                        {
                         //Programm.ShowMessage("Заход №"+tail);
                         TcpClient client = new TcpClient();
 
-                        if (client.ConnectAsync(cureIP, Port).Wait(1500)) // пытаемся с ним соединиться в течение 1,5 секунды
+                            if (client.ConnectAsync(cureIP, Port).Wait(1500)) // пытаемся с ним соединиться в течение 1,5 секунды
                         {
-                            allContractor.Add(new Contractor(this, client));                    // в случае удачи досбавляем в список исполнителей
+                                allContractor.Add(new Contractor(this, client));                    // в случае удачи досбавляем в список исполнителей
                             allContractor[allContractor.Count - 1].newMessage += GetPacket;
+                            }
                         }
-                    }
-                    catch (Exception ex)
-                    {
+                        catch (Exception ex)
+                        {
                         //Programm.ShowMessage("В процессе обновления произошла ошибка "+ex.Message+"\nПодробности:\n"+ex.ToString());
                     }
 
-                });
-                Programm.ShowMessage("Список обновлен");
-                refreshContractor = false;
+                    });
+                    Programm.ShowMessage("Список обновлен");
+                    refreshContractor = false;
+                }
                 refreshView();
             });
             th.IsBackground = true;
             th.Start();
-            refreshView();          // обновить отображение;
+            //refreshView();          // обновить отображение;
         }
         public void ConnectToContractor(IPAddress cureIP)
         {
@@ -563,10 +566,10 @@ namespace Agent.Model
         void GetPacket(ILockeded sender, string message) // обработка полученных пакетов
         {
             Packet pkt = new Packet() { type = PacketType.Empty, id = -1 };
-            if (message.CompareTo("ConnectToInit") == 0)
-                Status = StatusMachine.Wait;
-            if (pkt.Parse(message) == true)
+            Programm.ShowMessage("Cообщение "+ message);
+            if (Enum.TryParse(message.Substring(0,message.IndexOf(' ')), out pkt.type)) // Разобраться - почему не работает
             {
+                pkt.id = long.Parse(message.Substring(message.IndexOf(' ')));
                 Programm.ShowMessage("Код " + pkt.type.ToString() + " | id " + pkt.id.ToString());
                 switch (pkt.type)
                 {
@@ -606,7 +609,6 @@ namespace Agent.Model
                         break;
                     case PacketType.Free:
                         Status = StatusMachine.Free;
-                        initiator.Restart();
                         Programm.Reset();
                         sender.Locked = false;
                         break;
@@ -619,6 +621,8 @@ namespace Agent.Model
                         break;
                 }
             }
+            else if (message.CompareTo("ConnectToInit") == 0)
+                Status = StatusMachine.Wait;
         }
     }
 }
