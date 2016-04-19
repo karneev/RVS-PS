@@ -192,20 +192,6 @@ namespace Agent.Model
             }
             return count;
         }
-        private static double Dichotomy(Func<double, double> func, long a, long b, int epsilon)
-        {
-            long delta = epsilon / 10;
-            while (b - a >= epsilon)
-            {
-                long middle = (a + b) / 2;
-                long lambda = middle - delta, mu = middle + delta;
-                if (func(lambda) < func(mu))
-                    b = mu;
-                else
-                    a = lambda;
-            }
-            return (a + b) / 2;
-        }
         public void NetworkSettingsChange() // сетевые настройки изменены
         {
             Status = StatusMachine.LoadSettings;
