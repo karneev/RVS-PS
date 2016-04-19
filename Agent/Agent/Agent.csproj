@@ -52,9 +52,11 @@
     <ApplicationIcon>mainIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Build" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Net" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -82,7 +84,7 @@
     <Compile Include="View\AgentForm.Designer.cs">
       <DependentUpon>AgentForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Model\MainFile.cs" />
+    <Compile Include="MainFile.cs" />
     <Compile Include="View\CalculateForm.cs">
       <SubType>Form</SubType>
     </Compile>
