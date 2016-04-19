@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
@@ -55,13 +56,11 @@ namespace Agent.Model
             }
             catch (Exception e)
             {
-                MessageBox.Show("Инициатор потерялся с сообщением " + e.ToString()); // отладочный вывод
-                //if (agent.Status == StatusMachine.Wait)
-                //    Programm.Reset();
+                Programm.ShowMessage("Инициатор потерялся с сообщением " + e.ToString()); // отладочный вывод
+                if (agent.Status == StatusMachine.Wait)
+                    Programm.Reset();
                 if(mainStream!=null)
                     mainStream.Close();
-                //Programm.ShowMessage("Инициатор потерялся из-за " + e.Source); // отладочный вывод
-                //Programm.ShowMessage("Инициатор потерялся  " + e.ToString()); // отладочный вывод
             }
         }
         public void GetExeAndDataFile(bool isExe) // получить файл true-exe, false-data
@@ -130,7 +129,7 @@ namespace Agent.Model
                 if (th == null || th.IsAlive == false)   // если потока нет или он не запущен, то запускаем
                 {
                     started = true;
-                    server = new TcpListener(System.Net.IPAddress.Any, agent.Port);
+                    server = new TcpListener(IPAddress.Any, agent.Port);
                     th = new Thread(run);
                     th.IsBackground = true;
                     th.Start();

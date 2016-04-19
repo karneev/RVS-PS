@@ -16,15 +16,15 @@ namespace Agent.Model
     {
         public event refreshData refreshView;
 
-        private bool isInitiator; // Является ли инициатором
-        private bool isCalculate; // начались ли вычисления
-        private bool notDeleteFiles = false;
-        public bool refreshContractor = false;
-        int countFinished;
-        private FileInfo exeFile;
-        private List<FileInfo> diffDataFile;
-        private List<FileInfo> notDiffDataFile;
-        private List<Contractor> allContractor;  // список всех клиентов (для работы в качестве инициатора)
+        private bool isInitiator=false; // Является ли инициатором
+        private bool isCalculate=false; // начались ли вычисления
+        private bool notDeleteFiles = false; // Не удалять файлы
+        public bool refreshContractor = false; // обновляется список исполнителей
+        int countFinished = 0;              // количество завершивших вычисления
+        private FileInfo exeFile;           // исполняемый файл
+        private List<FileInfo> diffDataFile = new List<FileInfo>(); // разделяемые файлы
+        private List<FileInfo> notDiffDataFile = new List<FileInfo>(); // не разделяемые файлы
+        private List<Contractor> allContractor = new List<Contractor>();  // список всех клиентов (для работы в качестве инициатора)
         private Initiator initiator;            // информация о инициаторе
 
         private SettingSystem settingSystem;// Сетевые настройки системы
@@ -120,14 +120,7 @@ namespace Agent.Model
             }
         }
 
-        public AgentSystem()
-        {
-            diffDataFile = new List<FileInfo>();
-            notDiffDataFile = new List<FileInfo>();
-            allContractor = new List<Contractor>();
-            isInitiator = false;
-            countFinished = 0;
-        }
+        public AgentSystem() { }
         public void AddListener(setStat t) // добавить слушателя изменения статуса машины
         {
             infoMe.statusChange += t;
@@ -442,7 +435,8 @@ namespace Agent.Model
             initiator.Restart();
         }
 
-        List<FileInfo> DiffOneFile(FileInfo file, int countParts)
+        // Работа с файлами для запуска вычислений
+        List<FileInfo> DiffOneFile(FileInfo file, int countParts) // разделение одного файла
         {
             List<FileInfo> parts = new List<FileInfo>();
             for(int i=0; i<countParts; i++)
@@ -451,13 +445,13 @@ namespace Agent.Model
             }
             return parts;
         }
-        List<List<FileInfo>> DiffFileList(List<FileInfo> files, int countParts)
+        List<List<FileInfo>> DiffFileList(List<FileInfo> files, int countParts) // разделение набора файлов
         {
             List<List<FileInfo>> fileParts = new List<List<FileInfo>>();
             if (diffDataFile.Count != 0)
             {
                 
-                DirectoryInfo DI = new DirectoryInfo("tempPatch");
+                DirectoryInfo DI = new DirectoryInfo("TEMP\\Parts");
                 DI.Create();
                 foreach (var t in files)
                 {
@@ -483,8 +477,11 @@ namespace Agent.Model
             sw.Close();
             AddNotDiffDataFile(ipfile); // добавляем файл в список файлов данных
         }
+        
+        // Запуск и обрыв вычислений
         public void StartCalculate(bool notDeleteFiles) // запуск вычислений
         {
+            
             this.notDeleteFiles = notDeleteFiles;
             CopyFilesInitiator();
             countFinished = 0;
@@ -504,21 +501,25 @@ namespace Agent.Model
                 allContractor.Remove(t);
             }
             refreshView();
-            CreateFileIP(); // получаем сипсок машин
-            foreach (var t in allContractor) // всем отправляем файлы
-            {
-                if(notDeleteFiles)
-                    t.SendMessage(new Packet() { type = PacketType.NotDeleteFiles, id = infoMe.id });
-                t.AddFileList(notDiffDataFile); // добавляем к отправке не делимые файлы (в т.ч. iplist.txt)
-                // TODO: добавление части
-                t.SetExeAndDataFile(); // отправляем файлы
-            }
-            // запустить удаленно EXE
-            foreach (var t in allContractor) // всем выбранным даем команду начать выполнение
-            {
-                t.SendMessage(new Packet() { type = PacketType.StartCalc, id = infoMe.id });
-            }
-            RunExe();
+            Thread calcThread = new Thread(delegate () {
+                CreateFileIP(); // получаем сипсок машин
+                foreach (var t in allContractor) // всем отправляем файлы
+                {
+                    if (notDeleteFiles)
+                        t.SendMessage(new Packet() { type = PacketType.NotDeleteFiles, id = infoMe.id });
+                    t.AddFileList(notDiffDataFile); // добавляем к отправке не делимые файлы (в т.ч. iplist.txt)
+                                                    // TODO: добавление части
+                    t.SetExeAndDataFile(); // отправляем файлы
+                }
+                // запустить удаленно EXE
+                foreach (var t in allContractor) // всем выбранным даем команду начать выполнение
+                {
+                    t.SendMessage(new Packet() { type = PacketType.StartCalc, id = infoMe.id });
+                }
+                RunExe();
+            });
+            calcThread.IsBackground = true;
+            calcThread.Start();
         }
         public void BreakCalculate() // обрыв вычислений
         {
@@ -537,7 +538,7 @@ namespace Agent.Model
             proc.Exited += new EventHandler(EndProc);
             proc.Start();
         }
-        // по завершению работы программы
+        // по завершению работы программы 
         void EndProc(object sender, EventArgs e) // отправляем результаты и удаляем все полученные ранее файлы
         {
             try
@@ -566,10 +567,10 @@ namespace Agent.Model
         void GetPacket(ILockeded sender, string message) // обработка полученных пакетов
         {
             Packet pkt = new Packet() { type = PacketType.Empty, id = -1 };
-            Programm.ShowMessage("Cообщение "+ message);
-            if (Enum.TryParse(message.Substring(0,message.IndexOf(' ')), out pkt.type)) // Разобраться - почему не работает
+            string[] parts = message.Split(' ');
+            if (Enum.TryParse(parts[0], out pkt.type)) // пытаемся пропарсить сообщение на соответствие пакету
             {
-                pkt.id = long.Parse(message.Substring(message.IndexOf(' ')));
+                pkt.id = long.Parse(parts[1]);
                 Programm.ShowMessage("Код " + pkt.type.ToString() + " | id " + pkt.id.ToString());
                 switch (pkt.type)
                 {
