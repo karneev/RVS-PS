@@ -123,7 +123,7 @@ namespace Agent.View
 
         private void infoButton_Click(object sender, EventArgs e)
         {
-            (new AboutBox()).Show();
+            (new AboutBox(agent)).Show();
         }
 
         private void перезапускПриложенияToolStripMenuItem_Click(object sender, EventArgs e)

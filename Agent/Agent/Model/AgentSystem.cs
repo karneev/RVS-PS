@@ -135,15 +135,14 @@ namespace Agent.Model
         public void TestSystem() // тестирование системы
         {
             infoMe.Status = StatusMachine.Testing; // начало тестирования
-            infoMe.id = getMachineGuid().GetHashCode(); // получение хеш-кода GUID 
-            infoMe.vRam = (new Random()).Next(100,200);
-            infoMe.vCPU = (new Random()).Next(200,250);
-            Thread.Sleep(1000); // имитация теста
-            if(Properties.Settings.Default.Port!=-1)
+            infoMe.id = GetMachineGuid().GetHashCode(); // получение хеш-кода GUID 
+            infoMe.vRam = GetMachineRAM(); // получение доступного объема RAM
+            infoMe.vCPU = GetMachineCPUMHz(); // получаение тактовой частоты процессора
+            if(Properties.Settings.Default.Port!=0)
                 InitConnect();      // инициализируем подключение
             infoMe.Status = StatusMachine.Free; // свободен           
         }
-        private string getMachineGuid() // получение GUID 
+        private string GetMachineGuid() // получение GUID 
         {
             string location = @"SOFTWARE\Microsoft\Cryptography";
             string name = "MachineGuid";
@@ -158,6 +157,54 @@ namespace Agent.Model
                     return machineGuid.ToString();
                 }
             }
+        }
+        private int GetMachineCPUMHz() // Определение тактовой частоты процессора
+        {
+            string location = @"HARDWARE\DESCRIPTION\System\CentralProcessor\0";
+            string name = "~MHz";
+
+            using (RegistryKey localMachineX64View = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
+            {
+                using (RegistryKey rk = localMachineX64View.OpenSubKey(location))
+                {
+                    if (rk == null)
+                        throw new KeyNotFoundException(string.Format("Key Not Found: {0}", location));
+                    object machineGuid = rk.GetValue(name);
+                    return int.Parse(machineGuid.ToString());
+                }
+            }
+        }
+        private int GetMachineRAM() // тест доступного объема RAM
+        {
+            int count = 0;
+            try
+            {
+                byte[][] arr = new byte[8*8][];
+                for (int i = 0; i < 8*8; i++)
+                {
+                    arr[i] = new byte[1024 * 1024 * 128];
+                    count += 128;
+                }
+            }
+            catch(OutOfMemoryException ex)
+            {
+                return count;
+            }
+            return count;
+        }
+        private static double Dichotomy(Func<double, double> func, long a, long b, int epsilon)
+        {
+            long delta = epsilon / 10;
+            while (b - a >= epsilon)
+            {
+                long middle = (a + b) / 2;
+                long lambda = middle - delta, mu = middle + delta;
+                if (func(lambda) < func(mu))
+                    b = mu;
+                else
+                    a = lambda;
+            }
+            return (a + b) / 2;
         }
         public void NetworkSettingsChange() // сетевые настройки изменены
         {

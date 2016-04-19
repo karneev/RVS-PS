@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using System.Net;
 using System.Text;
-using System.Threading;
 using Agent.Model;
 using Agent.View;
 
