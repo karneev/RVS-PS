@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Agent
@@ -8,6 +9,16 @@ namespace Agent
     class Log
     {
         private static object sync = new object();
+        public static void ShowMessage(String text)
+        {
+            Log.Write(text);
+            Thread th = new Thread(delegate ()
+            {
+                MessageBox.Show(text);
+            });
+            th.IsBackground = true;
+            th.Start();
+        }
         public static void Write(Exception ex)
         {
             try

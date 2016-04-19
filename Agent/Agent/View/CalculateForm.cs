@@ -9,11 +9,11 @@ namespace Agent.View
     {
         bool started=false;
         AgentSystem agent;
-        public CalculateForm(ref AgentSystem agent)
+        internal CalculateForm(ref AgentSystem agent)
         {
             InitializeComponent();
             this.agent = agent;
-            this.agent.refreshView += refreshForm;
+            this.agent.RefreshView += refreshForm;
         }
         delegate void refresh();
         private void showAllDataFile() // отобразить все файлы данных в списке файлов
@@ -55,7 +55,7 @@ namespace Agent.View
                 foreach (Contractor i in agent.GetAllContractor())   // заполняем список машин
                 {
                     if (i.Selected == false)
-                        this.checkedMechineListBox.Items.Add(i.GetIpServer().ToString());
+                        this.checkedMechineListBox.Items.Add(i.GetIPServer().ToString());
                 }
                 if (agent.GetAllContractor().Count != 0)
                 {
@@ -94,7 +94,7 @@ namespace Agent.View
                 {
                     if (i.Selected == true)
                     {
-                        this.selectedMachineListBox.Items.Add(i.GetIpServer().ToString());
+                        this.selectedMachineListBox.Items.Add(i.GetIPServer().ToString());
                         sumRam += i.Info.vRam;
                         sumCpu += i.Info.vCPU;
                     }
@@ -193,7 +193,6 @@ namespace Agent.View
             catch (Exception ex)
             {
                 Log.Write(ex);
-                //Programm.ShowMessage(ex.Message + " in startCalculateButton_Click");
             }
         }
 
@@ -288,7 +287,7 @@ namespace Agent.View
 
         private void unselectButton_Click(object sender, EventArgs e) // отменить выбор отмеченных машин
         {
-            CheckedListBox.CheckedIndexCollection col = checkedMechineListBox.CheckedIndices;
+            CheckedListBox.CheckedIndexCollection col = selectedMachineListBox.CheckedIndices;
             for (int i = 0; i < col.Count; i++)
                 agent.UnSelectContractor(col[i]);
             this.refreshForm();

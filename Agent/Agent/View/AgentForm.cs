@@ -10,7 +10,7 @@ namespace Agent.View
     {
         AgentSystem agent;
         FormWindowState formerState; // Статус окна (свернуто/развернуто)
-        public AgentForm(AgentSystem agent)
+        internal AgentForm(AgentSystem agent)
         {
             InitializeComponent();
             this.Visible = true;
@@ -23,20 +23,24 @@ namespace Agent.View
             // Загрузить настройки. Если их нет - принудительно запросить
             try
             {
-                this.agent.LoadSettings();
+                if (Properties.Settings.Default.Port == 0)
+                {
+                    MessageBox.Show("Настройки не заданы!\nЗадайте настройки заново!");
+                    SettingForm t=new SettingForm(ref this.agent);
+                    t.ShowDialog();
+                }
             }
             catch (Exception ex)
             {
                 Log.Write(ex);
-                MessageBox.Show("Файл настроек не найден или поврежден!\nЗадайте настройки заново!");
-                (new SettingForm(ref this.agent)).ShowDialog();
+                
             }
         }
         private void setStatus(StatusMachine status)
         {
             if (this.statusTextBox.InvokeRequired)
             {
-                setStat d = new setStat(setStatus);
+                SetStat d = new SetStat(setStatus);
                 this.Invoke(d, new object[] { status });
             }
             else
@@ -110,7 +114,6 @@ namespace Agent.View
         private void settingsButton_Click(object sender, EventArgs e)
         {
             (new SettingForm(ref agent)).ShowDialog();
-            agent.NetworkSettingsChange();
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)

@@ -21,15 +21,16 @@ namespace Agent.View
 
         private void ipBox_TextChanged(object sender, EventArgs e)
         {
-            if (((TextBox)sender).Text.Length != 0)
+            TextBox tb = (TextBox)sender;
+            if (tb.Text.Length != 0)
             {
-                if ((Regex.Match(((TextBox)sender).Text, patternIP)).Length == 0) // Если не соответсвует требованиям IP-адреса
+                if ((Regex.Match(tb.Text, patternIP)).Length == 0) // Если не соответсвует требованиям IP-адреса
                 {
-                    ((TextBox)sender).Text = oldString;
+                    tb.Text = oldString;
                 }
                 else
                 {
-                    oldString = ((TextBox)sender).Text;
+                    oldString = tb.Text;
                 }
             }
             else

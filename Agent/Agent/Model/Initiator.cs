@@ -11,7 +11,7 @@ namespace Agent.Model
     public class Initiator : ILockeded       // класс информации о инициаторе
     {
         AgentSystem agent;
-        public event getMessage newMessage; // событие получения нового сообщения
+        public event GetMessage NewMessage; // событие получения нового сообщения
         bool started;
         bool locked;                        // заблокирована ли машина на прием пакетов
         TcpListener server;               // сервер (в нашей системе - исполнитель)
@@ -50,7 +50,7 @@ namespace Agent.Model
                     {
                         pkt = (Packet)bf.Deserialize(mainStream);   // получаем пакет и
                         locked = true;
-                        newMessage(this, pkt.ToString());                 // зажигаем событие "новое сообщение"
+                        NewMessage(this, pkt.ToString());                 // зажигаем событие "новое сообщение"
                     }
                 }
             }
@@ -129,7 +129,7 @@ namespace Agent.Model
                 if (th == null || th.IsAlive == false)   // если потока нет или он не запущен, то запускаем
                 {
                     started = true;
-                    server = new TcpListener(IPAddress.Any, agent.Port);
+                    server = new TcpListener(IPAddress.Any, Properties.Settings.Default.Port);
                     th = new Thread(run);
                     th.IsBackground = true;
                     th.Start();

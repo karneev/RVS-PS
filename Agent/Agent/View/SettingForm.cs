@@ -17,8 +17,9 @@ namespace Agent.View
         {
             this.agent = agent;
             InitializeComponent();
-            byte[] mask;
             int numIP = 0, selectIP=-1;
+            string[] mask;
+            string ip = Properties.Settings.Default.IP;
             
             IPHostEntry iphostentry = Dns.GetHostEntry(Dns.GetHostName());
             foreach (IPAddress ipaddress in iphostentry.AddressList)
@@ -26,19 +27,22 @@ namespace Agent.View
                 if (ipaddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) // если адрес ipv4
                 {
                     ipComboBox.Items.Add(ipaddress.ToString());
-                    if (ipaddress.ToString().CompareTo(this.agent.IP.ToString()) == 0)
+                    if (ipaddress.ToString().CompareTo(ip) == 0)
                         selectIP = numIP;
                     numIP++;
                 }
             }
             ipComboBox.SelectedIndex = selectIP;
 
-            mask = this.agent.Mask.GetAddressBytes();
-            maskBox1.Text = mask[0].ToString();
-            maskBox2.Text = mask[1].ToString();
-            maskBox3.Text = mask[2].ToString();
-            maskBox4.Text = mask[3].ToString();
-            portBox1.Text = this.agent.Port.ToString();
+            mask = Properties.Settings.Default.Mask.Split('.');
+            maskBox1.Text = mask[0];
+            maskBox2.Text = mask[1];
+            maskBox3.Text = mask[2];
+            maskBox4.Text = mask[3];
+            if (Properties.Settings.Default.Port != 0)
+                portBox1.Text = Properties.Settings.Default.Port.ToString();
+            else
+                portBox1.Text = "";
             oldString = "";
             ipPanel2.Enabled = false; // на время не рабочих масок. Маска всегда 255.255.255.0
         }
@@ -62,15 +66,16 @@ namespace Agent.View
 
         private void ipBox_TextChanged(object sender, EventArgs e)
         {
-            if (((TextBox)sender).Text.Length != 0)
+            TextBox tb = (TextBox)sender;
+            if (tb.Text.Length != 0)
             {
-                if ((Regex.Match(((TextBox)sender).Text, patternIP)).Length == 0) // Если не соответсвует требованиям IP-адреса
+                if ((Regex.Match(tb.Text, patternIP)).Length == 0) // Если не соответсвует требованиям IP-адреса
                 {
-                    ((TextBox)sender).Text = oldString;
+                    tb.Text = oldString;
                 }
                 else
                 {
-                    oldString = ((TextBox)sender).Text;
+                    oldString = tb.Text;
                 }
             }
             else
@@ -81,23 +86,24 @@ namespace Agent.View
 
         private void portBox_TextChanged(object sender, EventArgs e)
         {
-            if (((TextBox)sender).Text.Length != 0)
+            TextBox tb = (TextBox)sender;
+            if (tb.Text.Length != 0)
             {
                 int dec;
-                if (Int32.TryParse(((TextBox)sender).Text, out dec))
+                if (Int32.TryParse(tb.Text, out dec))
                 {
                     if (dec >= Int32.MinValue && dec <= Int32.MaxValue)
                     {
-                        oldString = ((TextBox)sender).Text;
+                        oldString = tb.Text;
                     }
                     else
                     {
-                        ((TextBox)sender).Text = oldString;
+                        tb.Text = oldString;
                     }
                 }
                 else
                 {
-                    ((TextBox)sender).Text = oldString;
+                    tb.Text = oldString;
                 }
             }
             else
@@ -110,29 +116,25 @@ namespace Agent.View
         {
             StringBuilder mask = new StringBuilder("");
             IPAddress ip;
-            int port =0;
+            int port = 0;
             mask.Append(maskBox1.Text).Append('.').Append(maskBox2.Text).Append('.').Append(maskBox3.Text).Append('.').Append(maskBox4.Text);
-
             if(!IPAddress.TryParse(ipComboBox.SelectedItem.ToString(), out ip))
                 if (!IPAddress.TryParse(ipComboBox.Items[0].ToString(), out ip))
                     ip = IPAddress.Parse("127.0.0.1");
-            this.agent.IP = ip;
+            Properties.Settings.Default.IP = ip.ToString();
             if (!IPAddress.TryParse(mask.ToString(), out ip))
                 ip = IPAddress.Parse("255.255.255.0");
-            this.agent.Mask = ip;
+            Properties.Settings.Default.Mask = ip.ToString();
             if (!Int32.TryParse(portBox1.Text, out port))
                 port = 56001;
-            this.agent.Port = port;
-            this.Close();            
+            Properties.Settings.Default.Port = port;
+            Properties.Settings.Default.Save();
+            agent.NetworkSettingsChange();
+            this.Close();
         }
 
         private void SettingForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            StreamWriter sw = new StreamWriter("set.cfg");
-            sw.WriteLine(this.agent.IP.ToString());
-            sw.WriteLine(this.agent.Mask.ToString());
-            sw.WriteLine(this.agent.Port.ToString());
-            sw.Close();
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Agent.Model
     public class Contractor : ILockeded   // класс информации о исполнителях
     {
         AgentSystem agent;
-        public event getMessage newMessage;    // событие получения нового сообщения
+        public event GetMessage NewMessage;    // событие получения нового сообщения
         TcpClient client;                      // связь с инициатором
         MachineInfo info;                      //информация о исполнителе
         bool selected;                         // выбран ли этот исполнитель для вычислений
@@ -37,7 +37,7 @@ namespace Agent.Model
             get { return info; }
         }
 
-        public Contractor(AgentSystem agent, TcpClient client)
+        internal Contractor(AgentSystem agent, TcpClient client)
         {
             this.agent = agent;
             this.client = client;
@@ -61,7 +61,7 @@ namespace Agent.Model
                     {
                         pkt = (Packet)bf.Deserialize(mainStream);          // получаем пакет от исполнителя и
                         locked = true;
-                        newMessage(this, pkt.ToString());                  // зажигаем событие "новое сообщение"
+                        NewMessage(this, pkt.ToString());                  // зажигаем событие "новое сообщение"
                     }
                 }
             }
@@ -75,7 +75,7 @@ namespace Agent.Model
         {
             get { return client.Connected; }
         }
-        public IPAddress GetIpServer() // получить IP исполнителя
+        public IPAddress GetIPServer() // получить IP исполнителя
         {
             return ((IPEndPoint)client.Client.RemoteEndPoint).Address;
         }
@@ -84,7 +84,7 @@ namespace Agent.Model
         {
             dataFile.Add(file);
         }
-        public void AddFileList(List<FileInfo> fileList)
+        internal void AddFileList(List<FileInfo> fileList)
         {
             foreach(var t in fileList)
                 AddFile(t);

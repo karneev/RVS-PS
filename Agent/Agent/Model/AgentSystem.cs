@@ -14,20 +14,19 @@ namespace Agent.Model
 {
     public class AgentSystem
     {
-        public event refreshData refreshView;
+        public event RefreshData RefreshView;
 
         private bool isInitiator=false; // Является ли инициатором
         private bool isCalculate=false; // начались ли вычисления
         private bool notDeleteFiles = false; // Не удалять файлы
-        public bool refreshContractor = false; // обновляется список исполнителей
+        internal bool refreshContractor = false; // обновляется список исполнителей
         int countFinished = 0;              // количество завершивших вычисления
         private FileInfo exeFile;           // исполняемый файл
         private List<FileInfo> diffDataFile = new List<FileInfo>(); // разделяемые файлы
         private List<FileInfo> notDiffDataFile = new List<FileInfo>(); // не разделяемые файлы
         private List<Contractor> allContractor = new List<Contractor>();  // список всех клиентов (для работы в качестве инициатора)
         private Initiator initiator;            // информация о инициаторе
-
-        private SettingSystem settingSystem;// Сетевые настройки системы
+        
         private MachineInfo infoMe;         // Информация о себе
 
         public bool IsInitiator
@@ -63,21 +62,6 @@ namespace Agent.Model
                 }
             }
         }
-        public IPAddress IP
-        {
-            get { return settingSystem.ip; }
-            set { settingSystem.ip = value; }
-        }
-        public IPAddress Mask
-        {
-            get { return settingSystem.mask; }
-            set { settingSystem.mask = value; }
-        }
-        public int Port
-        {
-            get { return settingSystem.port; }
-            set { settingSystem.port = value; }
-        }
         public MachineInfo InfoMe
         {
             get { return infoMe; }
@@ -92,7 +76,7 @@ namespace Agent.Model
             {
                 exeFile = value;
                 if (isInitiator == true)
-                    refreshView();
+                    RefreshView();
             }
         }
         public List<FileInfo> DiffDataFile
@@ -101,11 +85,6 @@ namespace Agent.Model
             {
                 return diffDataFile;
             }
-            set
-            {
-                diffDataFile = value;
-                refreshView();
-            }
         }
         public List<FileInfo> NotDiffDataFile
         {
@@ -113,21 +92,16 @@ namespace Agent.Model
             {
                 return notDiffDataFile;
             }
-            set
-            {
-                notDiffDataFile = value;
-                refreshView();
-            }
         }
 
         public AgentSystem() { }
-        public void AddListener(setStat t) // добавить слушателя изменения статуса машины
+        internal void AddListener(SetStat listener) // добавить слушателя изменения статуса машины
         {
-            infoMe.statusChange += t;
+            infoMe.StatusChange += listener;
         }
-        public void RemoveListener(setStat t) // удалить слушателя изменения статуса машины
+        internal void RemoveListener(SetStat listener) // удалить слушателя изменения статуса машины
         {
-            infoMe.statusChange -= t;
+            infoMe.StatusChange -= listener;
         }
 
         void CopyFile(FileInfo file, string name) // копирование файла
@@ -165,7 +139,8 @@ namespace Agent.Model
             infoMe.vRam = (new Random()).Next(100,200);
             infoMe.vCPU = (new Random()).Next(200,250);
             Thread.Sleep(1000); // имитация теста
-            InitConnect();      // инициализируем подключение
+            if(Properties.Settings.Default.Port!=-1)
+                InitConnect();      // инициализируем подключение
             infoMe.Status = StatusMachine.Free; // свободен           
         }
         private string getMachineGuid() // получение GUID 
@@ -180,43 +155,17 @@ namespace Agent.Model
                     if (rk == null)
                         throw new KeyNotFoundException(string.Format("Key Not Found: {0}", location));
                     object machineGuid = rk.GetValue(name);
-                    if (machineGuid == null)
-                        throw new IndexOutOfRangeException(string.Format("Index Not Found: {0}", name));
                     return machineGuid.ToString();
                 }
             }
         }
-        public void LoadSettings() // загрузка настроек
-        {
-            Status = StatusMachine.LoadSettings;
-            string buf;
-            StreamReader sr = null;
-            try // читаем данные с файла настроек
-            {
-                sr = new StreamReader("set.cfg");
-                buf = sr.ReadLine();
-                settingSystem.ip = IPAddress.Parse(buf);
-                buf = sr.ReadLine();
-                settingSystem.mask = IPAddress.Parse(buf);
-                buf = sr.ReadLine();
-                settingSystem.port = Convert.ToUInt16(buf);
-                sr.Close();
-            }
-            catch (Exception ex)
-            {
-                if (ex is FormatException)
-                    sr.Close();
-                settingSystem.ip = IPAddress.Parse("127.0.0.1");
-                settingSystem.mask = IPAddress.Parse("255.255.255.0");
-                settingSystem.port = 0;
-                throw ex;
-            }
-            Status = StatusMachine.Free;
-        }
         public void NetworkSettingsChange() // сетевые настройки изменены
         {
             Status = StatusMachine.LoadSettings;
-            this.initiator.Restart(); // перезапускаем сервер
+            if (this.initiator != null)
+                this.initiator.Restart(); // перезапускаем сервер
+            else
+                this.InitConnect();
             Status = StatusMachine.Free;
         }
         public void InitConnect() // начальный запуск сервера
@@ -224,7 +173,7 @@ namespace Agent.Model
             if (initiator == null)
             {
                 initiator = new Initiator(this); // 56000
-                initiator.newMessage += GetPacket;
+                initiator.NewMessage += GetPacket;
             }
         }
         public void Stop() // остановить всё
@@ -233,7 +182,7 @@ namespace Agent.Model
         }
 
         // работа с делимыми файлами
-        public void AddDiffDataFile(FileInfo file) // добавить файл данных
+        internal void AddDiffDataFile(FileInfo file) // добавить файл данных
         {
             foreach (FileInfo i in diffDataFile) // ищем, есть ли уже такой файл
             {
@@ -241,9 +190,9 @@ namespace Agent.Model
                     return;
             }
             diffDataFile.Add(file); // иначе добавляем и обновляем представление
-            refreshView();
+            RefreshView();
         }
-        public void RemoveDiffDataFile(string fileName) // удаляем файл данных
+        internal void RemoveDiffDataFile(string fileName) // удаляем файл данных
         {
             foreach (FileInfo i in diffDataFile) // если находим файл - удаляем
             {
@@ -253,9 +202,9 @@ namespace Agent.Model
                     break;
                 }
             }
-            refreshView();  // обновляем представление
+            RefreshView();  // обновляем представление
         }
-        public void ReplaceDiffDataFile(string removedFileName, FileInfo pasteFile) // заменяем файл с заданным именем на новый файл
+        internal void ReplaceDiffDataFile(string removedFileName, FileInfo pasteFile) // заменяем файл с заданным именем на новый файл
         {
             int k = 0;
             foreach (FileInfo i in diffDataFile) // удалем файл
@@ -273,14 +222,14 @@ namespace Agent.Model
                     return;
             }
             diffDataFile.Add(pasteFile);
-            refreshView();  // обновляем представление
+            RefreshView();  // обновляем представление
         }
-        public List<FileInfo> GetAllDiffDataFile() // получить список всех файлов данных
+        internal List<FileInfo> GetAllDiffDataFile() // получить список всех файлов данных
         {
             return diffDataFile;
         }
         // работа с не делимыми файлами
-        public void AddNotDiffDataFile(FileInfo file) // добавить файл данных
+        internal void AddNotDiffDataFile(FileInfo file) // добавить файл данных
         {
             foreach (FileInfo i in notDiffDataFile) // ищем, есть ли уже такой файл
             {
@@ -288,9 +237,9 @@ namespace Agent.Model
                     return;
             }
             notDiffDataFile.Add(file); // иначе добавляем и обновляем представление
-            refreshView();
+            RefreshView();
         }
-        public void RemoveNotDiffDataFile(string fileName) // удаляем файл данных
+        internal void RemoveNotDiffDataFile(string fileName) // удаляем файл данных
         {
             foreach (FileInfo i in notDiffDataFile) // если находим файл - удаляем
             {
@@ -300,9 +249,9 @@ namespace Agent.Model
                     break;
                 }
             }
-            refreshView();  // обновляем представление
+            RefreshView();  // обновляем представление
         }
-        public void ReplaceNotDiffDataFile(string removedFileName, FileInfo pasteFile) // заменяем файл с заданным именем на новый файл
+        internal void ReplaceNotDiffDataFile(string removedFileName, FileInfo pasteFile) // заменяем файл с заданным именем на новый файл
         {
             int k = 0;
             foreach (FileInfo i in notDiffDataFile) // удалем файл
@@ -320,50 +269,49 @@ namespace Agent.Model
                     return;
             }
             notDiffDataFile.Add(pasteFile);
-            refreshView();  // обновляем представление
+            RefreshView();  // обновляем представление
         }
-        public List<FileInfo> GetAllNotDiffDataFile() // получить список всех файлов данных
+        internal List<FileInfo> GetAllNotDiffDataFile() // получить список всех файлов данных
         {
             return notDiffDataFile;
         }
 
-        public List<Contractor> GetAllContractor() // получить список всех клиентов
+        internal List<Contractor> GetAllContractor() // получить список всех клиентов
         {
             return allContractor;
         }
 
         // работа с клиентами в качетсве инициатора
-        public void RefreshContractorList() // обновить список клиентов
+        internal void RefreshContractorList() // обновить список клиентов
         {
             refreshContractor = true;
-            refreshView();
+            RefreshView();
             Thread th = new Thread(delegate () // поток обновления
             {
                 lock (allContractor)
                 {
                     IPAddress cureIP;                           // очередной IP
                     StringBuilder headIP = new StringBuilder(); // начало IP
-                    Byte[] ipInBytes = IP.GetAddressBytes();
-                    headIP.Append(ipInBytes[0].ToString()).Append(".").Append(ipInBytes[1].ToString()).Append(".").Append(ipInBytes[2].ToString()).Append("."); // на время пока маска 255.255.255.0
+                    string[] ipInBytes = Properties.Settings.Default.IP.Split('.');
+                    headIP.Append(ipInBytes[0]).Append(".").Append(ipInBytes[1]).Append(".").Append(ipInBytes[2]).Append("."); // на время пока маска 255.255.255.0
                     foreach (var t in allContractor) // закрываем все соединения
                     {
                         if (t.Connected)
                             t.Close();
                     }
                     allContractor.Clear();
-                    Programm.ShowMessage("Обновляем список");
+                    Log.ShowMessage("Обновляем список");
                     Parallel.For(2, 254, tail => // перебираем все адреса с 2 до 254
                     {
                         cureIP = IPAddress.Parse(headIP.ToString() + tail.ToString()); // формируем конечный IP
                         try
                         {
-                            //Programm.ShowMessage("Заход №"+tail);
                             TcpClient client = new TcpClient();
 
-                            if (client.ConnectAsync(cureIP, Port).Wait(1500)) // пытаемся с ним соединиться в течение 1,5 секунды
+                            if (client.ConnectAsync(cureIP, Properties.Settings.Default.Port).Wait(1500)) // пытаемся с ним соединиться в течение 1,5 секунды
                             {
                                 allContractor.Add(new Contractor(this, client));                    // в случае удачи досбавляем в список исполнителей
-                                allContractor[allContractor.Count - 1].newMessage += GetPacket;
+                                allContractor[allContractor.Count - 1].NewMessage += GetPacket;
                             }
                         }
                         catch (Exception ex)
@@ -372,27 +320,26 @@ namespace Agent.Model
                         }
 
                     });
-                    Programm.ShowMessage("Список обновлен");
+                    Log.ShowMessage("Список обновлен");
                     refreshContractor = false;
                 }
-                refreshView();
+                RefreshView();
             });
             th.IsBackground = true;
             th.Start();
-            //refreshView();          // обновить отображение;
         }
-        public void ConnectToContractor(IPAddress cureIP)
+        internal void ConnectToContractor(IPAddress cureIP)
         {
             TcpClient client = new TcpClient();
-            client.Connect(cureIP, Port); // пытаемся с ним соединиться в течение 15 секунд
+            client.Connect(cureIP, Properties.Settings.Default.Port); // пытаемся с ним соединиться в течение 15 секунд
             if (client.Connected)
             {
                 allContractor.Add(new Contractor(this, client));                    // в случае удачи досбавляем в список исполнителей
-                allContractor[allContractor.Count - 1].newMessage += GetPacket;
-                refreshView();
+                allContractor[allContractor.Count - 1].NewMessage += GetPacket;
+                RefreshView();
             }
         }
-        public void SelectContractor(int n) // выбрать для вычислений машину n
+        internal void SelectContractor(int n) // выбрать для вычислений машину n
         {
             int i = -1;
             foreach (Contractor t in allContractor)
@@ -406,7 +353,7 @@ namespace Agent.Model
                 }
             }
         }
-        public void UnSelectContractor(int n) // снять выбор с машины n для вычислений
+        internal void UnSelectContractor(int n) // снять выбор с машины n для вычислений
         {
             int i = -1;
             foreach (Contractor t in allContractor)
@@ -420,14 +367,14 @@ namespace Agent.Model
                 }
             }
         }
-        public void UnSelectAll() // снять выбор со всех машин
+        internal void UnSelectAll() // снять выбор со всех машин
         {
             foreach (Contractor t in allContractor)
             {
                 t.Selected = false;
             }
         }
-        public void EndCalculate() // освобождаем всех, кого занимали
+        internal void EndCalculate() // освобождаем всех, кого занимали
         {
             foreach (var t in allContractor)
                 t.Close();
@@ -469,19 +416,18 @@ namespace Agent.Model
             StreamWriter sw = new StreamWriter(ipfile.Create());
             countMachines = allContractor.Count + 1; // количество машин в подсистеме
             sw.WriteLine(countMachines);
-            sw.WriteLine(IP); // записываем IP инцииатора
+            sw.WriteLine(Properties.Settings.Default.IP); // записываем IP инцииатора
             foreach (var t in allContractor) // IP исполнителей
             {
-                sw.WriteLine(t.GetIpServer().ToString());
+                sw.WriteLine(t.GetIPServer().ToString());
             }
             sw.Close();
             AddNotDiffDataFile(ipfile); // добавляем файл в список файлов данных
         }
-        
+
         // Запуск и обрыв вычислений
-        public void StartCalculate(bool notDeleteFiles) // запуск вычислений
+        internal void StartCalculate(bool notDeleteFiles) // запуск вычислений
         {
-            
             this.notDeleteFiles = notDeleteFiles;
             CopyFilesInitiator();
             countFinished = 0;
@@ -500,7 +446,7 @@ namespace Agent.Model
             {
                 allContractor.Remove(t);
             }
-            refreshView();
+            RefreshView();
             Thread calcThread = new Thread(delegate () {
                 CreateFileIP(); // получаем сипсок машин
                 foreach (var t in allContractor) // всем отправляем файлы
@@ -521,7 +467,7 @@ namespace Agent.Model
             calcThread.IsBackground = true;
             calcThread.Start();
         }
-        public void BreakCalculate() // обрыв вычислений
+        internal void BreakCalculate() // обрыв вычислений
         {
 
         }
@@ -596,7 +542,7 @@ namespace Agent.Model
                                 t.SendMessage(new Packet() { type = PacketType.Free, id = infoMe.id });
                             allContractor.Clear();
                             isCalculate = false;
-                            refreshView();
+                            RefreshView();
                         }
                         sender.Locked = false;
                         break;

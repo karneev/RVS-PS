@@ -8,11 +8,10 @@ using Agent.View;
 
 namespace Agent
 {
-
-    public delegate void refreshData(); // делегат изменения представления
-    public delegate void setStat(StatusMachine status); // делегат изменение статуса
-    public delegate void getMessage(ILockeded sender, string message); // делегат получение сообщения
-    public enum StatusMachine
+    public delegate void RefreshData(); // делегат изменения представления
+    public delegate void SetStat(StatusMachine status); // делегат изменение статуса
+    public delegate void GetMessage(ILockeded sender, string message); // делегат получение сообщения
+    public enum StatusMachine // Статус машины
     {
         Free,
         Wait,
@@ -22,7 +21,7 @@ namespace Agent
         LoadSettings,
         WaitEndCalc
     }
-    public enum PacketType
+    public enum PacketType // Тип пакета
     {
         Hello,
         RunFile,
@@ -48,7 +47,7 @@ namespace Agent
         public byte[] part; // часть файла
     }
     [Serializable]
-    public struct Packet
+    public struct Packet // Пакет
     {
         public PacketType type;  // Код пакета
         public long id;          // ID источника пакета
@@ -62,7 +61,7 @@ namespace Agent
     [Serializable]
     public struct MachineInfo
     {
-        [field: NonSerialized] public event setStat statusChange;
+        [field: NonSerialized] public event SetStat StatusChange;
         public long id;        // ID машины
         public int vRam;       // Объем RAM
         public int vCPU;       // Частота CPU
@@ -76,51 +75,13 @@ namespace Agent
             set
             {
                 status = value;
-                statusChange(status);
+                StatusChange(status);
             }
-        }
-    }
-    public struct SettingSystem
-    {
-        public IPAddress ip;    // IP
-        public IPAddress mask;  // маска
-        public int port;        // порт
-        public SettingSystem(string ip, string mask, int port)
-        {
-            try
-            {
-                this.ip = IPAddress.Parse(ip);
-                this.mask = IPAddress.Parse(mask);
-            }
-            catch
-            {
-                this.ip = IPAddress.Parse("127.0.0.1");
-                this.mask = IPAddress.Parse("255.255.255.0");
-            }
-            this.port = port;
         }
     }
 
     public static class Programm 
     {
-        static AgentSystem ags;
-        static AgentForm agf;
-        public static void ShowMessage(String text)
-        {
-            Log.Write(text);
-            Thread th = new Thread(delegate ()
-              {
-                  MessageBox.Show(text);
-              });
-            th.IsBackground = true;
-            th.Start();
-        }
-        static void Run()
-        {
-            ags = new AgentSystem();
-            agf = new AgentForm(ags);
-            Application.Run(agf);
-        }
         public static void Reset()
         {
             Application.Restart();
@@ -132,7 +93,9 @@ namespace Agent
         [STAThread]
         static void Main()
         {
-            Run();
+            AgentSystem ags = new AgentSystem();
+            AgentForm agf = new AgentForm(ags);
+            Application.Run(agf);
         }
     }
 }
