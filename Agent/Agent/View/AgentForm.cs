@@ -27,11 +27,10 @@ namespace Agent.View
             }
             catch (Exception ex)
             {
+                Log.Write(ex);
                 MessageBox.Show("Файл настроек не найден или поврежден!\nЗадайте настройки заново!");
                 (new SettingForm(ref this.agent)).ShowDialog();
             }
-            //th.Join();
-            //this.agent.InitConnect();
         }
         private void setStatus(StatusMachine status)
         {

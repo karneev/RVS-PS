@@ -192,6 +192,7 @@ namespace Agent.View
             }
             catch (Exception ex)
             {
+                Log.Write(ex);
                 //Programm.ShowMessage(ex.Message + " in startCalculateButton_Click");
             }
         }

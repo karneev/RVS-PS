@@ -107,6 +107,7 @@ namespace Agent
         static AgentForm agf;
         public static void ShowMessage(String text)
         {
+            Log.Write(text);
             Thread th = new Thread(delegate ()
               {
                   MessageBox.Show(text);

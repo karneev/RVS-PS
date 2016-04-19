@@ -54,9 +54,9 @@ namespace Agent.Model
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Programm.ShowMessage("Инициатор потерялся с сообщением " + e.ToString()); // отладочный вывод
+                Log.Write(ex);
                 if (agent.Status == StatusMachine.Wait)
                     Programm.Reset();
                 if(mainStream!=null)
@@ -115,7 +115,7 @@ namespace Agent.Model
             }
             catch (Exception ex)
             {
-                Programm.ShowMessage("Клиент потерялся в sendMessage с сообщением " + ex.Message); // отладочный вывод
+                Log.Write(ex);
             }
         }
         public void SendInfoMe()    // сообщить информацию о себе

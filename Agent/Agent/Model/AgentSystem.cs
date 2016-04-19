@@ -339,7 +339,7 @@ namespace Agent.Model
             refreshView();
             Thread th = new Thread(delegate () // поток обновления
             {
-                lock(allContractor)
+                lock (allContractor)
                 {
                     IPAddress cureIP;                           // очередной IP
                     StringBuilder headIP = new StringBuilder(); // начало IP
@@ -355,21 +355,21 @@ namespace Agent.Model
                     Parallel.For(2, 254, tail => // перебираем все адреса с 2 до 254
                     {
                         cureIP = IPAddress.Parse(headIP.ToString() + tail.ToString()); // формируем конечный IP
-                    try
+                        try
                         {
-                        //Programm.ShowMessage("Заход №"+tail);
-                        TcpClient client = new TcpClient();
+                            //Programm.ShowMessage("Заход №"+tail);
+                            TcpClient client = new TcpClient();
 
                             if (client.ConnectAsync(cureIP, Port).Wait(1500)) // пытаемся с ним соединиться в течение 1,5 секунды
-                        {
+                            {
                                 allContractor.Add(new Contractor(this, client));                    // в случае удачи досбавляем в список исполнителей
-                            allContractor[allContractor.Count - 1].newMessage += GetPacket;
+                                allContractor[allContractor.Count - 1].newMessage += GetPacket;
                             }
                         }
                         catch (Exception ex)
                         {
-                        //Programm.ShowMessage("В процессе обновления произошла ошибка "+ex.Message+"\nПодробности:\n"+ex.ToString());
-                    }
+                            Log.Write(ex);
+                        }
 
                     });
                     Programm.ShowMessage("Список обновлен");
@@ -559,8 +559,7 @@ namespace Agent.Model
             }
             catch (Exception ex)
             {
-                Programm.ShowMessage("endProc потерялся с сообщением " + ex.ToString()); // отладочный вывод
-                //Programm.ShowMessage("endProc потерялся  " + ex.ToString()); // отладочный вывод
+                Log.Write(ex);
             }
         }
         // работа с пакетами
@@ -571,7 +570,7 @@ namespace Agent.Model
             if (Enum.TryParse(parts[0], out pkt.type)) // пытаемся пропарсить сообщение на соответствие пакету
             {
                 pkt.id = long.Parse(parts[1]);
-                Programm.ShowMessage("Код " + pkt.type.ToString() + " | id " + pkt.id.ToString());
+                Log.Write("Код " + pkt.type.ToString() + " | id " + pkt.id.ToString());
                 switch (pkt.type)
                 {
                     case PacketType.Hello:

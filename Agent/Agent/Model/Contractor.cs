@@ -65,9 +65,9 @@ namespace Agent.Model
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Programm.ShowMessage("Исполнитель потерялся с ообщением" + e.Message);
+                Log.Write(ex);
                 mainStream.Close();
             }
         }
