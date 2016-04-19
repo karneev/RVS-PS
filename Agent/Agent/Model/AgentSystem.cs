@@ -18,7 +18,7 @@ namespace Agent.Model
 
         private bool isInitiator; // Является ли инициатором
         private bool isCalculate; // начались ли вычисления
-        private bool notDeleteFiles = true;
+        private bool notDeleteFiles = false;
         public bool refreshContractor = false;
         int countFinished;
         private FileInfo exeFile;
