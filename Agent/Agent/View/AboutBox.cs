@@ -30,7 +30,7 @@ namespace Agent.View
                 (Environment.TickCount / 1000 % 3600) / 60, 
                 Environment.TickCount / 1000 % 60).Append("\n");
             str.Append("Объем физической памяти текущего процесса: " + Environment.WorkingSet / 1024 / 1024).Append("МБ\n");
-            str.Append("Объем физической памяти доступный: " + agent.InfoMe.vRam).Append("МБ\n");
+            str.Append("Объем свободной физической памяти: " + agent.InfoMe.vRam).Append("МБ\n");
             str.Append("Частота процессора: " + agent.InfoMe.vCPU).Append("MHz\n");
             str.Append("Число ядер процессора: " + Environment.ProcessorCount).Append("\n");
             str.Append("Командная строка текущего процесса: " + Environment.CommandLine).Append("\n");

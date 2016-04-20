@@ -177,34 +177,24 @@ namespace Agent.Model
         private int GetMachineRAM() // тест доступного объема RAM
         {
             int count = 0;
+            const int MB = 1024 * 1024;
+            int step = 32; // 32 МБ
+            int maxSize = 32768; // 32ГБ
             try
             {
-                byte[][] arr = new byte[8*8][];
-                for (int i = 0; i < 8*8; i++)
+                
+                byte[][] arr = new byte[maxSize/step][];
+                for (int i = 0; i < maxSize / step; i++)
                 {
-                    arr[i] = new byte[1024 * 1024 * 128];
-                    count += 128;
+                    arr[i] = new byte[MB * step];
+                    count += step;
                 }
             }
-            catch(OutOfMemoryException ex)
+            catch(OutOfMemoryException)
             {
                 return count;
             }
             return count;
-        }
-        private static double Dichotomy(Func<double, double> func, long a, long b, int epsilon)
-        {
-            long delta = epsilon / 10;
-            while (b - a >= epsilon)
-            {
-                long middle = (a + b) / 2;
-                long lambda = middle - delta, mu = middle + delta;
-                if (func(lambda) < func(mu))
-                    b = mu;
-                else
-                    a = lambda;
-            }
-            return (a + b) / 2;
         }
         public void NetworkSettingsChange() // сетевые настройки изменены
         {
