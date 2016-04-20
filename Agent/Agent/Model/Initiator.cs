@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Agent.Enums;
+using Agent.Structs;
+using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;

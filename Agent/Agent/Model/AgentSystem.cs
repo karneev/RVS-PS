@@ -1,4 +1,6 @@
-﻿using Microsoft.Win32;
+﻿using Agent.Enums;
+using Agent.Structs;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,7 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
- 
+
 namespace Agent.Model
 {
     public class AgentSystem
@@ -319,6 +321,11 @@ namespace Agent.Model
         }
 
         // работа с клиентами в качетсве инициатора
+        internal void RemoveContractor(Contractor temp)
+        {
+            allContractor.Remove(temp);
+            RefreshView();
+        }
         internal void RefreshContractorList() // обновить список клиентов
         {
             refreshContractor = true;

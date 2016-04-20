@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows.Forms;
 using Agent.Model;
+using Agent.Enums;
 
 namespace Agent.View
 {

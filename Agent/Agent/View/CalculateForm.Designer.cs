@@ -47,6 +47,7 @@
             this.startCalculateButton = new System.Windows.Forms.Button();
             this.exitButton = new System.Windows.Forms.Button();
             this.filePanel = new System.Windows.Forms.Panel();
+            this.notDeleteFilesCheckBox = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.dataNotDiffFileList = new System.Windows.Forms.ListBox();
             this.dataDiffFileList = new System.Windows.Forms.ListBox();
@@ -55,7 +56,6 @@
             this.fileNameLabel = new System.Windows.Forms.Label();
             this.runFileLabel = new System.Windows.Forms.Label();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.notDeleteFilesCheckBox = new System.Windows.Forms.CheckBox();
             this.machineSelectPanel.SuspendLayout();
             this.machineInfoPanel.SuspendLayout();
             this.filePanel.SuspendLayout();
@@ -263,6 +263,16 @@
             this.filePanel.Size = new System.Drawing.Size(233, 312);
             this.filePanel.TabIndex = 2;
             // 
+            // notDeleteFilesCheckBox
+            // 
+            this.notDeleteFilesCheckBox.AutoSize = true;
+            this.notDeleteFilesCheckBox.Location = new System.Drawing.Point(15, 239);
+            this.notDeleteFilesCheckBox.Name = "notDeleteFilesCheckBox";
+            this.notDeleteFilesCheckBox.Size = new System.Drawing.Size(217, 17);
+            this.notDeleteFilesCheckBox.TabIndex = 17;
+            this.notDeleteFilesCheckBox.Text = "Не удалять файлы после вычислений";
+            this.notDeleteFilesCheckBox.UseVisualStyleBackColor = true;
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -332,16 +342,6 @@
             this.runFileLabel.Size = new System.Drawing.Size(108, 13);
             this.runFileLabel.TabIndex = 0;
             this.runFileLabel.Text = "Исполняемый файл";
-            // 
-            // notDeleteFilesCheckBox
-            // 
-            this.notDeleteFilesCheckBox.AutoSize = true;
-            this.notDeleteFilesCheckBox.Location = new System.Drawing.Point(15, 239);
-            this.notDeleteFilesCheckBox.Name = "notDeleteFilesCheckBox";
-            this.notDeleteFilesCheckBox.Size = new System.Drawing.Size(217, 17);
-            this.notDeleteFilesCheckBox.TabIndex = 17;
-            this.notDeleteFilesCheckBox.Text = "Не удалять файлы после вычислений";
-            this.notDeleteFilesCheckBox.UseVisualStyleBackColor = true;
             // 
             // CalculateForm
             // 

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Agent.Enums;
+using Agent.Structs;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -16,6 +18,7 @@ namespace Agent.Model
         MachineInfo info;                      //информация о исполнителе
         bool selected;                         // выбран ли этот исполнитель для вычислений
         bool locked;
+        bool closing = false;                   // идет ли закрытие соединения инициатором
         Thread th;                             // основной поток исполнителя
         BinaryFormatter bf = new BinaryFormatter();
         NetworkStream mainStream;
@@ -68,6 +71,8 @@ namespace Agent.Model
             catch (Exception ex)
             {
                 Log.Write(ex);
+                if(closing==false)
+                    agent.RemoveContractor(this);
                 mainStream.Close();
             }
         }
@@ -125,9 +130,11 @@ namespace Agent.Model
         {
             if (client.Connected)
             {
+                closing = true;
                 SendMessage(new Packet() { type = PacketType.Free, id = agent.InfoMe.id });
                 mainStream.Close();
                 client.Close();
+                closing = false;
             }
         }
     }

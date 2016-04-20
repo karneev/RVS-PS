@@ -1,8 +1,8 @@
 ﻿using System;
-using System.IO;
 using System.Windows.Forms;
 using System.Threading;
 using Agent.Model;
+using Agent.Enums;
 
 namespace Agent.View
 {
@@ -25,7 +25,7 @@ namespace Agent.View
             {
                 if (Properties.Settings.Default.Port == 0)
                 {
-                    MessageBox.Show("Настройки не заданы!\nЗадайте настройки заново!");
+                    MessageBox.Show("Настройки не заданы!\nЗадайте настройки перед началом работы!");
                     SettingForm t=new SettingForm(ref this.agent);
                     t.ShowDialog();
                 }
