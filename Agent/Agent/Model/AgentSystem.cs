@@ -1,4 +1,4 @@
-﻿using Agent.Enums;
+using Agent.Enums;
 using Agent.Structs;
 using Microsoft.Win32;
 using System;
@@ -131,7 +131,7 @@ namespace Agent.Model
                 CopyFile(t, source + t.Name);
                 newDiffDataList.Add(new FileInfo(source + t.Name));
             }
-            notDiffDataFile = newDiffDataList;
+            notDiffDataFile = newNotDiffDataList;
         }
 
         public void TestSystem() // тестирование системы
@@ -454,7 +454,7 @@ namespace Agent.Model
         void CreateFileIP() // собрать файл из всех IP в системе
         {
             int countMachines;
-            FileInfo ipfile = new FileInfo("iplist.txt");
+            FileInfo ipfile = new FileInfo("TEMP\\iplist.txt");
             if (ipfile.Exists) // если файл уже есть - пересоздать
                 ipfile.Delete();
             StreamWriter sw = new StreamWriter(ipfile.Create());
