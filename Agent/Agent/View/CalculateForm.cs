@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Windows.Forms;
 using Agent.Model;
@@ -257,7 +257,7 @@ namespace Agent.View
         }
         private void dataNotDiffFileList_MouseDoubleClick(object sender, MouseEventArgs e) // Пытаемся добавить или заменить файл данных
         {
-            this.openFileDialog.Filter = "txt files (*.txt)|*.txt";
+            this.openFileDialog.Filter = "(*.*)|*.*";
             if (this.openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 FileInfo txt = new FileInfo(openFileDialog.FileName);
