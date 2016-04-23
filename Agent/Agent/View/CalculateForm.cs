@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Windows.Forms;
 using Agent.Model;
@@ -8,15 +8,35 @@ namespace Agent.View
 {
     public partial class CalculateForm : Form
     {
+        delegate void refresh();
+        delegate void updProgressBar(double percent, string text);
         bool started=false;
         AgentSystem agent;
         internal CalculateForm(ref AgentSystem agent)
         {
             InitializeComponent();
+            this.openExeFileDialog.Filter = "exe files (*.exe)|*.exe";
+            this.openDataFileDialog.Filter = "all files (*.*)|*.*";
             this.agent = agent;
             this.agent.RefreshView += refreshForm;
+            this.agent.UpdProgress += updateProgressBar;
         }
-        delegate void refresh();
+        
+        public void updateProgressBar(double percent, string text)
+        {
+            if (this.InvokeRequired)
+            {
+                updProgressBar d = new updProgressBar(updateProgressBar);
+                this.Invoke(d, new object[] { percent, text });
+            }
+            else
+            {
+                progressBar.Value = (int)(percent * 100);
+                progressBar.Step = 1;
+                progressBar.Maximum = 100;
+                cureProcessStatusLabel.Text = text;
+            }
+        }
         private void showAllDataFile() // отобразить все файлы данных в списке файлов
         {
             if (this.InvokeRequired)
@@ -28,13 +48,13 @@ namespace Agent.View
             {
                 this.dataDiffFileList.Items.Clear(); // очищаем старый список
                 this.dataNotDiffFileList.Items.Clear(); // очищаем старый список
-                foreach (FileInfo i in agent.GetAllDiffDataFile()) // выводим всё, что есть в агенте
+                foreach (var t in agent.GetAllDiffDataFile()) // выводим всё, что есть в агенте
                 {
-                    this.dataDiffFileList.Items.Add(i.Name);
+                    this.dataDiffFileList.Items.Add(t.data.Name);
                 }
-                foreach (FileInfo i in agent.GetAllNotDiffDataFile()) // выводим всё, что есть в агенте
+                foreach (var t in agent.GetAllNotDiffDataFile()) // выводим всё, что есть в агенте
                 {
-                    this.dataNotDiffFileList.Items.Add(i.Name);
+                    this.dataNotDiffFileList.Items.Add(t.Name);
                 }
                 this.dataDiffFileList.Items.Add("Добавить файл"); // добавляем опцию "Добавить файл"
                 this.dataNotDiffFileList.Items.Add("Добавить файл"); // добавляем опцию "Добавить файл"
@@ -156,10 +176,9 @@ namespace Agent.View
 
         private void selectRunFileButton_Click(object sender, EventArgs e) // установка файла exe
         {
-            this.openFileDialog.Filter = "exe files (*.exe)|*.exe"; 
-            if(this.openFileDialog.ShowDialog()==DialogResult.OK)
+            if(this.openExeFileDialog.ShowDialog()==DialogResult.OK)
             {
-                FileInfo exe = new FileInfo(openFileDialog.FileName);
+                FileInfo exe = new FileInfo(openExeFileDialog.FileName);
                 if (exe.Exists)
                 {
                     agent.ExeFile = exe;                    // установка файла в агент
@@ -180,15 +199,14 @@ namespace Agent.View
                 {
                     this.selectRunFileButton.Enabled = false;
                     this.dataDiffFileList.Enabled = false;
+                    this.dataNotDiffFileList.Enabled = false;
                     this.startCalculateButton.Enabled = false;
                     this.exitButton.Enabled = false;
                     this.machineInfoPanel.Enabled = false;
                     this.machineSelectPanel.Enabled = false;
-                    this.startCalculateButton.Text = "Идут вычисления";
                     this.started = true;
                     agent.StartCalculate(notDeleteFilesCheckBox.CheckState.Equals(CheckState.Checked));
                     this.exitButton.Enabled = true;
-                    this.startCalculateButton.Text = "Вычисления завершаются";
                 }
             }
             catch (Exception ex)
@@ -227,18 +245,18 @@ namespace Agent.View
 
         private void dataDiffFileList_MouseDoubleClick(object sender, MouseEventArgs e) // Пытаемся добавить или заменить файл данных
         {
-            this.openFileDialog.Filter = "txt files (*.txt)|*.txt";
-            if (this.openFileDialog.ShowDialog() == DialogResult.OK)
+            if (this.openDataFileDialog.ShowDialog() == DialogResult.OK && this.openExeFileDialog.ShowDialog() == DialogResult.OK)
             {
-                FileInfo txt = new FileInfo(openFileDialog.FileName);
+                FileInfo txt = new FileInfo(openDataFileDialog.FileName);
+                FileInfo exe = new FileInfo(openExeFileDialog.FileName);
                 if (txt.Exists)
                 {
                     if (this.dataDiffFileList.Text.CompareTo("Добавить файл") == 0)
-                        agent.AddDiffDataFile(txt);             // добавляем файл
+                        agent.AddDiffDataFile(txt,exe);             // добавляем файл
                     else
                     {
                         string old = this.dataDiffFileList.Text;
-                        agent.ReplaceDiffDataFile(old, txt);   // заменяем файл
+                        agent.ReplaceDiffDataFile(old, txt, exe);   // заменяем файл
                     }
                 }
                 else
@@ -257,10 +275,9 @@ namespace Agent.View
         }
         private void dataNotDiffFileList_MouseDoubleClick(object sender, MouseEventArgs e) // Пытаемся добавить или заменить файл данных
         {
-            this.openFileDialog.Filter = "(*.*)|*.*";
-            if (this.openFileDialog.ShowDialog() == DialogResult.OK)
+            if (this.openDataFileDialog.ShowDialog() == DialogResult.OK)
             {
-                FileInfo txt = new FileInfo(openFileDialog.FileName);
+                FileInfo txt = new FileInfo(openDataFileDialog.FileName);
                 if (txt.Exists)
                 {
                     if (this.dataDiffFileList.Text.CompareTo("Добавить файл") == 0)

@@ -55,10 +55,15 @@
             this.selectRunFileButton = new System.Windows.Forms.Button();
             this.fileNameLabel = new System.Windows.Forms.Label();
             this.runFileLabel = new System.Windows.Forms.Label();
-            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.openExeFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.openDataFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.progressBar = new System.Windows.Forms.ToolStripProgressBar();
+            this.cureProcessStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.machineSelectPanel.SuspendLayout();
             this.machineInfoPanel.SuspendLayout();
             this.filePanel.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // machineSelectPanel
@@ -343,11 +348,35 @@
             this.runFileLabel.TabIndex = 0;
             this.runFileLabel.Text = "Исполняемый файл";
             // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.progressBar,
+            this.cureProcessStatusLabel});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 328);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.statusStrip1.Size = new System.Drawing.Size(693, 22);
+            this.statusStrip1.SizingGrip = false;
+            this.statusStrip1.TabIndex = 3;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // progressBar
+            // 
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(100, 16);
+            // 
+            // cureProcessStatusLabel
+            // 
+            this.cureProcessStatusLabel.Name = "cureProcessStatusLabel";
+            this.cureProcessStatusLabel.Size = new System.Drawing.Size(0, 17);
+            // 
             // CalculateForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(693, 330);
+            this.ClientSize = new System.Drawing.Size(693, 350);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.filePanel);
             this.Controls.Add(this.machineInfoPanel);
             this.Controls.Add(this.machineSelectPanel);
@@ -362,7 +391,10 @@
             this.machineInfoPanel.PerformLayout();
             this.filePanel.ResumeLayout(false);
             this.filePanel.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -388,7 +420,8 @@
         private System.Windows.Forms.Button selectRunFileButton;
         private System.Windows.Forms.Label fileNameLabel;
         private System.Windows.Forms.Label runFileLabel;
-        private System.Windows.Forms.OpenFileDialog openFileDialog;
+        private System.Windows.Forms.OpenFileDialog openDataFileDialog;
+        private System.Windows.Forms.OpenFileDialog openExeFileDialog;
         private System.Windows.Forms.CheckedListBox selectedMachineListBox;
         private System.Windows.Forms.Button unselectAllButton;
         private System.Windows.Forms.Button unselectButton;
@@ -396,5 +429,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ListBox dataNotDiffFileList;
         private System.Windows.Forms.CheckBox notDeleteFilesCheckBox;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripProgressBar progressBar;
+        private System.Windows.Forms.ToolStripStatusLabel cureProcessStatusLabel;
     }
 }

@@ -1,4 +1,4 @@
-using Agent.Enums;
+﻿using Agent.Enums;
 using Agent.Structs;
 using Microsoft.Win32;
 using System;
@@ -17,6 +17,7 @@ namespace Agent.Model
     public class AgentSystem
     {
         public event RefreshData RefreshView;
+        public event UpdateProgressBar UpdProgress;
 
         private bool isInitiator=false; // Является ли инициатором
         private bool isCalculate=false; // начались ли вычисления
@@ -24,7 +25,7 @@ namespace Agent.Model
         internal bool refreshContractor = false; // обновляется список исполнителей
         int countFinished = 0;              // количество завершивших вычисления
         private FileInfo exeFile;           // исполняемый файл
-        private List<FileInfo> diffDataFile = new List<FileInfo>(); // разделяемые файлы
+        private List<DiffFile> diffDataFile = new List<DiffFile>(); // разделяемые файлы
         private List<FileInfo> notDiffDataFile = new List<FileInfo>(); // не разделяемые файлы
         private List<Contractor> allContractor = new List<Contractor>();  // список всех клиентов (для работы в качестве инициатора)
         private Initiator initiator;            // информация о инициаторе
@@ -81,7 +82,7 @@ namespace Agent.Model
                     RefreshView();
             }
         }
-        public List<FileInfo> DiffDataFile
+        public List<DiffFile> DiffDataFile
         {
             get
             {
@@ -96,6 +97,7 @@ namespace Agent.Model
             }
         }
 
+        // Запуск системы и добавление/удаление слушателей системы
         public AgentSystem() { }
         internal void AddListener(SetStat listener) // добавить слушателя изменения статуса машины
         {
@@ -105,35 +107,8 @@ namespace Agent.Model
         {
             infoMe.StatusChange -= listener;
         }
-
-        void CopyFile(FileInfo file, string name) // копирование файла
-        {
-            file.CopyTo(name, true);
-        }
-        void CopyFilesInitiator() // копирование всех файлов в директорию Temp
-        {
-            List<FileInfo> newDiffDataList = new List<FileInfo>();
-            List<FileInfo> newNotDiffDataList = new List<FileInfo>();
-            string source = Application.StartupPath + "\\Temp\\";
-            DirectoryInfo DI = new DirectoryInfo(Application.StartupPath + "\\Temp\\");
-            DI.Create();
-            CopyFile(exeFile, source + exeFile.Name);
-            exeFile = new FileInfo(source + exeFile.Name);
-            foreach (var t in notDiffDataFile)
-            {
-                CopyFile(t, source + t.Name);
-                newNotDiffDataList.Add(new FileInfo(source + t.Name));
-            }
-            notDiffDataFile.Clear();
-            notDiffDataFile = newNotDiffDataList;
-            foreach (var t in diffDataFile)
-            {
-                CopyFile(t, source + t.Name);
-                newDiffDataList.Add(new FileInfo(source + t.Name));
-            }
-            notDiffDataFile = newNotDiffDataList;
-        }
-
+        
+        // Тестирование системы и инициализация подключения
         public void TestSystem() // тестирование системы
         {
             infoMe.Status = StatusMachine.Testing; // начало тестирования
@@ -221,49 +196,47 @@ namespace Agent.Model
         }
 
         // работа с делимыми файлами
-        internal void AddDiffDataFile(FileInfo file) // добавить файл данных
+        internal void AddDiffDataFile(FileInfo file, FileInfo exe) // добавить файл данных
         {
-            foreach (FileInfo i in diffDataFile) // ищем, есть ли уже такой файл
+            foreach (var t in diffDataFile) // ищем, есть ли уже такой файл
             {
-                if (i.Name.CompareTo(file.Name) == 0) // если есть - игнорируем добавление
+                if (t.data.Name.CompareTo(file.Name) == 0) // если есть - игнорируем добавление
                     return;
             }
-            diffDataFile.Add(file); // иначе добавляем и обновляем представление
+            diffDataFile.Add(new DiffFile() { data = file, splitExe=exe }); // иначе добавляем и обновляем представление
             RefreshView();
         }
         internal void RemoveDiffDataFile(string fileName) // удаляем файл данных
         {
-            foreach (FileInfo i in diffDataFile) // если находим файл - удаляем
+            foreach (var t in diffDataFile) // если находим файл - удаляем
             {
-                if (i.Name == fileName)
+                if (t.data.Name == fileName)
                 {
-                    diffDataFile.Remove(i);
+                    diffDataFile.Remove(t);
                     break;
                 }
             }
             RefreshView();  // обновляем представление
         }
-        internal void ReplaceDiffDataFile(string removedFileName, FileInfo pasteFile) // заменяем файл с заданным именем на новый файл
+        internal void ReplaceDiffDataFile(string removedFileName, FileInfo pasteFile, FileInfo pasteExe) // заменяем файл с заданным именем на новый файл
         {
-            int k = 0;
-            foreach (FileInfo i in diffDataFile) // удалем файл
+            foreach (var t in diffDataFile) // удалем файл
             {
-                if (i.Name == removedFileName)
+                if (t.data.Name == removedFileName)
                 {
-                    diffDataFile.Remove(i);
+                    diffDataFile.Remove(t);
                     break;
                 }
-                k++;
             }
-            foreach (FileInfo i in diffDataFile) // вставляем на его позицию новый
+            foreach (var t in diffDataFile) // вставляем на его позицию новый
             {
-                if (i.Name.CompareTo(pasteFile.Name) == 0)
+                if (t.data.Name.CompareTo(pasteFile.Name) == 0)
                     return;
             }
-            diffDataFile.Add(pasteFile);
+            diffDataFile.Add(new DiffFile() { data=pasteFile, splitExe=pasteExe });
             RefreshView();  // обновляем представление
         }
-        internal List<FileInfo> GetAllDiffDataFile() // получить список всех файлов данных
+        internal List<DiffFile> GetAllDiffDataFile() // получить список всех файлов данных
         {
             return diffDataFile;
         }
@@ -328,8 +301,11 @@ namespace Agent.Model
         }
         internal void RefreshContractorList() // обновить список клиентов
         {
+            string name = "Обновсление списка исполнителей";
+            int countEnd = 0;
             refreshContractor = true;
             RefreshView();
+            UpdProgress(0, name);
             Thread th = new Thread(delegate () // поток обновления
             {
                 lock (allContractor)
@@ -338,13 +314,7 @@ namespace Agent.Model
                     StringBuilder headIP = new StringBuilder(); // начало IP
                     string[] ipInBytes = Properties.Settings.Default.IP.Split('.');
                     headIP.Append(ipInBytes[0]).Append(".").Append(ipInBytes[1]).Append(".").Append(ipInBytes[2]).Append("."); // на время пока маска 255.255.255.0
-                    foreach (var t in allContractor) // закрываем все соединения
-                    {
-                        if (t.Connected)
-                            t.Close();
-                    }
-                    allContractor.Clear();
-                    Log.ShowMessage("Обновляем список");
+                    Log.Write("Запущено обновление списка");
                     Parallel.For(2, 254, tail => // перебираем все адреса с 2 до 254
                     {
                         cureIP = IPAddress.Parse(headIP.ToString() + tail.ToString()); // формируем конечный IP
@@ -362,12 +332,15 @@ namespace Agent.Model
                         {
                             Log.Write(ex);
                         }
-
+                        countEnd++;
+                        RefreshView();
+                        UpdProgress((double)countEnd /254, name);
                     });
-                    Log.ShowMessage("Список обновлен");
+                    Log.Write("Список обновлен");
                     refreshContractor = false;
                 }
                 RefreshView();
+                UpdProgress(0, "Обновление завершено");
             });
             th.IsBackground = true;
             th.Start();
@@ -427,6 +400,48 @@ namespace Agent.Model
         }
 
         // Работа с файлами для запуска вычислений
+        void CopyFile(FileInfo file, string name) // копирование файла
+        {
+            file.CopyTo(name, true);
+        }
+        void CopyFilesInitiator() // копирование всех файлов в директорию Temp
+        {
+            string name = "Копирование файлов на инициаторе";
+            int countCopy = 0;
+            int countAllFiles = DiffDataFile.Count*2 + NotDiffDataFile.Count + 1;
+            UpdProgress((double)countCopy/countAllFiles, name);
+            List<DiffFile> newDiffDataList = new List<DiffFile>();
+            List<FileInfo> newNotDiffDataList = new List<FileInfo>();
+            string source = Application.StartupPath + "\\Temp\\";
+            DirectoryInfo DI = new DirectoryInfo(Application.StartupPath + "\\Temp\\");
+            DI.Create();
+            CopyFile(exeFile, source + exeFile.Name);
+            countCopy++;
+            UpdProgress((double)countCopy / countAllFiles, name);
+            exeFile = new FileInfo(source + exeFile.Name);
+            foreach (var t in notDiffDataFile)
+            {
+                CopyFile(t, source + t.Name);
+                countCopy++;
+                UpdProgress((double)countCopy / countAllFiles, name);
+                newNotDiffDataList.Add(new FileInfo(source + t.Name));
+            }
+            notDiffDataFile.Clear();
+            notDiffDataFile = newNotDiffDataList;
+            foreach (var t in diffDataFile)
+            {
+                CopyFile(t.data, source + t.data.Name);
+                countCopy++;
+                UpdProgress((double)countCopy / countAllFiles, name);
+                CopyFile(t.splitExe, source + t.splitExe.Name);
+                countCopy++;
+                UpdProgress((double)countCopy / countAllFiles, name);
+                newDiffDataList.Add(new DiffFile() { data = new FileInfo(source + t.data.Name), splitExe = new FileInfo(source + t.splitExe.Name) });
+            }
+            diffDataFile.Clear();
+            diffDataFile = newDiffDataList;
+            UpdProgress(1, "Данные на инициаторе скопированы");
+        }
         List<FileInfo> DiffOneFile(FileInfo file, int countParts) // разделение одного файла
         {
             List<FileInfo> parts = new List<FileInfo>();
@@ -468,16 +483,53 @@ namespace Agent.Model
             sw.Close();
             AddNotDiffDataFile(ipfile); // добавляем файл в список файлов данных
         }
+        void UploadFiles()
+        {
+            string name = "Отправка файлов исполнителю ";
+            int count = 0;
+            int countAll = allContractor.Count;
+            UpdProgress((double)count / countAll, name+(count+1)+"из"+ countAll);
+            Thread calcThread = new Thread(delegate () {
+                
+                CreateFileIP(); // получаем сипсок машин
+                foreach (var t in allContractor) // всем отправляем файлы
+                {
+                    if (notDeleteFiles)
+                        t.SendMessage(new Packet() { type = PacketType.NotDeleteFiles, id = infoMe.id });
+                    t.AddFileList(notDiffDataFile); // добавляем к отправке не делимые файлы (в т.ч. iplist.txt)
+                                                    // TODO: добавление части
+                    t.SetExeAndDataFile(); // отправляем файлы
+                    count++;
+                    UpdProgress((double)count / countAll, name + (count + 1) + "из" + countAll);
+                }
+                // запустить удаленно EXE
+                name = "Запускаем вычисления";
+                count = 0;
+                countAll += 1;
+                UpdProgress((double)count / countAll, name);
+                foreach (var t in allContractor) // всем выбранным даем команду начать выполнение
+                {
+                    t.SendMessage(new Packet() { type = PacketType.StartCalc, id = infoMe.id });
+                    count++;
+                    UpdProgress((double)count / countAll, name);
+                }
+                RunExe();
+                count++;
+                UpdProgress((double)count / countAll, "Вычисления запущены");
+            });
+            calcThread.IsBackground = true;
+            calcThread.Start();
+        }
 
         // Запуск и обрыв вычислений
         internal void StartCalculate(bool notDeleteFiles) // запуск вычислений
         {
-            this.notDeleteFiles = notDeleteFiles;
-            CopyFilesInitiator();
+            List<Contractor> removed = new List<Contractor>();
             countFinished = 0;
             isInitiator = true;
             isCalculate = true;
-            List<Contractor> removed = new List<Contractor>();
+            this.notDeleteFiles = notDeleteFiles;
+            CopyFilesInitiator();
             foreach (var t in allContractor) // Собираем список всех свободных
             {
                 if (t.Selected == false)
@@ -491,25 +543,7 @@ namespace Agent.Model
                 allContractor.Remove(t);
             }
             RefreshView();
-            Thread calcThread = new Thread(delegate () {
-                CreateFileIP(); // получаем сипсок машин
-                foreach (var t in allContractor) // всем отправляем файлы
-                {
-                    if (notDeleteFiles)
-                        t.SendMessage(new Packet() { type = PacketType.NotDeleteFiles, id = infoMe.id });
-                    t.AddFileList(notDiffDataFile); // добавляем к отправке не делимые файлы (в т.ч. iplist.txt)
-                                                    // TODO: добавление части
-                    t.SetExeAndDataFile(); // отправляем файлы
-                }
-                // запустить удаленно EXE
-                foreach (var t in allContractor) // всем выбранным даем команду начать выполнение
-                {
-                    t.SendMessage(new Packet() { type = PacketType.StartCalc, id = infoMe.id });
-                }
-                RunExe();
-            });
-            calcThread.IsBackground = true;
-            calcThread.Start();
+            UploadFiles();
         }
         internal void BreakCalculate() // обрыв вычислений
         {
@@ -538,6 +572,10 @@ namespace Agent.Model
                 {
                     Status = StatusMachine.WaitEndCalc;
                     initiator.SendMessage(new Packet() { type = PacketType.FinishCalc, id = infoMe.id }); // отправляем сообщение о завершении вычислений    
+                }
+                else
+                {
+                    UpdProgress(0, "Вычисления завершаются");
                 }
                 if (notDeleteFiles == false)
                 {
@@ -586,6 +624,7 @@ namespace Agent.Model
                                 t.SendMessage(new Packet() { type = PacketType.Free, id = infoMe.id });
                             allContractor.Clear();
                             isCalculate = false;
+                            UpdProgress(1, "Вычисления завершены");
                             RefreshView();
                         }
                         sender.Locked = false;

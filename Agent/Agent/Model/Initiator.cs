@@ -59,7 +59,7 @@ namespace Agent.Model
             catch (Exception ex)
             {
                 Log.Write(ex);
-                if (agent.Status == StatusMachine.Wait)
+                if (agent.Status == StatusMachine.Wait || agent.Status == StatusMachine.WaitEndCalc)
                     Programm.Reset();
                 if(mainStream!=null)
                     mainStream.Close();

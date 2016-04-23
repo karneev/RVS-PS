@@ -97,6 +97,7 @@
     <Compile Include="Model\Delegates.cs" />
     <Compile Include="Model\ILockeded.cs" />
     <Compile Include="Model\Initiator.cs" />
+    <Compile Include="Structs\DiffFile.cs" />
     <Compile Include="Structs\Files.cs" />
     <Compile Include="Structs\MachineInfo.cs" />
     <Compile Include="Structs\Packet.cs" />
