@@ -79,16 +79,36 @@ class mainFrame : Work
             }
             it++;
         } while (!SGCJ(end));
-        DateTime time3 = System.DateTime.Now;
-        for (int i = 0; i < JJJ; i++)
+        if (getIndex() != 0)
         {
-            Console.WriteLine("X{0:D}:{1:E}", getIndex() * JJJ + i, X[i]);
+            CollectSendData cl = CollectorSend(0, X);
+            cl.block();
+            Console.WriteLine("CollectSend " + getIndex() + " part");
         }
-        Console.Write("Total (computing and reading) - seconds: ");
-        Console.WriteLine((time3 - time1).TotalSeconds);
-        Console.Write("Only computing - seconds: ");
-        Console.WriteLine((time3 - time2).TotalSeconds);
-        Console.ReadLine();
+        else
+        {
+            StreamWriter sw = new StreamWriter("result.txt");
+            CollectorRecipientData r = getAllData();
+            r.block();
+            DateTime time3 = System.DateTime.Now;
+            for (int i = 0; i < JJJ; i++)
+            {
+                sw.WriteLine("X{0:D}:{1:E}", i, X[i]);
+            }
+            for (int i = 1; i < getCount(); i++)
+            {
+                double[] data = (double[])r.getData(i);
+                for (int j = 0; j < JJJ; j++)
+                {
+                    sw.WriteLine("X{0:D}:{1:E}", i * JJJ + j, data[j]);
+                }
+            }
+            sw.Write("Total (computing and reading) - seconds: ");
+            sw.WriteLine((time3 - time1).TotalSeconds);
+            sw.Write("Only computing - seconds: ");
+            sw.WriteLine((time3 - time2).TotalSeconds);
+            sw.Close();
+        }
     }
 }
 
