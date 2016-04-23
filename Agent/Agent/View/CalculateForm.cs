@@ -9,7 +9,7 @@ namespace Agent.View
     public partial class CalculateForm : Form
     {
         delegate void refresh();
-        delegate void updProgressBar(double percent, string text);
+        delegate void updProgressBar(int count, int countAll, string text);
         bool started=false;
         AgentSystem agent;
         internal CalculateForm(ref AgentSystem agent)
@@ -20,20 +20,24 @@ namespace Agent.View
             this.agent = agent;
             this.agent.RefreshView += refreshForm;
             this.agent.UpdProgress += updateProgressBar;
+            progressBar.Step = 1;
+            progressBar.Maximum = 100;
+            refreshForm();
         }
         
-        public void updateProgressBar(double percent, string text)
+        public void updateProgressBar(int count, int countAll, string text)
         {
             if (this.InvokeRequired)
             {
                 updProgressBar d = new updProgressBar(updateProgressBar);
-                this.Invoke(d, new object[] { percent, text });
+                this.Invoke(d, new object[] { count, countAll, text });
             }
             else
             {
-                progressBar.Value = (int)(percent * 100);
-                progressBar.Step = 1;
-                progressBar.Maximum = 100;
+                if (countAll != 0)
+                    progressBar.Value = (count * 100) / countAll;
+                else
+                    progressBar.Value = 0;
                 cureProcessStatusLabel.Text = text;
             }
         }
@@ -86,14 +90,12 @@ namespace Agent.View
                 if(agent.refreshContractor==false)
                 {
                     this.machineInfoPanel.Enabled = true;
-                    this.filePanel.Enabled = true;
                     this.refreshButton.Enabled = true;
                     this.refreshButton.Text = "Обновить список";
                 }
                 else
                 {
                     this.machineInfoPanel.Enabled = false;
-                    this.filePanel.Enabled = false;
                     this.refreshButton.Enabled = false;
                     this.refreshButton.Text = "Идет обновление списка";
                 }
@@ -143,7 +145,7 @@ namespace Agent.View
                     readyStart = false;
                 }
                 showAllDataFile();
-                readyStart = readyStart && (this.selectedMachineListBox.Items.Count != 0) && !agent.IsCalculate;
+                readyStart = readyStart && !agent.IsCalculate;
                 startCalculateButton.Enabled = readyStart && !started;
                 if(started==true && agent.IsCalculate==false)
                 {
@@ -161,6 +163,7 @@ namespace Agent.View
             }
             else
             {
+                this.Text="Запуск вычислений. Машин в подсистеме: "+ (1+agent.GetCountSelectredContractor());
                 this.refreshMachineSelectPanel();
                 this.refreshMachineInfoPanel();
                 this.refreshFilePanel();
