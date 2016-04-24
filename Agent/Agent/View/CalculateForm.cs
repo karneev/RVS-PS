@@ -204,7 +204,6 @@ namespace Agent.View
                     this.dataDiffFileList.Enabled = false;
                     this.dataNotDiffFileList.Enabled = false;
                     this.startCalculateButton.Enabled = false;
-                    this.exitButton.Enabled = false;
                     this.machineInfoPanel.Enabled = false;
                     this.machineSelectPanel.Enabled = false;
                     this.started = true;
@@ -328,6 +327,7 @@ namespace Agent.View
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (result != DialogResult.Yes)
                     e.Cancel = true;
+                agent.BreakCalculate();
             }
         }
 

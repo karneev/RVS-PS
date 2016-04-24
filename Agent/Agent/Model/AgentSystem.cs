@@ -513,7 +513,7 @@ namespace Agent.Model
             sw.Close();
             AddNotDiffDataFile(ipfile); // добавляем файл в список файлов данных
         }
-        void UploadFiles()
+        void UploadFiles() // деление и распределение файлов
         {
             string name = "Делим файлы и создаем iplist";
             int count, countAll;
@@ -581,7 +581,23 @@ namespace Agent.Model
         }
         internal void BreakCalculate() // обрыв вычислений
         {
-
+            mainProc.Kill();
+            if(isInitiator==true)
+            {
+                foreach (var t in allContractor)
+                    t.SendMessage(new Packet() { id=infoMe.id, type=PacketType.StopCalc });
+                allContractor.Clear();
+                isCalculate = false;
+                UpdProgress(2, 2, "Вычисления прерваны");
+                RefreshView();
+            }
+            if (notDeleteFiles == false)
+            {
+                Directory.Delete(Application.StartupPath + "\\Temp", true);
+                exeFile = null;
+                notDiffDataFile.Clear();
+                diffDataFile.Clear();
+            }
         }
 
         // работа с инициатором в качестве клиента
@@ -674,6 +690,8 @@ namespace Agent.Model
                         RunExe();
                         break;
                     case PacketType.StopCalc:
+                        BreakCalculate();
+                        Programm.Reset();
                         sender.Locked = false;
                         break;
                     case PacketType.Free:
