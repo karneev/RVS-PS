@@ -59,5 +59,15 @@ namespace Agent.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Byte[].
+        /// </summary>
+        internal static byte[] sqlite3 {
+            get {
+                object obj = ResourceManager.GetObject("sqlite3", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }
