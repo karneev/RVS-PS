@@ -24,6 +24,9 @@ namespace Agent.Model
         private bool notDeleteFiles = false; // Не удалять файлы
         private bool endSplitFile = true; // закончили деление файла
         internal bool refreshContractor = false; // обновляется список исполнителей
+        public int AllTime { get; private set; }
+        public int UploadTime { get; private set; }
+        public int CalculateTime { get; private set; }
         int countFinished = 0;              // количество завершивших вычисления
         private FileInfo exeFile;           // исполняемый файл
         private List<DiffFile> diffDataFile = new List<DiffFile>(); // разделяемые файлы
@@ -515,6 +518,7 @@ namespace Agent.Model
         }
         void UploadFiles() // деление и распределение файлов
         {
+            UploadTime = Environment.TickCount;
             string name = "Делим файлы и создаем iplist";
             int count, countAll;
             UpdProgress(0,2, name);
@@ -553,11 +557,14 @@ namespace Agent.Model
             });
             calcThread.IsBackground = true;
             calcThread.Start();
+            UploadTime = Environment.TickCount - UploadTime;
+            CalculateTime = Environment.TickCount;
         }
 
         // Запуск и обрыв вычислений
         internal void StartCalculate(bool notDeleteFiles) // запуск вычислений
         {
+            AllTime = Environment.TickCount;
             List<Contractor> removed = new List<Contractor>();
             countFinished = 0;
             isInitiator = true;
@@ -631,6 +638,9 @@ namespace Agent.Model
                         isCalculate = false;
                         UpdProgress(2,2, "Вычисления завершены");
                         RefreshView();
+                        CalculateTime = Environment.TickCount - CalculateTime;
+                        AllTime = Environment.TickCount - AllTime;
+                        Log.ShowMessage("Общее время вычислений: " + AllTime/1000 + " сек\nВремя на передачу файлов: " + UploadTime / 1000 + " сек\nВремя рассчетов: " + CalculateTime / 1000 + " сек");
                     }
                 }
                 if (notDeleteFiles == false)
@@ -679,9 +689,12 @@ namespace Agent.Model
                             foreach (var t in allContractor)
                                 t.SendMessage(new Packet() { type = PacketType.Free, id = infoMe.id });
                             allContractor.Clear();
+                            CalculateTime = Environment.TickCount - CalculateTime;
+                            AllTime = Environment.TickCount - AllTime;
                             isCalculate = false;
                             UpdProgress(2,2, "Вычисления завершены");
                             RefreshView();
+                            Log.ShowMessage("Общее время вычислений: " + AllTime / 1000 + " сек\nВремя на передачу файлов: " + UploadTime / 1000 + " сек\nВремя рассчетов: " + CalculateTime / 1000 + " сек");
                         }
                         sender.Locked = false;
                         break;
