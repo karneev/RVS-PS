@@ -21,14 +21,13 @@ class mainFrame : Work
         double er = (double)Convert.ToDouble(R.ReadLine());
         int N = Convert.ToInt32(R.ReadLine());
         double[][] A = new double[N / getCount()][];
-        int ic = 0;
-        for (; ic < (N / getCount()) * getIndex(); R.ReadLine(), ic++) ;
-        for (int i = 0; ic < (N / getCount()) * (getIndex() + 1) && ic < N; i++, ic++)
+        //for (; ic < (N / getCount()) * getIndex(); R.ReadLine(), ic++) ;
+        for (int i = 0; i < (N / getCount()); i++)
         {
             A[i] = R.ReadLine().Split(new char[] { ' ' }).Select(Double.Parse).ToArray();
         }
-        for (; ic < N; R.ReadLine(), ic++) ;
-        double[] F = R.ReadLine().Split(new char[] { ' ' }).Skip(getIndex() * N / getCount()).Take(N / getCount()).Select(Double.Parse).ToArray();
+        //for (; ic < N; R.ReadLine(), ic++) ;
+        double[] F = R.ReadLine().Split(new char[] { ' ' }).Select(Double.Parse).ToArray();
         double[] X = new double[F.Length];
         double[] timeX = new double[F.Length];
         double[] buffer;
@@ -107,6 +106,8 @@ class mainFrame : Work
             sw.WriteLine((time3 - time1).TotalSeconds);
             sw.Write("Only computing - seconds: ");
             sw.WriteLine((time3 - time2).TotalSeconds);
+            sw.Write("Write In File - seconds: ");
+            sw.WriteLine((DateTime.Now - time1).TotalSeconds);
             sw.Close();
         }
     }
