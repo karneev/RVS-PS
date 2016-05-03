@@ -285,7 +285,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(157, 13);
             this.label1.TabIndex = 16;
-            this.label1.Text = "Файлы данных (не делимые):";
+            this.label1.Text = "Файлы данных (неделимые):";
             // 
             // dataNotDiffFileList
             // 
@@ -365,6 +365,7 @@
             // 
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(100, 16);
+            this.progressBar.Step = 1;
             // 
             // cureProcessStatusLabel
             // 

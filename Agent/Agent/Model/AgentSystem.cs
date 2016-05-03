@@ -16,17 +16,23 @@ namespace Agent.Model
 {
     public class AgentSystem
     {
+        #region События системы
         public event RefreshData RefreshView;
         public event UpdateProgressBar UpdProgress;
+        #endregion
 
+        #region Основные переменные
         private bool isInitiator=false; // Является ли инициатором
         private bool isCalculate=false; // начались ли вычисления
         private bool notDeleteFiles = false; // Не удалять файлы
         private bool endSplitFile = true; // закончили деление файла
         internal bool refreshContractor = false; // обновляется список исполнителей
-        public int AllTime { get; private set; }
-        public int UploadTime { get; private set; }
-        public int CalculateTime { get; private set; }
+        public DateTime AllTimeStart { get; private set; }
+        public DateTime AllTimeEnd { get; private set; }
+        public DateTime UploadTimeStart { get; private set; }
+        public DateTime UploadTimeEnd { get; private set; }
+        public DateTime CalculateTimeStart { get; private set; }
+        public DateTime CalculateTimeEnd { get; private set; }
         int countFinished = 0;              // количество завершивших вычисления
         private FileInfo exeFile;           // исполняемый файл
         private List<DiffFile> diffDataFile = new List<DiffFile>(); // разделяемые файлы
@@ -36,7 +42,9 @@ namespace Agent.Model
         private Process mainProc;           // основной процесс вычислений
 
         private MachineInfo infoMe;         // Информация о себе
+        #endregion
 
+        #region Поля-свойства
         public bool IsInitiator
         {
             get { return isInitiator; }
@@ -101,8 +109,9 @@ namespace Agent.Model
                 return notDiffDataFile;
             }
         }
+        #endregion
 
-        // Запуск системы и добавление/удаление слушателей системы
+        #region Запуск системы и добавление/удаление слушателей
         public AgentSystem() { }
         internal void AddListener(SetStat listener) // добавить слушателя изменения статуса машины
         {
@@ -112,8 +121,9 @@ namespace Agent.Model
         {
             infoMe.StatusChange -= listener;
         }
-        
-        // Тестирование системы и инициализация подключения
+        #endregion
+
+        #region Тестирование системы и инициализация подключения
         public void TestSystem() // тестирование системы
         {
             infoMe.Status = StatusMachine.Testing; // начало тестирования
@@ -199,8 +209,9 @@ namespace Agent.Model
         {
             initiator.Stop();
         }
+        #endregion
 
-        // работа с делимыми файлами
+        #region Работа с делимыми файлами
         internal void AddDiffDataFile(FileInfo file, FileInfo exe) // добавить файл данных
         {
             foreach (var t in diffDataFile) // ищем, есть ли уже такой файл
@@ -245,7 +256,9 @@ namespace Agent.Model
         {
             return diffDataFile;
         }
-        // работа с не делимыми файлами
+        #endregion
+
+        #region Работа с неделимыми файлами
         internal void AddNotDiffDataFile(FileInfo file) // добавить файл данных
         {
             foreach (FileInfo i in notDiffDataFile) // ищем, есть ли уже такой файл
@@ -292,7 +305,9 @@ namespace Agent.Model
         {
             return notDiffDataFile;
         }
+        #endregion
 
+        #region Работа с исполнителями в качетсве инициатора
         internal List<Contractor> GetAllContractor() // получить список всех клиентов
         {
             return allContractor;
@@ -305,8 +320,7 @@ namespace Agent.Model
                     count++;
             return count;
         }
-
-        // работа с клиентами в качетсве инициатора
+        
         internal void RemoveContractor(Contractor temp)
         {
             allContractor.Remove(temp);
@@ -412,8 +426,9 @@ namespace Agent.Model
             allContractor.Clear();
             initiator.Restart();
         }
+        #endregion
 
-        // Работа с файлами для запуска вычислений
+        #region Работа с файлами для запуска вычислений
         void CopyFile(FileInfo file, string fullName) // копирование файла
         {
             file.CopyTo(fullName, true);
@@ -518,24 +533,24 @@ namespace Agent.Model
         }
         void UploadFiles() // деление и распределение файлов
         {
-            UploadTime = Environment.TickCount;
+            UploadTimeStart = DateTime.Now;
             string name = "Делим файлы и создаем iplist";
             int count, countAll;
-            UpdProgress(0,2, name);
+            UpdProgress(0, 2, name);
             Thread calcThread = new Thread(delegate () {
                 CreateFileIP(); // получаем сипсок машин
-                UpdProgress(1,2, name);
+                UpdProgress(1, 2, name);
                 DiffFileList(diffDataFile, allContractor.Count + 1);
-                UpdProgress(2,2, name);
+                UpdProgress(2, 2, name);
                 name = "Отправка файлов исполнителю ";
                 count = 0;
                 countAll = allContractor.Count;
                 foreach (var t in allContractor) // всем отправляем файлы
                 {
-                    UpdProgress(count , countAll, name + (count + 1) + "из" + countAll);
+                    UpdProgress(count, countAll, name + (count + 1) + "из" + countAll);
                     if (notDeleteFiles)
                         t.SendMessage(new Packet() { type = PacketType.NotDeleteFiles, id = infoMe.id });
-                    t.AddFileList(notDiffDataFile); // добавляем к отправке не делимые файлы (в т.ч. iplist.txt)
+                    t.AddFileList(notDiffDataFile); // добавляем к отправке неделимые файлы (в т.ч. iplist.txt)
                                                     // TODO: добавление части
                     t.SetExeAndDataFile(); // отправляем файлы
                     count++;
@@ -544,27 +559,28 @@ namespace Agent.Model
                 name = "Запускаем вычисления";
                 count = 0;
                 countAll += 1;
-                UpdProgress(count , countAll, name);
+                UpdProgress(count, countAll, name);
                 foreach (var t in allContractor) // всем выбранным даем команду начать выполнение
                 {
                     t.SendMessage(new Packet() { type = PacketType.StartCalc, id = infoMe.id });
                     count++;
                     UpdProgress(count, countAll, name);
                 }
+                UploadTimeEnd = DateTime.Now;
+                CalculateTimeStart = DateTime.Now;
                 RunExe();
                 count++;
                 UpdProgress(count, countAll, "Вычисления запущены");
             });
             calcThread.IsBackground = true;
             calcThread.Start();
-            UploadTime = Environment.TickCount - UploadTime;
-            CalculateTime = Environment.TickCount;
         }
+        #endregion
 
-        // Запуск и обрыв вычислений
+        #region Запуск и обрыв вычислений
         internal void StartCalculate(bool notDeleteFiles) // запуск вычислений
         {
-            AllTime = Environment.TickCount;
+            AllTimeStart = DateTime.Now;
             List<Contractor> removed = new List<Contractor>();
             countFinished = 0;
             isInitiator = true;
@@ -588,8 +604,11 @@ namespace Agent.Model
         }
         internal void BreakCalculate() // обрыв вычислений
         {
-            mainProc.Kill();
-            if(isInitiator==true)
+            if (Process.GetProcessesByName(mainProc.ProcessName).Length != 0) // если процесс не завершился
+            {
+                mainProc.Kill();
+            }
+            if(isInitiator==true) 
             {
                 foreach (var t in allContractor)
                     t.SendMessage(new Packet() { id=infoMe.id, type=PacketType.StopCalc });
@@ -606,8 +625,9 @@ namespace Agent.Model
                 diffDataFile.Clear();
             }
         }
+        #endregion
 
-        // работа с инициатором в качестве клиента
+        #region Работа с инициатором в качестве исполнителя
         void RunExe() // запускаем полученный или имеющийся exe
         {
             Status = StatusMachine.Calculate;
@@ -638,9 +658,8 @@ namespace Agent.Model
                         isCalculate = false;
                         UpdProgress(2,2, "Вычисления завершены");
                         RefreshView();
-                        CalculateTime = Environment.TickCount - CalculateTime;
-                        AllTime = Environment.TickCount - AllTime;
-                        Log.ShowMessage("Общее время вычислений: " + AllTime/1000 + " сек\nВремя на передачу файлов: " + UploadTime / 1000 + " сек\nВремя рассчетов: " + CalculateTime / 1000 + " сек");
+                        CalculateTimeEnd = AllTimeEnd = DateTime.Now;
+                        Log.ShowMessage("Общее время вычислений: " + (AllTimeEnd-AllTimeStart).TotalSeconds + " сек\nВремя на передачу файлов: " + (UploadTimeEnd-UploadTimeStart).TotalSeconds + " сек\nВремя рассчетов: " + (CalculateTimeEnd-CalculateTimeStart).TotalSeconds + " сек");
                     }
                 }
                 if (notDeleteFiles == false)
@@ -656,7 +675,9 @@ namespace Agent.Model
                 Log.Write(ex);
             }
         }
-        // работа с пакетами
+        #endregion
+
+        #region Работа с пакетами
         void GetPacket(ILockeded sender, string message) // обработка полученных пакетов
         {
             Packet pkt = new Packet() { type = PacketType.Empty, id = -1 };
@@ -689,12 +710,11 @@ namespace Agent.Model
                             foreach (var t in allContractor)
                                 t.SendMessage(new Packet() { type = PacketType.Free, id = infoMe.id });
                             allContractor.Clear();
-                            CalculateTime = Environment.TickCount - CalculateTime;
-                            AllTime = Environment.TickCount - AllTime;
+                            CalculateTimeEnd=AllTimeEnd = DateTime.Now;
                             isCalculate = false;
                             UpdProgress(2,2, "Вычисления завершены");
                             RefreshView();
-                            Log.ShowMessage("Общее время вычислений: " + AllTime / 1000 + " сек\nВремя на передачу файлов: " + UploadTime / 1000 + " сек\nВремя рассчетов: " + CalculateTime / 1000 + " сек");
+                            Log.ShowMessage("Общее время вычислений: " + (AllTimeEnd - AllTimeStart).TotalSeconds + " сек\nВремя на передачу файлов: " + (UploadTimeEnd - UploadTimeStart).TotalSeconds + " сек\nВремя рассчетов: " + (CalculateTimeEnd - CalculateTimeStart).TotalSeconds + " сек");
                         }
                         sender.Locked = false;
                         break;
@@ -724,5 +744,6 @@ namespace Agent.Model
             else if (message.CompareTo("ConnectToInit") == 0)
                 Status = StatusMachine.Wait;
         }
+        #endregion
     }
 }
