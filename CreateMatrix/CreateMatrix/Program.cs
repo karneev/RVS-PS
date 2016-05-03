@@ -15,7 +15,6 @@ namespace CreateMatrix
             int N;
             N = Int32.Parse(Console.ReadLine());
             Random r = new Random((int)System.DateTime.Now.Ticks);
-            double dd = 0;
             StreamWriter R = new StreamWriter("Work.txt");
             R.WriteLine(er);
             R.WriteLine(N);

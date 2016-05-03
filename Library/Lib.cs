@@ -85,7 +85,7 @@ namespace Library
         public void start()
         {
             if (sup == null) sup = new SUPAll(Iplist.Count, Iplist);
-            Thread.Sleep(20000);
+            Thread.Sleep(500);
             master = new Thread(masterFun);
             master.IsBackground = true;
             master.Start();
