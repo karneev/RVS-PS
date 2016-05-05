@@ -9,7 +9,7 @@
       <Value Profile="(Default)">255.255.255.0</Value>
     </Setting>
     <Setting Name="Port" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
+      <Value Profile="(Default)">56001</Value>
     </Setting>
   </Settings>
 </SettingsFile>
