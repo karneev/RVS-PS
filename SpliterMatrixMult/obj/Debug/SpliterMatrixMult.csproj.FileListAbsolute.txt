@@ -1,0 +1,6 @@
+E:\Projects\DCN\SpliterMatrixMult\bin\Debug\SpliterMatrixMult.exe.config
+E:\Projects\DCN\SpliterMatrixMult\obj\Debug\SpliterMatrixMult.csprojResolveAssemblyReference.cache
+E:\Projects\DCN\SpliterMatrixMult\bin\Debug\SpliterMatrixMult.exe
+E:\Projects\DCN\SpliterMatrixMult\bin\Debug\SpliterMatrixMult.pdb
+E:\Projects\DCN\SpliterMatrixMult\obj\Debug\SpliterMatrixMult.exe
+E:\Projects\DCN\SpliterMatrixMult\obj\Debug\SpliterMatrixMult.pdb
