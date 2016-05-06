@@ -1,0 +1,6 @@
+E:\Projects\DCN\SpliterSLAU\bin\Release\SpliterSLAU.exe.config
+E:\Projects\DCN\SpliterSLAU\bin\Release\SpliterSLAU.exe
+E:\Projects\DCN\SpliterSLAU\bin\Release\SpliterSLAU.pdb
+E:\Projects\DCN\SpliterSLAU\obj\Release\SpliterSLAU.exe
+E:\Projects\DCN\SpliterSLAU\obj\Release\SpliterSLAU.pdb
+E:\Projects\DCN\SpliterSLAU\obj\Release\SpliterSLAU.csprojResolveAssemblyReference.cache
