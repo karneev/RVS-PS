@@ -54,7 +54,7 @@ namespace Agent.View
                 connectButton.Enabled = false;
                 try
                 {
-                    agent.ConnectToContractor(findIP);
+                    agent.ConnectToContractor(findIP,10000);
                 }
                 catch
                 {

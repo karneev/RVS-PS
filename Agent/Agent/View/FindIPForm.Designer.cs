@@ -164,7 +164,7 @@
             this.Controls.Add(this.ipPanel2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "FindIPForm";
-            this.Text = "FindIPForm";
+            this.Text = "Ручной поиск";
             this.ipPanel2.ResumeLayout(false);
             this.ipPanel2.PerformLayout();
             this.ResumeLayout(false);

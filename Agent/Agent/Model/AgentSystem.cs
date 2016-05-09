@@ -321,6 +321,12 @@ namespace Agent.Model
             return count;
         }
         
+        internal void AddContractor(TcpClient client)
+        {
+            allContractor.Add(new Contractor(this, client));                    // в случае удачи досбавляем в список исполнителей
+            allContractor[allContractor.Count - 1].NewMessage += GetPacket;
+            RefreshView();
+        }
         internal void RemoveContractor(Contractor temp)
         {
             allContractor.Remove(temp);
@@ -348,14 +354,7 @@ namespace Agent.Model
                         cureIP = IPAddress.Parse(headIP.ToString() + tail.ToString()); // формируем конечный IP
                         try
                         {
-                            TcpClient client = new TcpClient();
-
-                            if (client.ConnectAsync(cureIP, Properties.Settings.Default.Port).Wait(1500)) // пытаемся с ним соединиться в течение 1,5 секунды
-                            {
-                                allContractor.Add(new Contractor(this, client));                    // в случае удачи досбавляем в список исполнителей
-                                allContractor[allContractor.Count - 1].NewMessage += GetPacket;
-                                RefreshView();
-                            }
+                            ConnectToContractor(cureIP, 1500);
                         }
                         catch (Exception ex)
                         {
@@ -373,16 +372,11 @@ namespace Agent.Model
             th.IsBackground = true;
             th.Start();
         }
-        internal void ConnectToContractor(IPAddress cureIP)
+        internal void ConnectToContractor(IPAddress cureIP, int timeout)
         {
             TcpClient client = new TcpClient();
-            client.Connect(cureIP, Properties.Settings.Default.Port); // пытаемся с ним соединиться в течение 15 секунд
-            if (client.Connected)
-            {
-                allContractor.Add(new Contractor(this, client));                    // в случае удачи досбавляем в список исполнителей
-                allContractor[allContractor.Count - 1].NewMessage += GetPacket;
-                RefreshView();
-            }
+            if (client.ConnectAsync(cureIP, Properties.Settings.Default.Port).Wait(timeout)) // пытаемся соединиться с клиентом
+                AddContractor(client);
         }
         internal void SelectContractor(int n) // выбрать для вычислений машину n
         {

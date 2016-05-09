@@ -60,6 +60,8 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.progressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.cureProcessStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.addToDataBaseButton = new System.Windows.Forms.Button();
+            this.loadFromDataBaseButton = new System.Windows.Forms.Button();
             this.machineSelectPanel.SuspendLayout();
             this.machineInfoPanel.SuspendLayout();
             this.filePanel.SuspendLayout();
@@ -68,6 +70,8 @@
             // 
             // machineSelectPanel
             // 
+            this.machineSelectPanel.Controls.Add(this.loadFromDataBaseButton);
+            this.machineSelectPanel.Controls.Add(this.addToDataBaseButton);
             this.machineSelectPanel.Controls.Add(this.findIP);
             this.machineSelectPanel.Controls.Add(this.checkLabel);
             this.machineSelectPanel.Controls.Add(this.refreshButton);
@@ -83,7 +87,7 @@
             // 
             this.findIP.Location = new System.Drawing.Point(3, 225);
             this.findIP.Name = "findIP";
-            this.findIP.Size = new System.Drawing.Size(188, 23);
+            this.findIP.Size = new System.Drawing.Size(90, 23);
             this.findIP.TabIndex = 6;
             this.findIP.Text = "Найти по IP";
             this.findIP.UseVisualStyleBackColor = true;
@@ -283,7 +287,7 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(10, 147);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(157, 13);
+            this.label1.Size = new System.Drawing.Size(154, 13);
             this.label1.TabIndex = 16;
             this.label1.Text = "Файлы данных (неделимые):";
             // 
@@ -372,6 +376,26 @@
             this.cureProcessStatusLabel.Name = "cureProcessStatusLabel";
             this.cureProcessStatusLabel.Size = new System.Drawing.Size(0, 17);
             // 
+            // addToDataBaseButton
+            // 
+            this.addToDataBaseButton.Location = new System.Drawing.Point(103, 225);
+            this.addToDataBaseButton.Name = "addToDataBaseButton";
+            this.addToDataBaseButton.Size = new System.Drawing.Size(39, 23);
+            this.addToDataBaseButton.TabIndex = 7;
+            this.addToDataBaseButton.Text = "Доб.";
+            this.addToDataBaseButton.UseVisualStyleBackColor = true;
+            this.addToDataBaseButton.Click += new System.EventHandler(this.addToDataBaseButton_Click);
+            // 
+            // loadFromDataBaseButton
+            // 
+            this.loadFromDataBaseButton.Location = new System.Drawing.Point(148, 225);
+            this.loadFromDataBaseButton.Name = "loadFromDataBaseButton";
+            this.loadFromDataBaseButton.Size = new System.Drawing.Size(44, 23);
+            this.loadFromDataBaseButton.TabIndex = 8;
+            this.loadFromDataBaseButton.Text = "Загр.";
+            this.loadFromDataBaseButton.UseVisualStyleBackColor = true;
+            this.loadFromDataBaseButton.Click += new System.EventHandler(this.loadFromDataBaseButton_Click);
+            // 
             // CalculateForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -433,5 +457,7 @@
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripProgressBar progressBar;
         private System.Windows.Forms.ToolStripStatusLabel cureProcessStatusLabel;
+        private System.Windows.Forms.Button loadFromDataBaseButton;
+        private System.Windows.Forms.Button addToDataBaseButton;
     }
 }
