@@ -20,7 +20,11 @@ namespace Agent.View
             int numIP = 0, selectIP=-1;
             string[] mask;
             string ip = Properties.Settings.Default.IP;
-            
+
+            // инициализация системных настроек
+            autoRunCheckBox.Checked = Properties.Settings.Default.AutoRun;
+            autoUpdateCheckBox.Checked = Properties.Settings.Default.AutoUpdate;
+            // инициализация сетевых настроек
             IPHostEntry iphostentry = Dns.GetHostEntry(Dns.GetHostName());
             foreach (IPAddress ipaddress in iphostentry.AddressList)
             {
@@ -44,7 +48,6 @@ namespace Agent.View
             else
                 portBox1.Text = "";
             oldString = "";
-            ipPanel2.Enabled = false; // на время не рабочих масок. Маска всегда 255.255.255.0
         }
 
         private void pointBox_TextChanged(object sender, EventArgs e)
@@ -117,6 +120,11 @@ namespace Agent.View
             StringBuilder mask = new StringBuilder("");
             IPAddress ip;
             int port = 0;
+            // сохранение системных настроек
+            Properties.Settings.Default.AutoRun = autoRunCheckBox.Checked;
+            agent.UpdateAutoRun();
+            Properties.Settings.Default.AutoUpdate = autoUpdateCheckBox.Checked;
+            // сохранение сетевых настроек
             mask.Append(maskBox1.Text).Append('.').Append(maskBox2.Text).Append('.').Append(maskBox3.Text).Append('.').Append(maskBox4.Text);
             if(!IPAddress.TryParse(ipComboBox.SelectedItem.ToString(), out ip))
                 if (!IPAddress.TryParse(ipComboBox.Items[0].ToString(), out ip))

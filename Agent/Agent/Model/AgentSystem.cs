@@ -130,9 +130,25 @@ namespace Agent.Model
             infoMe.id = GetMachineGuid().GetHashCode(); // получение хеш-кода GUID 
             infoMe.vRam = GetMachineRAM(); // получение доступного объема RAM
             infoMe.vCPU = GetMachineCPUMHz(); // получаение тактовой частоты процессора
-            if(Properties.Settings.Default.Port!=0)
+            if(Properties.Settings.Default.IP.CompareTo("127.0.0.1")!=0)
                 InitConnect();      // инициализируем подключение
             infoMe.Status = StatusMachine.Free; // свободен           
+        }
+        public void UpdateAutoRun() // изменить состояние ключа
+        {
+            RegistryKey rkApp = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            if (Properties.Settings.Default.AutoRun)
+            {
+                // Add the value in the registry so that the application runs at startup
+                rkApp.SetValue("Agent", Application.ExecutablePath.ToString());
+                rkApp.SetValue("Agent", "\"" + Application.ExecutablePath.ToString() + "\" -autorun");
+            }
+            else
+            {
+                // Remove the value from the registry so that the application doesn't start
+                rkApp.DeleteValue("Agent", false);
+            }
+
         }
         private string GetMachineGuid() // получение GUID 
         {
@@ -321,6 +337,33 @@ namespace Agent.Model
             return count;
         }
         
+        internal void SaveAllContractorToDB()
+        {
+            SQLiteDriver DB = new SQLiteDriver();
+            foreach (var t in allContractor)
+            {
+                DB.AddIP(t.GetIPServer().ToString());
+            }
+            DB.Close();
+        }
+        internal void LoadAllContractorFromDB()
+        {
+            Thread th = new Thread(delegate ()
+            {
+                int i = 0;
+                SQLiteDriver DB = new SQLiteDriver();
+                List<string> allIP = DB.GetAllIP();
+                foreach (var t in allIP)
+                {
+                    ConnectToContractor(IPAddress.Parse(t), 1500);
+                    UpdProgress(i++, allIP.Count, "Загрузка из базы данных");
+                }
+                DB.Close();
+                UpdProgress(i++, allIP.Count, "Загрузка завершена");
+            });
+            th.IsBackground = true;
+            th.Start();
+        }
         internal void AddContractor(TcpClient client)
         {
             allContractor.Add(new Contractor(this, client));                    // в случае удачи досбавляем в список исполнителей
@@ -332,11 +375,43 @@ namespace Agent.Model
             allContractor.Remove(temp);
             RefreshView();
         }
+
+        private byte[] IPToByteArray(string IP)
+        {
+            string[] ip = IP.Split('.');
+            byte[] array = new byte[4];
+            for (int i = 0; i < 4; i++)
+                array[i] = Byte.Parse(ip[i]);
+            return array;
+        }
+        private byte[] GetNetworkIP(byte[] pointIP, byte[] mask)
+        {
+            byte[] networkIP = new byte[4];
+            for (int i = 0; i < 4; i++)
+                networkIP[i] = (byte)(pointIP[i] & mask[i]);
+            return networkIP;
+        }
+        private int GetCountIPinNetwork(byte[] mask)
+        {
+            return (256 - mask[0]) * (256 - mask[1]) * (256 - mask[2]) * (256 - mask[3]);
+        }
+        private bool IsCorrectIP(int a, int b, int c, int d, byte[] networkIP,out string cureIP)
+        {
+            cureIP = "0.0.0.0";
+            if (a != 255 && b != 255 && c != 255 && d != 0 && d != 255) // Не является ли IP широковещательным
+            {
+                cureIP = (a + networkIP[0]).ToString() + "." + (b + networkIP[1]).ToString() + "." + (c + networkIP[2]).ToString() + "." + (d + networkIP[3]).ToString();
+                return true;
+            }
+            else
+                return false;
+            
+        }
         internal void RefreshContractorList() // обновить список клиентов
         {
             string name = "Обновсление списка исполнителей";
             int countEnd = 0;
-            int countAll = 254;
+            int countAll = 1;
             refreshContractor = true;
             RefreshView();
             UpdProgress(countEnd, countAll, name);
@@ -344,29 +419,42 @@ namespace Agent.Model
             {
                 lock (allContractor)
                 {
-                    IPAddress cureIP;                           // очередной IP
-                    StringBuilder headIP = new StringBuilder(); // начало IP
-                    string[] ipInBytes = Properties.Settings.Default.IP.Split('.');
-                    headIP.Append(ipInBytes[0]).Append(".").Append(ipInBytes[1]).Append(".").Append(ipInBytes[2]).Append("."); // на время пока маска 255.255.255.0
+                    byte[] pointIP = IPToByteArray(Properties.Settings.Default.IP);
+                    byte[] mask = IPToByteArray(Properties.Settings.Default.Mask);
+                    byte[] networkIP = GetNetworkIP(pointIP, mask);
+                    countAll = GetCountIPinNetwork(mask);
+
                     Log.Write("Запущено обновление списка");
-                    Parallel.For(2, 254, tail => // перебираем все адреса с 2 до 254
-                    {
-                        cureIP = IPAddress.Parse(headIP.ToString() + tail.ToString()); // формируем конечный IP
-                        try
-                        {
-                            ConnectToContractor(cureIP, 1500);
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Write(ex);
-                        }
-                        countEnd++;
-                        UpdProgress(countEnd, countAll, name);
-                    });
+                    // перебираем все адреса в соответствии с маской
+                    Parallel.For(0, 256 - mask[0], a =>
+                      {
+                          Parallel.For(0, 256 - mask[1], b =>
+                          {
+                              Parallel.For(0, 256 - mask[2], c =>
+                              {
+                                  Parallel.For(0, 256 - mask[3], d => 
+                                  {
+                                      try
+                                      {
+                                          string cureIP;
+                                          if (IsCorrectIP(a, b, c, d, networkIP, out cureIP))
+                                              ConnectToContractor(IPAddress.Parse(cureIP), 1500);
+                                      }
+                                      catch (Exception ex)
+                                      {
+                                          Log.Write(ex);
+                                      }
+                                      countEnd++;
+                                      UpdProgress(countEnd, countAll, name);
+                                  });
+                              });
+                          });
+                      });
                     Log.Write("Список обновлен");
                     refreshContractor = false;
                 }
                 RefreshView();
+                SaveAllContractorToDB();
                 UpdProgress(countEnd, countAll, "Обновление завершено");
             });
             th.IsBackground = true;
@@ -374,9 +462,16 @@ namespace Agent.Model
         }
         internal void ConnectToContractor(IPAddress cureIP, int timeout)
         {
-            TcpClient client = new TcpClient();
-            if (client.ConnectAsync(cureIP, Properties.Settings.Default.Port).Wait(timeout)) // пытаемся соединиться с клиентом
-                AddContractor(client);
+            try
+            {
+                TcpClient client = new TcpClient();
+                if (client.ConnectAsync(cureIP, Properties.Settings.Default.Port).Wait(timeout)) // пытаемся соединиться с клиентом
+                    AddContractor(client);
+            }
+            catch(Exception ex)
+            {
+                Log.Write(ex);
+            }
         }
         internal void SelectContractor(int n) // выбрать для вычислений машину n
         {

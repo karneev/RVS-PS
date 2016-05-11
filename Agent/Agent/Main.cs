@@ -16,10 +16,15 @@ namespace Agent
         /// Главная точка входа для приложения.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             AgentSystem ags = new AgentSystem();
             AgentForm agf = new AgentForm(ags);
+            foreach(var arg in args)
+            {
+                if(arg.CompareTo("-autorun")==0)
+                    agf.WindowState = FormWindowState.Minimized; // загружать в трей
+            }
             Application.Run(agf);
         }
     }

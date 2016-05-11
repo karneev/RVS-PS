@@ -344,29 +344,9 @@ namespace Agent.View
                 checkedMechineListBox.SetItemChecked(clb.SelectedIndex, !clb.GetItemChecked(clb.SelectedIndex));
         }
 
-        private void addToDataBaseButton_Click(object sender, EventArgs e)
-        {
-            SQLiteDriver DB = new SQLiteDriver();
-            foreach(var t in agent.GetAllContractor())
-            {
-                DB.AddIP(t.GetIPServer().ToString());
-            }
-            DB.Close();
-        }
-
         private void loadFromDataBaseButton_Click(object sender, EventArgs e)
         {
-            Thread th = new Thread(delegate ()
-              {
-                  SQLiteDriver DB = new SQLiteDriver();
-                  foreach (var t in DB.GetAllIP())
-                  {
-                      agent.ConnectToContractor(IPAddress.Parse(t), 1500);
-                  }
-                  DB.Close();
-              });
-            th.IsBackground = true;
-            th.Start();
+            agent.LoadAllContractorFromDB();
         }
     }
 }

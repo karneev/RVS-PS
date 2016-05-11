@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.machineSelectPanel = new System.Windows.Forms.Panel();
+            this.loadFromDataBaseButton = new System.Windows.Forms.Button();
             this.findIP = new System.Windows.Forms.Button();
             this.checkLabel = new System.Windows.Forms.Label();
             this.refreshButton = new System.Windows.Forms.Button();
@@ -60,8 +61,6 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.progressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.cureProcessStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.addToDataBaseButton = new System.Windows.Forms.Button();
-            this.loadFromDataBaseButton = new System.Windows.Forms.Button();
             this.machineSelectPanel.SuspendLayout();
             this.machineInfoPanel.SuspendLayout();
             this.filePanel.SuspendLayout();
@@ -71,7 +70,6 @@
             // machineSelectPanel
             // 
             this.machineSelectPanel.Controls.Add(this.loadFromDataBaseButton);
-            this.machineSelectPanel.Controls.Add(this.addToDataBaseButton);
             this.machineSelectPanel.Controls.Add(this.findIP);
             this.machineSelectPanel.Controls.Add(this.checkLabel);
             this.machineSelectPanel.Controls.Add(this.refreshButton);
@@ -82,6 +80,16 @@
             this.machineSelectPanel.Name = "machineSelectPanel";
             this.machineSelectPanel.Size = new System.Drawing.Size(195, 313);
             this.machineSelectPanel.TabIndex = 0;
+            // 
+            // loadFromDataBaseButton
+            // 
+            this.loadFromDataBaseButton.Location = new System.Drawing.Point(103, 225);
+            this.loadFromDataBaseButton.Name = "loadFromDataBaseButton";
+            this.loadFromDataBaseButton.Size = new System.Drawing.Size(89, 23);
+            this.loadFromDataBaseButton.TabIndex = 8;
+            this.loadFromDataBaseButton.Text = "Загр. из БД";
+            this.loadFromDataBaseButton.UseVisualStyleBackColor = true;
+            this.loadFromDataBaseButton.Click += new System.EventHandler(this.loadFromDataBaseButton_Click);
             // 
             // findIP
             // 
@@ -370,31 +378,12 @@
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(100, 16);
             this.progressBar.Step = 1;
+            this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             // 
             // cureProcessStatusLabel
             // 
             this.cureProcessStatusLabel.Name = "cureProcessStatusLabel";
             this.cureProcessStatusLabel.Size = new System.Drawing.Size(0, 17);
-            // 
-            // addToDataBaseButton
-            // 
-            this.addToDataBaseButton.Location = new System.Drawing.Point(103, 225);
-            this.addToDataBaseButton.Name = "addToDataBaseButton";
-            this.addToDataBaseButton.Size = new System.Drawing.Size(39, 23);
-            this.addToDataBaseButton.TabIndex = 7;
-            this.addToDataBaseButton.Text = "Доб.";
-            this.addToDataBaseButton.UseVisualStyleBackColor = true;
-            this.addToDataBaseButton.Click += new System.EventHandler(this.addToDataBaseButton_Click);
-            // 
-            // loadFromDataBaseButton
-            // 
-            this.loadFromDataBaseButton.Location = new System.Drawing.Point(148, 225);
-            this.loadFromDataBaseButton.Name = "loadFromDataBaseButton";
-            this.loadFromDataBaseButton.Size = new System.Drawing.Size(44, 23);
-            this.loadFromDataBaseButton.TabIndex = 8;
-            this.loadFromDataBaseButton.Text = "Загр.";
-            this.loadFromDataBaseButton.UseVisualStyleBackColor = true;
-            this.loadFromDataBaseButton.Click += new System.EventHandler(this.loadFromDataBaseButton_Click);
             // 
             // CalculateForm
             // 
@@ -458,6 +447,5 @@
         private System.Windows.Forms.ToolStripProgressBar progressBar;
         private System.Windows.Forms.ToolStripStatusLabel cureProcessStatusLabel;
         private System.Windows.Forms.Button loadFromDataBaseButton;
-        private System.Windows.Forms.Button addToDataBaseButton;
     }
 }

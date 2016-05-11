@@ -18,22 +18,22 @@ namespace Agent.View
             this.agent.AddListener(setStatus);
             // Запуск теста
             Thread th = new Thread(new ThreadStart(this.agent.TestSystem));
-            th.IsBackground = false;
+            th.IsBackground = true;
             th.Start();
             // Загрузить настройки. Если их нет - принудительно запросить
             try
             {
-                if (Properties.Settings.Default.Port == 0)
+                if (Properties.Settings.Default.IP.CompareTo("127.0.0.1") == 0)
                 {
                     MessageBox.Show("Настройки не заданы!\nЗадайте настройки перед началом работы!");
-                    SettingForm t=new SettingForm(ref this.agent);
-                    t.ShowDialog();
+                    (new SettingForm(ref this.agent)).ShowDialog();
                 }
             }
             catch (Exception ex)
             {
                 Log.Write(ex);
-                
+                MessageBox.Show("Настройки не заданы!\nЗадайте настройки перед началом работы!");
+                (new SettingForm(ref this.agent)).ShowDialog();
             }
         }
         private void setStatus(StatusMachine status)
@@ -129,6 +129,12 @@ namespace Agent.View
         private void перезапускПриложенияToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Programm.Reset();
+        }
+
+        private void проверитьОбновленияToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Log.ShowMessage("Функция временно недоступна");
+            // тут будем проверять обновления
         }
     }
 }

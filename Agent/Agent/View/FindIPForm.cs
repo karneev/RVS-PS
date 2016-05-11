@@ -55,6 +55,7 @@ namespace Agent.View
                 try
                 {
                     agent.ConnectToContractor(findIP,10000);
+                    agent.SaveAllContractorToDB();
                 }
                 catch
                 {
