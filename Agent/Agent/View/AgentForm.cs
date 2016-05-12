@@ -130,11 +130,5 @@ namespace Agent.View
         {
             Programm.Reset();
         }
-
-        private void проверитьОбновленияToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Log.ShowMessage("Функция временно недоступна");
-            // тут будем проверять обновления
-        }
     }
 }

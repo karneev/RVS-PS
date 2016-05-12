@@ -23,7 +23,6 @@ namespace Agent.View
 
             // инициализация системных настроек
             autoRunCheckBox.Checked = Properties.Settings.Default.AutoRun;
-            autoUpdateCheckBox.Checked = Properties.Settings.Default.AutoUpdate;
             // инициализация сетевых настроек
             IPHostEntry iphostentry = Dns.GetHostEntry(Dns.GetHostName());
             foreach (IPAddress ipaddress in iphostentry.AddressList)
@@ -123,7 +122,6 @@ namespace Agent.View
             // сохранение системных настроек
             Properties.Settings.Default.AutoRun = autoRunCheckBox.Checked;
             agent.UpdateAutoRun();
-            Properties.Settings.Default.AutoUpdate = autoUpdateCheckBox.Checked;
             // сохранение сетевых настроек
             mask.Append(maskBox1.Text).Append('.').Append(maskBox2.Text).Append('.').Append(maskBox3.Text).Append('.').Append(maskBox4.Text);
             if(!IPAddress.TryParse(ipComboBox.SelectedItem.ToString(), out ip))

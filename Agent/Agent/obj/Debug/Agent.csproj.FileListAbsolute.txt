@@ -80,3 +80,7 @@ D:\SystemDir\GitHub\RVS-PS\Agent\Agent\obj\Debug\Agent.Properties.Resources.reso
 D:\SystemDir\GitHub\RVS-PS\Agent\Agent\obj\Debug\Agent.View.FindIPForm.resources
 D:\SystemDir\GitHub\RVS-PS\Agent\Agent\obj\Debug\Agent.View.SettingForm.resources
 D:\SystemDir\GitHub\RVS-PS\Agent\Agent\obj\Debug\Agent.csproj.GenerateResource.Cache
+D:\SystemDir\GitHub\RVS-PS\Agent\Agent\bin\Debug\Agent.exe.manifest
+D:\SystemDir\GitHub\RVS-PS\Agent\Agent\bin\Debug\Agent.application
+D:\SystemDir\GitHub\RVS-PS\Agent\Agent\obj\Debug\Agent.exe.manifest
+D:\SystemDir\GitHub\RVS-PS\Agent\Agent\obj\Debug\Agent.application
