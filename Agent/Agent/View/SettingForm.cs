@@ -113,12 +113,39 @@ namespace Agent.View
                 oldString = "";
             }
         }
-
+        private bool CheckMask(params string[] parts)
+        {
+            byte[] bytes = new byte[4]; // формируем массив байт
+            for (int i = 0; i < 4; i++)
+            {
+                bytes[i] = byte.Parse(parts[i]);
+                byte temp = bytes[i];
+                bool ones = false;
+                for(int j=0; j<8; j++) // каждый байт проверяем на соответсвие байту масок
+                {
+                    if(ones==true && temp % 2 == 0) // если перед единицами есть ноль, значит не маска
+                        return false;
+                    else if (temp % 2 == 1) // если единица перед нулями, то запоминаем её
+                        ones = true;
+                    temp = (byte)(temp >> 1); // битовый сдвиг влево
+                }
+            }
+            for (int i = 1; i < 4; i++)
+                if ((bytes[i] > bytes[i - 1]) || ((bytes[i] == bytes[i - 1]) && bytes[i] != 255)) 
+                    return false;
+            return true;
+        }
         private void saveButton_Click(object sender, EventArgs e)
         {
             StringBuilder mask = new StringBuilder("");
             IPAddress ip;
             int port = 0;
+            // Проверка маски
+            if (!CheckMask(maskBox1.Text, maskBox2.Text, maskBox3.Text, maskBox4.Text))
+            {
+                MessageBox.Show("Маска задана не верно. Проверьте настроки");
+                return; 
+            }
             // сохранение системных настроек
             Properties.Settings.Default.AutoRun = autoRunCheckBox.Checked;
             agent.UpdateAutoRun();

@@ -30,7 +30,7 @@ namespace Agent.Model
                 this.connection.Open();
                 if (dbcreate)
                 {
-                    this.NonExecuteQuery("CREATE TABLE 'iplist' ( 'ip' TEXT NOT NULL UNIQUE )");
+                    NonExecuteQuery("CREATE TABLE 'iplist' ( 'ip' TEXT NOT NULL UNIQUE )");
                 }
             }
             catch (Exception ex)
@@ -60,7 +60,16 @@ namespace Agent.Model
             SQLiteCommand command = new SQLiteCommand(this.connection);
             command.CommandType = CommandType.Text;
             command.CommandText = query;
-            return command.ExecuteReader();
+            try
+            {
+                return command.ExecuteReader();
+            }
+            catch(Exception ex)
+            {
+                Log.Write(ex);
+                NonExecuteQuery("CREATE TABLE 'iplist' ( 'ip' TEXT NOT NULL UNIQUE )");
+                return command.ExecuteReader();
+            }
         }
 
         public void AddIP(string IP)

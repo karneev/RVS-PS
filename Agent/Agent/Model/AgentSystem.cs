@@ -328,7 +328,7 @@ namespace Agent.Model
         {
             return allContractor;
         }
-        internal int GetCountSelectredContractor()
+        internal int GetCountSelectredContractor() // получить число выбранных исполнителей
         {
             int count=0;
             foreach (var t in allContractor)
@@ -337,7 +337,7 @@ namespace Agent.Model
             return count;
         }
         
-        internal void SaveAllContractorToDB()
+        internal void SaveAllContractorToDB() // Добавить всех исполнителей в БД
         {
             SQLiteDriver DB = new SQLiteDriver();
             foreach (var t in allContractor)
@@ -346,7 +346,7 @@ namespace Agent.Model
             }
             DB.Close();
         }
-        internal void LoadAllContractorFromDB()
+        internal void LoadAllContractorFromDB() // загрузить всех испонителей из БД
         {
             Thread th = new Thread(delegate ()
             {
@@ -364,19 +364,27 @@ namespace Agent.Model
             th.IsBackground = true;
             th.Start();
         }
-        internal void AddContractor(TcpClient client)
+        internal void AddContractor(TcpClient client) // добавить исполнителя
         {
-            allContractor.Add(new Contractor(this, client));                    // в случае удачи досбавляем в список исполнителей
-            allContractor[allContractor.Count - 1].NewMessage += GetPacket;
-            RefreshView();
+            try
+            {
+                Contractor contractor = new Contractor(this, client);
+                allContractor.Add(contractor);                    // в случае удачи досбавляем в список исполнителей
+                allContractor[allContractor.Count - 1].NewMessage += GetPacket;
+                RefreshView();
+            }
+            catch(Exception ex)
+            {
+                Log.Write(ex);
+            }
         }
-        internal void RemoveContractor(Contractor temp)
+        internal void RemoveContractor(Contractor temp) // удалить исполнителя
         {
             allContractor.Remove(temp);
             RefreshView();
         }
 
-        private byte[] IPToByteArray(string IP)
+        private byte[] IPToByteArray(string IP) // перевод строкового представления IP в массив байт
         {
             string[] ip = IP.Split('.');
             byte[] array = new byte[4];
@@ -384,18 +392,18 @@ namespace Agent.Model
                 array[i] = Byte.Parse(ip[i]);
             return array;
         }
-        private byte[] GetNetworkIP(byte[] pointIP, byte[] mask)
+        private byte[] GetNetworkIP(byte[] pointIP, byte[] mask) // получить адрес сети
         {
             byte[] networkIP = new byte[4];
             for (int i = 0; i < 4; i++)
                 networkIP[i] = (byte)(pointIP[i] & mask[i]);
             return networkIP;
         }
-        private int GetCountIPinNetwork(byte[] mask)
+        private int GetCountIPinNetwork(byte[] mask) // Вычисление кол-ва IP по маске
         {
             return (256 - mask[0]) * (256 - mask[1]) * (256 - mask[2]) * (256 - mask[3]);
         }
-        private bool IsCorrectIP(int a, int b, int c, int d, byte[] networkIP,out string cureIP)
+        private bool IsCorrectIP(int a, int b, int c, int d, byte[] networkIP,out string cureIP) // проверка IP на правильность
         {
             cureIP = "0.0.0.0";
             if (a != 255 && b != 255 && c != 255 && d != 0 && d != 255) // Не является ли IP широковещательным
@@ -460,12 +468,14 @@ namespace Agent.Model
             th.IsBackground = true;
             th.Start();
         }
-        internal void ConnectToContractor(IPAddress cureIP, int timeout)
+        internal void ConnectToContractor(IPAddress cureIP, int timeout, int port=-1) // подключаемся к заданному исполнителю
         {
             try
             {
+                if (port == -1)
+                    port = Properties.Settings.Default.Port;
                 TcpClient client = new TcpClient();
-                if (client.ConnectAsync(cureIP, Properties.Settings.Default.Port).Wait(timeout)) // пытаемся соединиться с клиентом
+                if (client.ConnectAsync(cureIP, port).Wait(timeout)) // пытаемся соединиться с клиентом
                     AddContractor(client);
             }
             catch(Exception ex)

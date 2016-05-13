@@ -2,9 +2,9 @@
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <PublishUrlHistory>D:\Apache24\htdocs\|http://rvs-ps.noip.me:56002/|publish\</PublishUrlHistory>
-    <InstallUrlHistory>http://rvs-ps.noip.me:56002/|http://rvs-ps.noip.me/</InstallUrlHistory>
+    <InstallUrlHistory>http://rvs-ps.noip.me/|http://rvs-ps.noip.me:56002/</InstallUrlHistory>
     <SupportUrlHistory />
-    <UpdateUrlHistory>http://rvs-ps.noip.me:56002/</UpdateUrlHistory>
+    <UpdateUrlHistory>http://rvs-ps.noip.me/|http://rvs-ps.noip.me:56002/</UpdateUrlHistory>
     <BootstrapperUrlHistory />
     <ErrorReportUrlHistory />
     <FallbackCulture>ru-RU</FallbackCulture>

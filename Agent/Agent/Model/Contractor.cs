@@ -48,10 +48,31 @@ namespace Agent.Model
             selected = false;
             locked = false;
             bf.Serialize(mainStream, new Packet(){ type=PacketType.Hello, id=agent.InfoMe.id });
-            this.info = (MachineInfo)bf.Deserialize(mainStream);
-            th = new Thread(RunPacketExchange);
-            th.IsBackground = true;
-            th.Start();
+            // ждем ответа 5 секунд, иначе отбрасываем этого клиента (возможно, на другой стороне не Агент)
+            try
+            {
+                bool connected = false;
+                Thread th2 = new Thread(delegate ()
+                {
+                    Thread.Sleep(5000);
+                    if (connected == false)
+                    {
+                        mainStream.Close();
+                        throw (new Exception("Не получен ответ от исполнителя"));
+                    }
+                });
+                th2.IsBackground = true;
+                th2.Start();
+                this.info = (MachineInfo)bf.Deserialize(mainStream);
+                connected = true;
+                th = new Thread(RunPacketExchange);
+                th.IsBackground = true;
+                th.Start();
+            }
+            catch(Exception ex)
+            {
+                Log.Write(ex);
+            }
         }
         void RunPacketExchange()
         {

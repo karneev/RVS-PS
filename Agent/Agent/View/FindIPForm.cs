@@ -17,6 +17,7 @@ namespace Agent.View
         {
             this.agent = agent;
             InitializeComponent();
+            this.portTextBox.Text = Properties.Settings.Default.Port.ToString();
         }
 
         private void ipBox_TextChanged(object sender, EventArgs e)
@@ -47,14 +48,15 @@ namespace Agent.View
         {
             IPAddress findIP;
             StringBuilder ip = new StringBuilder("");
+            ushort port;
             ip.Append(ipBox1.Text).Append('.').Append(ipBox2.Text).Append('.').Append(ipBox3.Text).Append('.').Append(ipBox4.Text);
-            if (IPAddress.TryParse(ip.ToString(), out findIP))
+            if (IPAddress.TryParse(ip.ToString(), out findIP) && ushort.TryParse(portTextBox.Text,out port))
             {
                 connectButton.Text = "Подключение";
                 connectButton.Enabled = false;
                 try
                 {
-                    agent.ConnectToContractor(findIP,10000);
+                    agent.ConnectToContractor(findIP,10000,port);
                     agent.SaveAllContractorToDB();
                 }
                 catch
@@ -68,7 +70,7 @@ namespace Agent.View
             }
             else
             {
-                MessageBox.Show("Вами введен не верный IP", "Ошибка ввода", MessageBoxButtons.OK);
+                MessageBox.Show("Вами введен не верный IP или порт", "Ошибка ввода", MessageBoxButtons.OK);
             }
         }
     }
