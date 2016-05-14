@@ -3,7 +3,7 @@
   <asmv1:assemblyIdentity name="Agent.exe" version="1.1.3.4" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="Agent" version="1.0.5978.2249" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="Agent" version="1.0.5978.2294" language="neutral" processorArchitecture="msil" />
     <commandLine file="Agent.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -43,13 +43,13 @@
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Agent.exe" size="977320">
-      <assemblyIdentity name="Agent" version="1.0.5978.2249" language="neutral" processorArchitecture="msil" />
+      <assemblyIdentity name="Agent" version="1.0.5978.2294" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>ozkXmSzSZmKs0sgQwNBRPQnsJpkmEcIrROrboMn6/8s=</dsig:DigestValue>
+        <dsig:DigestValue>feJ0SrEdeSRLfUxbNghjosjlgKiLUc4Cjl7SS2Y3SKI=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
