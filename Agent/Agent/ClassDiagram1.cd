@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Agent.Log" Collapsed="true">
+    <Position X="5.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Log.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agent.Programm" Collapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Main.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agent.Model.AgentSystem" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BCgCQkEFBUKHABjABxAACTH4BkIMJEAAcCAgVAIDIQY=</HashCode>
+      <FileName>Model\AgentSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agent.Model.Contractor" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAA5QIAMCAEABAACIAAAAQAQAAABkCBAAI=</HashCode>
+      <FileName>Model\Contractor.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Agent.Model.Initiator" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="4" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAgAgACAAJQIAECAAAgAACAAAAAQAIAAEhAAgAAI=</HashCode>
+      <FileName>Model\Initiator.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Agent.Model.SQLiteDriver" Collapsed="true">
+    <Position X="0.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAACAAAAAABBAAAAAAACAAgAAAAAAACAAEA=</HashCode>
+      <FileName>Model\SQLiteDriver.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agent.Properties.Resources" Collapsed="true">
+    <Position X="2.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAREAAAAQAAAAAAAAAAAAAAAIE=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agent.Properties.Settings" Collapsed="true">
+    <Position X="5.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAEAAAAIAAAKAABAAAAAACAAAAACAA=</HashCode>
+      <FileName>Settings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agent.View.AboutBox" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>kIACAAgAACAgCAUAAACAAAADAAAAEIAAAAAAAAAAAAA=</HashCode>
+      <FileName>View\AboutBox.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agent.View.AgentForm" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EACAAAEACDgAQQAAAECgAwAGAMgDAECBAAAAACACAAA=</HashCode>
+      <FileName>View\AgentForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agent.View.CalculateForm" Collapsed="true">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AADwEkAwEiAIAbCAZUWqMgACAQiiBoASQwQACgB0gCU=</HashCode>
+      <FileName>View\CalculateForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agent.View.FindIPForm" Collapsed="true">
+    <Position X="2.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAiAAARAAAFCQAAACAAAIAARQAAAAAAAAAQA=</HashCode>
+      <FileName>View\FindIPForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agent.View.SettingForm" Collapsed="true">
+    <Position X="4" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABEABAAAiACARAgAGSQAAACAAAIAARAAEAAwAAIIAA=</HashCode>
+      <FileName>View\SettingForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Agent.Structs.DiffFile" Collapsed="true">
+    <Position X="0.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>Structs\DiffFile.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Agent.Structs.HandleFile" Collapsed="true">
+    <Position X="2.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>Structs\Files.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Agent.Structs.PartFile" Collapsed="true">
+    <Position X="0.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAACAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Structs\Files.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Agent.Structs.MachineInfo" Collapsed="true">
+    <Position X="4" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAACEAAAAAAAAAAAAAAAAAAAAAAAAAAAAEEAAAgA=</HashCode>
+      <FileName>Structs\MachineInfo.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Agent.Structs.Packet" Collapsed="true">
+    <Position X="5.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAABAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Structs\Packet.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Interface Name="Agent.Model.ILockeded" Collapsed="true">
+    <Position X="0.5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\ILockeded.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="Agent.Enums.PacketType" Collapsed="true">
+    <Position X="0.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAQAAAAAAAAAAAAAAIAAAAAAAAAABAAAAACAAMABAI=</HashCode>
+      <FileName>Enums\PacketType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Agent.Enums.StatusMachine" Collapsed="true">
+    <Position X="2.25" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAAAAAAACQAAAAAAAAAAAAgCgI=</HashCode>
+      <FileName>Enums\StatusMachine.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Delegate Name="Agent.Model.RefreshData" Collapsed="true">
+    <Position X="2.25" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Delegates.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="Agent.Model.SetStat" Collapsed="true">
+    <Position X="4" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Delegates.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="Agent.Model.UpdateProgressBar" Collapsed="true">
+    <Position X="5.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAEAAAACAAAAAAAAAA=</HashCode>
+      <FileName>Model\Delegates.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="Agent.Model.GetMessage" Collapsed="true">
+    <Position X="0.5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Delegates.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

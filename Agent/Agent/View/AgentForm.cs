@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using System.Threading;
 using Agent.Model;
 using Agent.Enums;
+using System.IO;
 
 namespace Agent.View
 {
@@ -15,49 +16,60 @@ namespace Agent.View
             InitializeComponent();
             this.Visible = true;
             this.agent = agent;
-            this.agent.AddListener(setStatus);
+            StatusMachine.StatusChange+=setStatus;
             // Запуск теста
             Thread th = new Thread(new ThreadStart(this.agent.TestSystem));
-            th.IsBackground = false;
+            th.IsBackground = true;
             th.Start();
             // Загрузить настройки. Если их нет - принудительно запросить
             try
             {
-                if (Properties.Settings.Default.Port == 0)
+                string md = Environment.GetFolderPath(Environment.SpecialFolder.Personal);//путь к Документам
+                if (File.Exists(md + "\\Agent\\" + "Settings.conf") == false)
                 {
-                    MessageBox.Show("Настройки не заданы!\nЗадайте настройки перед началом работы!");
-                    SettingForm t=new SettingForm(ref this.agent);
-                    t.ShowDialog();
+                    if (Properties.Settings.Default.IP.CompareTo("127.0.0.1") == 0)
+                    {
+                        MessageBox.Show("Настройки не заданы!\nЗадайте настройки перед началом работы!");
+                        (new SettingForm(ref this.agent)).ShowDialog();
+                    }
+                    else
+                    {
+                        SettingForm.SaveSettingInFile();
+                    }
+                }
+                else
+                {
+                    SettingForm.LoadSettingFromFile();
+                    agent.UpdateAutoRun();
                 }
             }
             catch (Exception ex)
             {
                 Log.Write(ex);
-                
+                MessageBox.Show("Настройки не заданы!\nЗадайте настройки перед началом работы!");
+                (new SettingForm(ref this.agent)).ShowDialog();
             }
         }
-        private void setStatus(StatusMachine status)
+        private void setStatus()
         {
             if (this.statusTextBox.InvokeRequired)
             {
                 SetStat d = new SetStat(setStatus);
-                this.Invoke(d, new object[] { status });
+                this.Invoke(d, new object[] { });
             }
             else
             {
-                if (status == StatusMachine.Free) // свободен
+                if (agent.Status.Free==true) // свободен
                 {
                     this.startCalcButton.Enabled = true;
                     this.startCalculateToolStripMenuItem.Enabled = true;
                     this.settingsButton.Enabled = true;
                     this.settingsToolStripMenuItem.Enabled = true;
-                    this.statusTextBox.Text = "Свободен";
-                    this.agentNotifyIcon.Text = "Свободен";
                 }
                 else // Занят
                 {
                     // Ожидание, инициатор или уже участвует в вычислениях
-                    if (status == StatusMachine.Wait || status == StatusMachine.Initiator || status == StatusMachine.Calculate) 
+                    if (agent.Status.Wait || agent.Status.Initiator || agent.Status.Calculate) 
                     {
                         this.settingsButton.Enabled = false;
                         this.settingsToolStripMenuItem.Enabled = false;
@@ -69,9 +81,9 @@ namespace Agent.View
                     }
                     this.startCalcButton.Enabled = false;
                     this.startCalculateToolStripMenuItem.Enabled = false;
-                    this.statusTextBox.Text = "Занят. Код: " + status.ToString();
-                    this.agentNotifyIcon.Text = "Занят. Код: " + status.ToString();
                 }
+                this.statusTextBox.Text = agent.Status.GetStatus();
+                this.agentNotifyIcon.Text = agent.Status.GetStatus();
             }
         }
         private void AgentForm_Resize(object sender, EventArgs e)
@@ -106,9 +118,9 @@ namespace Agent.View
 
         private void startCalcButton_Click(object sender, EventArgs e)
         {
-            agent.Status = StatusMachine.Initiator;
+            agent.StatusInitiator = true;
             (new CalculateForm(ref agent)).ShowDialog();
-            agent.Status = StatusMachine.Free;
+            agent.StatusInitiator = false;
         }
 
         private void settingsButton_Click(object sender, EventArgs e)
@@ -128,6 +140,7 @@ namespace Agent.View
 
         private void перезапускПриложенияToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Log.Write("Нажали кнопку перезагрузки приложения");
             Programm.Reset();
         }
     }

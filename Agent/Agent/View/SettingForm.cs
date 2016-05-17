@@ -20,7 +20,10 @@ namespace Agent.View
             int numIP = 0, selectIP=-1;
             string[] mask;
             string ip = Properties.Settings.Default.IP;
-            
+
+            // инициализация системных настроек
+            autoRunCheckBox.Checked = Properties.Settings.Default.AutoRun;
+            // инициализация сетевых настроек
             IPHostEntry iphostentry = Dns.GetHostEntry(Dns.GetHostName());
             foreach (IPAddress ipaddress in iphostentry.AddressList)
             {
@@ -44,7 +47,6 @@ namespace Agent.View
             else
                 portBox1.Text = "";
             oldString = "";
-            ipPanel2.Enabled = false; // на время не рабочих масок. Маска всегда 255.255.255.0
         }
 
         private void pointBox_TextChanged(object sender, EventArgs e)
@@ -111,12 +113,43 @@ namespace Agent.View
                 oldString = "";
             }
         }
-
+        private bool CheckMask(params string[] parts)
+        {
+            byte[] bytes = new byte[4]; // формируем массив байт
+            for (int i = 0; i < 4; i++)
+            {
+                bytes[i] = byte.Parse(parts[i]);
+                byte temp = bytes[i];
+                bool ones = false;
+                for(int j=0; j<8; j++) // каждый байт проверяем на соответсвие байту масок
+                {
+                    if(ones==true && temp % 2 == 0) // если перед единицами есть ноль, значит не маска
+                        return false;
+                    else if (temp % 2 == 1) // если единица перед нулями, то запоминаем её
+                        ones = true;
+                    temp = (byte)(temp >> 1); // битовый сдвиг влево
+                }
+            }
+            for (int i = 1; i < 4; i++)
+                if ((bytes[i] > bytes[i - 1]) || ((bytes[i] == bytes[i - 1]) && bytes[i] != 255)) 
+                    return false;
+            return true;
+        }
         private void saveButton_Click(object sender, EventArgs e)
         {
             StringBuilder mask = new StringBuilder("");
             IPAddress ip;
             int port = 0;
+            // Проверка маски
+            if (!CheckMask(maskBox1.Text, maskBox2.Text, maskBox3.Text, maskBox4.Text))
+            {
+                MessageBox.Show("Маска задана не верно. Проверьте настроки");
+                return; 
+            }
+            // сохранение системных настроек
+            Properties.Settings.Default.AutoRun = autoRunCheckBox.Checked;
+            agent.UpdateAutoRun();
+            // сохранение сетевых настроек
             mask.Append(maskBox1.Text).Append('.').Append(maskBox2.Text).Append('.').Append(maskBox3.Text).Append('.').Append(maskBox4.Text);
             if(!IPAddress.TryParse(ipComboBox.SelectedItem.ToString(), out ip))
                 if (!IPAddress.TryParse(ipComboBox.Items[0].ToString(), out ip))
@@ -129,12 +162,40 @@ namespace Agent.View
                 port = 56001;
             Properties.Settings.Default.Port = port;
             Properties.Settings.Default.Save();
+            SaveSettingInFile();
             agent.NetworkSettingsChange();
             this.Close();
         }
-
-        private void SettingForm_FormClosing(object sender, FormClosingEventArgs e)
+        static public void SaveSettingInFile()
         {
+            string md = Environment.GetFolderPath(Environment.SpecialFolder.Personal);//путь к Документам
+            if (Directory.Exists(md + "\\Agent") == false)
+            {
+                Directory.CreateDirectory(md + "\\Agent");
+            }
+            FileInfo fi = new FileInfo(md + "\\Agent\\"+"Settings.conf");
+            if (fi.Exists == true)
+                fi.Delete();
+            StreamWriter sw=new StreamWriter(fi.Create());
+            sw.WriteLine(Properties.Settings.Default.IP);
+            sw.WriteLine(Properties.Settings.Default.Mask);
+            sw.WriteLine(Properties.Settings.Default.Port);
+            sw.WriteLine(Properties.Settings.Default.AutoRun);
+            sw.Close();
+        }
+        static public void LoadSettingFromFile()
+        {
+            string md = Environment.GetFolderPath(Environment.SpecialFolder.Personal);//путь к Документам
+            FileInfo fi = new FileInfo(md + "\\Agent\\" + "Settings.conf");
+            if (fi.Exists == true)
+            {
+                StreamReader sw = new StreamReader(fi.Open(FileMode.Open));
+                Properties.Settings.Default.IP=sw.ReadLine();
+                Properties.Settings.Default.Mask=sw.ReadLine();
+                Properties.Settings.Default.Port=int.Parse(sw.ReadLine());
+                Properties.Settings.Default.AutoRun=bool.Parse(sw.ReadLine());
+                sw.Close();
+            }
         }
     }
 }

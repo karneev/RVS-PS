@@ -38,6 +38,7 @@
             this.fileToolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.startCalculateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.infoButton = new System.Windows.Forms.ToolStripButton();
@@ -82,6 +83,7 @@
             this.fileToolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.startCalculateToolStripMenuItem,
             this.resetToolStripMenuItem,
+            this.toolStripSeparator1,
             this.settingsToolStripMenuItem,
             this.exitToolStripMenuItem});
             resources.ApplyResources(this.fileToolStripDropDownButton1, "fileToolStripDropDownButton1");
@@ -98,6 +100,11 @@
             this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
             resources.ApplyResources(this.resetToolStripMenuItem, "resetToolStripMenuItem");
             this.resetToolStripMenuItem.Click += new System.EventHandler(this.перезапускПриложенияToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             // 
             // settingsToolStripMenuItem
             // 
@@ -159,6 +166,7 @@
         private System.Windows.Forms.ToolStripButton infoButton;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }
 }
 

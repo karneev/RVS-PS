@@ -19,6 +19,7 @@ namespace Agent.Model
         #region События системы
         public event RefreshData RefreshView;
         public event UpdateProgressBar UpdProgress;
+        
         #endregion
 
         #region Основные переменные
@@ -41,6 +42,7 @@ namespace Agent.Model
         private Initiator initiator;            // информация о инициаторе
         private Process mainProc;           // основной процесс вычислений
 
+        private StatusMachine status;
         private MachineInfo infoMe;         // Информация о себе
         #endregion
 
@@ -56,26 +58,16 @@ namespace Agent.Model
         }
         public StatusMachine Status
         {
-            get { return infoMe.Status; }
+            get
+            {
+                return this.status;
+            }
+        }
+        public bool StatusInitiator
+        {
             set
             {
-                infoMe.Status = value;
-                if (initiator != null)
-                {
-                    if (infoMe.Status == StatusMachine.Initiator)
-                    {
-                        isInitiator = true;
-                        initiator.Stop();
-                    }
-                    else
-                    {
-                        if (infoMe.Status == StatusMachine.Free)
-                        {
-                            initiator.Start();
-                            isInitiator = false;
-                        }
-                    }
-                }
+                status.Initiator = value;
             }
         }
         public MachineInfo InfoMe
@@ -112,27 +104,33 @@ namespace Agent.Model
         #endregion
 
         #region Запуск системы и добавление/удаление слушателей
-        public AgentSystem() { }
-        internal void AddListener(SetStat listener) // добавить слушателя изменения статуса машины
-        {
-            infoMe.StatusChange += listener;
-        }
-        internal void RemoveListener(SetStat listener) // удалить слушателя изменения статуса машины
-        {
-            infoMe.StatusChange -= listener;
-        }
+        public AgentSystem() { StatusMachine.StatusChange += SetStatus; }
         #endregion
 
         #region Тестирование системы и инициализация подключения
         public void TestSystem() // тестирование системы
         {
-            infoMe.Status = StatusMachine.Testing; // начало тестирования
+            status.Testing = true; // начало тестирования
             infoMe.id = GetMachineGuid().GetHashCode(); // получение хеш-кода GUID 
             infoMe.vRam = GetMachineRAM(); // получение доступного объема RAM
             infoMe.vCPU = GetMachineCPUMHz(); // получаение тактовой частоты процессора
-            if(Properties.Settings.Default.Port!=0)
-                InitConnect();      // инициализируем подключение
-            infoMe.Status = StatusMachine.Free; // свободен           
+            status.Testing = false; // свободен           
+        }
+        public void UpdateAutoRun() // изменить состояние ключа
+        {
+            RegistryKey rkApp = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            if (Properties.Settings.Default.AutoRun)
+            {
+                // Add the value in the registry so that the application runs at startup
+                rkApp.SetValue("Agent", Application.ExecutablePath.ToString());
+                rkApp.SetValue("Agent", "\"" + Application.ExecutablePath.ToString() + "\" -autorun");
+            }
+            else
+            {
+                // Remove the value from the registry so that the application doesn't start
+                rkApp.DeleteValue("Agent", false);
+            }
+
         }
         private string GetMachineGuid() // получение GUID 
         {
@@ -190,12 +188,12 @@ namespace Agent.Model
         }
         public void NetworkSettingsChange() // сетевые настройки изменены
         {
-            Status = StatusMachine.LoadSettings;
+            status.LoadSettings = true;
             if (this.initiator != null)
                 this.initiator.Restart(); // перезапускаем сервер
             else
                 this.InitConnect();
-            Status = StatusMachine.Free;
+            status.LoadSettings = false;
         }
         public void InitConnect() // начальный запуск сервера
         {
@@ -208,6 +206,15 @@ namespace Agent.Model
         public void Stop() // остановить всё
         {
             initiator.Stop();
+        }
+        public void SetStatus()
+        {
+            if (Status.Free == true && initiator==null)
+                InitConnect();      // инициализируем подключение
+            if (status.Initiator == true)
+                initiator.Stop();
+            else if (initiator!=null && initiator.IsStart == false && status.LoadSettings==false)
+                this.initiator.Restart(); // перезапускаем сервер
         }
         #endregion
 
@@ -312,7 +319,7 @@ namespace Agent.Model
         {
             return allContractor;
         }
-        internal int GetCountSelectredContractor()
+        internal int GetCountSelectredContractor() // получить число выбранных исполнителей
         {
             int count=0;
             foreach (var t in allContractor)
@@ -321,16 +328,92 @@ namespace Agent.Model
             return count;
         }
         
-        internal void RemoveContractor(Contractor temp)
+        internal void SaveAllContractorToDB() // Добавить всех исполнителей в БД
+        {
+            SQLiteDriver DB = new SQLiteDriver();
+            foreach (var t in allContractor)
+            {
+                DB.AddIP(t.GetIPServer().ToString());
+            }
+            DB.Close();
+        }
+        internal void LoadAllContractorFromDB() // загрузить всех испонителей из БД
+        {
+            Thread th = new Thread(delegate ()
+            {
+                int i = 0;
+                SQLiteDriver DB = new SQLiteDriver();
+                List<string> allIP = DB.GetAllIP();
+                foreach (var t in allIP)
+                {
+                    ConnectToContractor(IPAddress.Parse(t), 1500);
+                    UpdProgress(i++, allIP.Count, "Загрузка из базы данных");
+                }
+                DB.Close();
+                UpdProgress(i++, allIP.Count, "Загрузка завершена");
+            });
+            th.IsBackground = true;
+            th.Start();
+        }
+        internal void AddContractor(TcpClient client) // добавить исполнителя
+        {
+            try
+            {
+                Contractor contractor = new Contractor(this, client);
+                if (contractor.Live == true)
+                {
+                    allContractor.Add(contractor);                    // в случае удачи досбавляем в список исполнителей
+                    allContractor[allContractor.Count - 1].NewMessage += GetPacket;
+                    RefreshView();
+                }
+            }
+            catch(Exception ex)
+            {
+                Log.Write(ex);
+            }
+        }
+        internal void RemoveContractor(Contractor temp) // удалить исполнителя
         {
             allContractor.Remove(temp);
             RefreshView();
+        }
+
+        private byte[] IPToByteArray(string IP) // перевод строкового представления IP в массив байт
+        {
+            string[] ip = IP.Split('.');
+            byte[] array = new byte[4];
+            for (int i = 0; i < 4; i++)
+                array[i] = Byte.Parse(ip[i]);
+            return array;
+        }
+        private byte[] GetNetworkIP(byte[] pointIP, byte[] mask) // получить адрес сети
+        {
+            byte[] networkIP = new byte[4];
+            for (int i = 0; i < 4; i++)
+                networkIP[i] = (byte)(pointIP[i] & mask[i]);
+            return networkIP;
+        }
+        private int GetCountIPinNetwork(byte[] mask) // Вычисление кол-ва IP по маске
+        {
+            return (256 - mask[0]) * (256 - mask[1]) * (256 - mask[2]) * (256 - mask[3]);
+        }
+        private bool IsCorrectIP(int a, int b, int c, int d, byte[] networkIP,out string cureIP) // проверка IP на правильность
+        {
+            cureIP = "0.0.0.0";
+            if (a != 255 && b != 255 && c != 255 && d != 0 && d != 255) // Не является ли IP широковещательным
+            {
+                cureIP = (a + networkIP[0]).ToString() + "." + (b + networkIP[1]).ToString() + "." + (c + networkIP[2]).ToString() + "." + (d + networkIP[3]).ToString();
+                return true;
+            }
+            else
+                return false;
+            
         }
         internal void RefreshContractorList() // обновить список клиентов
         {
             string name = "Обновсление списка исполнителей";
             int countEnd = 0;
-            int countAll = 254;
+            int countAll = 1;
             refreshContractor = true;
             RefreshView();
             UpdProgress(countEnd, countAll, name);
@@ -338,50 +421,60 @@ namespace Agent.Model
             {
                 lock (allContractor)
                 {
-                    IPAddress cureIP;                           // очередной IP
-                    StringBuilder headIP = new StringBuilder(); // начало IP
-                    string[] ipInBytes = Properties.Settings.Default.IP.Split('.');
-                    headIP.Append(ipInBytes[0]).Append(".").Append(ipInBytes[1]).Append(".").Append(ipInBytes[2]).Append("."); // на время пока маска 255.255.255.0
-                    Log.Write("Запущено обновление списка");
-                    Parallel.For(2, 254, tail => // перебираем все адреса с 2 до 254
-                    {
-                        cureIP = IPAddress.Parse(headIP.ToString() + tail.ToString()); // формируем конечный IP
-                        try
-                        {
-                            TcpClient client = new TcpClient();
+                    byte[] pointIP = IPToByteArray(Properties.Settings.Default.IP);
+                    byte[] mask = IPToByteArray(Properties.Settings.Default.Mask);
+                    byte[] networkIP = GetNetworkIP(pointIP, mask);
+                    countAll = GetCountIPinNetwork(mask);
 
-                            if (client.ConnectAsync(cureIP, Properties.Settings.Default.Port).Wait(1500)) // пытаемся с ним соединиться в течение 1,5 секунды
-                            {
-                                allContractor.Add(new Contractor(this, client));                    // в случае удачи досбавляем в список исполнителей
-                                allContractor[allContractor.Count - 1].NewMessage += GetPacket;
-                                RefreshView();
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Write(ex);
-                        }
-                        countEnd++;
-                        UpdProgress(countEnd, countAll, name);
-                    });
+                    Log.Write("Запущено обновление списка");
+                    // перебираем все адреса в соответствии с маской
+                    Parallel.For(0, 256 - mask[0], a =>
+                      {
+                          Parallel.For(0, 256 - mask[1], b =>
+                          {
+                              Parallel.For(0, 256 - mask[2], c =>
+                              {
+                                  Parallel.For(0, 256 - mask[3], d => 
+                                  {
+                                      try
+                                      {
+                                          string cureIP;
+                                          if (IsCorrectIP(a, b, c, d, networkIP, out cureIP))
+                                              ConnectToContractor(IPAddress.Parse(cureIP), 1500);
+                                      }
+                                      catch (Exception ex)
+                                      {
+                                          Log.Write(ex);
+                                      }
+                                      countEnd++;
+                                      UpdProgress(countEnd, countAll, name);
+                                  });
+                              });
+                          });
+                      });
                     Log.Write("Список обновлен");
                     refreshContractor = false;
                 }
                 RefreshView();
+                SaveAllContractorToDB();
                 UpdProgress(countEnd, countAll, "Обновление завершено");
             });
             th.IsBackground = true;
             th.Start();
         }
-        internal void ConnectToContractor(IPAddress cureIP)
+        internal void ConnectToContractor(IPAddress cureIP, int timeout, int port=-1) // подключаемся к заданному исполнителю
         {
-            TcpClient client = new TcpClient();
-            client.Connect(cureIP, Properties.Settings.Default.Port); // пытаемся с ним соединиться в течение 15 секунд
-            if (client.Connected)
+            try
             {
-                allContractor.Add(new Contractor(this, client));                    // в случае удачи досбавляем в список исполнителей
-                allContractor[allContractor.Count - 1].NewMessage += GetPacket;
-                RefreshView();
+                if (port == -1)
+                    port = Properties.Settings.Default.Port;
+                TcpClient client = new TcpClient();
+                if (client.ConnectAsync(cureIP, port).Wait(timeout)) // пытаемся соединиться с клиентом
+                    AddContractor(client);
+            }
+            catch(Exception ex)
+            {
+                Log.Write(ex);
             }
         }
         internal void SelectContractor(int n) // выбрать для вычислений машину n
@@ -630,7 +723,7 @@ namespace Agent.Model
         #region Работа с инициатором в качестве исполнителя
         void RunExe() // запускаем полученный или имеющийся exe
         {
-            Status = StatusMachine.Calculate;
+            status.Calculate = true;
             mainProc = new Process();
             Thread.Sleep(1000);
             mainProc.StartInfo.FileName = exeFile.FullName;
@@ -645,9 +738,10 @@ namespace Agent.Model
             try
             {
                 Thread.Sleep(1000);
+                status.Calculate = false;
                 if (isInitiator == false)
                 {
-                    Status = StatusMachine.WaitEndCalc;
+                    status.WaitEndCalc=true;
                     initiator.SendMessage(new Packet() { type = PacketType.FinishCalc, id = infoMe.id }); // отправляем сообщение о завершении вычислений    
                 }
                 else
@@ -669,6 +763,7 @@ namespace Agent.Model
                     notDiffDataFile.Clear();
                     diffDataFile.Clear();
                 }
+                status.WaitEndCalc = false;
             }
             catch (Exception ex)
             {
@@ -689,7 +784,7 @@ namespace Agent.Model
                 switch (pkt.type)
                 {
                     case PacketType.Hello:
-                        Status = StatusMachine.Wait;
+                        status.Wait=true;
                         ((Initiator)sender).SendInfoMe();
                         sender.Locked = false;
                         break;
@@ -710,9 +805,9 @@ namespace Agent.Model
                             foreach (var t in allContractor)
                                 t.SendMessage(new Packet() { type = PacketType.Free, id = infoMe.id });
                             allContractor.Clear();
-                            CalculateTimeEnd=AllTimeEnd = DateTime.Now;
+                            CalculateTimeEnd = AllTimeEnd = DateTime.Now;
                             isCalculate = false;
-                            UpdProgress(2,2, "Вычисления завершены");
+                            UpdProgress(2, 2, "Вычисления завершены");
                             RefreshView();
                             Log.ShowMessage("Общее время вычислений: " + (AllTimeEnd - AllTimeStart).TotalSeconds + " сек\nВремя на передачу файлов: " + (UploadTimeEnd - UploadTimeStart).TotalSeconds + " сек\nВремя рассчетов: " + (CalculateTimeEnd - CalculateTimeStart).TotalSeconds + " сек");
                         }
@@ -724,12 +819,18 @@ namespace Agent.Model
                         break;
                     case PacketType.StopCalc:
                         BreakCalculate();
+                        status.WaitEndCalc = false;
+                        status.Wait = false;
+                        status.Calculate = false;
+                        Log.Write("Перезапускаем приложение по причине прерывания вычислений");
                         Programm.Reset();
                         sender.Locked = false;
                         break;
                     case PacketType.Free:
-                        Status = StatusMachine.Free;
+                        status.WaitEndCalc = false;
+                        status.Wait = false;
                         Programm.Reset();
+                        Log.Write("Перезапускаем приложение по причине освобождения от вычислений");
                         sender.Locked = false;
                         break;
                     case PacketType.NotDeleteFiles:
@@ -742,7 +843,7 @@ namespace Agent.Model
                 }
             }
             else if (message.CompareTo("ConnectToInit") == 0)
-                Status = StatusMachine.Wait;
+                status.Wait = true;
         }
         #endregion
     }

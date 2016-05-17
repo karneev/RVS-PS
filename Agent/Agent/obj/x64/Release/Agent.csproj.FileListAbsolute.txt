@@ -1,0 +1,13 @@
+D:\SystemDir\GitHub\RVS-PS\Agent\Agent\bin\x64\Release\Agent.exe.config
+D:\SystemDir\GitHub\RVS-PS\Agent\Agent\bin\x64\Release\Agent.exe
+D:\SystemDir\GitHub\RVS-PS\Agent\Agent\bin\x64\Release\Agent.pdb
+D:\SystemDir\GitHub\RVS-PS\Agent\Agent\obj\x64\Release\Agent.csprojResolveAssemblyReference.cache
+D:\SystemDir\GitHub\RVS-PS\Agent\Agent\obj\x64\Release\Agent.View.AboutBox.resources
+D:\SystemDir\GitHub\RVS-PS\Agent\Agent\obj\x64\Release\Agent.View.AgentForm.resources
+D:\SystemDir\GitHub\RVS-PS\Agent\Agent\obj\x64\Release\Agent.View.CalculateForm.resources
+D:\SystemDir\GitHub\RVS-PS\Agent\Agent\obj\x64\Release\Agent.Properties.Resources.resources
+D:\SystemDir\GitHub\RVS-PS\Agent\Agent\obj\x64\Release\Agent.View.FindIPForm.resources
+D:\SystemDir\GitHub\RVS-PS\Agent\Agent\obj\x64\Release\Agent.View.SettingForm.resources
+D:\SystemDir\GitHub\RVS-PS\Agent\Agent\obj\x64\Release\Agent.csproj.GenerateResource.Cache
+D:\SystemDir\GitHub\RVS-PS\Agent\Agent\obj\x64\Release\Agent.exe
+D:\SystemDir\GitHub\RVS-PS\Agent\Agent\obj\x64\Release\Agent.pdb

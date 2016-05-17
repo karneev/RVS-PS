@@ -38,21 +38,26 @@
             this.ipBox1 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.connectButton = new System.Windows.Forms.Button();
+            this.portTextBox = new System.Windows.Forms.TextBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
             this.ipPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // ipPanel2
             // 
             this.ipPanel2.Controls.Add(this.pointBox6);
+            this.ipPanel2.Controls.Add(this.portTextBox);
             this.ipPanel2.Controls.Add(this.pointBox5);
             this.ipPanel2.Controls.Add(this.pointBox4);
             this.ipPanel2.Controls.Add(this.ipBox4);
             this.ipPanel2.Controls.Add(this.ipBox3);
             this.ipPanel2.Controls.Add(this.ipBox2);
             this.ipPanel2.Controls.Add(this.ipBox1);
+            this.ipPanel2.Controls.Add(this.textBox2);
+            this.ipPanel2.Controls.Add(this.portTextBox);
             this.ipPanel2.Location = new System.Drawing.Point(63, 6);
             this.ipPanel2.Name = "ipPanel2";
-            this.ipPanel2.Size = new System.Drawing.Size(136, 19);
+            this.ipPanel2.Size = new System.Drawing.Size(187, 19);
             this.ipPanel2.TabIndex = 8;
             // 
             // pointBox6
@@ -146,25 +151,46 @@
             // 
             // connectButton
             // 
-            this.connectButton.Location = new System.Drawing.Point(50, 31);
+            this.connectButton.Location = new System.Drawing.Point(85, 31);
             this.connectButton.Name = "connectButton";
             this.connectButton.Size = new System.Drawing.Size(111, 23);
-            this.connectButton.TabIndex = 12;
+            this.connectButton.TabIndex = 5;
             this.connectButton.Text = "Подключиться";
             this.connectButton.UseVisualStyleBackColor = true;
             this.connectButton.Click += new System.EventHandler(this.connectButton_Click);
+            // 
+            // portTextBox
+            // 
+            this.portTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.portTextBox.Location = new System.Drawing.Point(143, 3);
+            this.portTextBox.Name = "portTextBox";
+            this.portTextBox.Size = new System.Drawing.Size(47, 13);
+            this.portTextBox.TabIndex = 4;
+            // 
+            // textBox2
+            // 
+            this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox2.Enabled = false;
+            this.textBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.textBox2.Location = new System.Drawing.Point(196, 7);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(10, 16);
+            this.textBox2.TabIndex = 14;
+            this.textBox2.Text = ":";
+            this.textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // FindIPForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(209, 58);
+            this.ClientSize = new System.Drawing.Size(262, 58);
+            this.Controls.Add(this.textBox2);
             this.Controls.Add(this.connectButton);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.ipPanel2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "FindIPForm";
-            this.Text = "FindIPForm";
+            this.Text = "Ручной поиск";
             this.ipPanel2.ResumeLayout(false);
             this.ipPanel2.PerformLayout();
             this.ResumeLayout(false);
@@ -184,5 +210,7 @@
         private System.Windows.Forms.TextBox ipBox1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button connectButton;
+        private System.Windows.Forms.TextBox portTextBox;
+        private System.Windows.Forms.TextBox textBox2;
     }
 }

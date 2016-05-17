@@ -44,6 +44,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.saveButton = new System.Windows.Forms.Button();
             this.ipComboBox = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.autoRunCheckBox = new System.Windows.Forms.CheckBox();
             this.ipPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -56,7 +58,7 @@
             this.ipPanel2.Controls.Add(this.maskBox3);
             this.ipPanel2.Controls.Add(this.maskBox2);
             this.ipPanel2.Controls.Add(this.maskBox1);
-            this.ipPanel2.Location = new System.Drawing.Point(80, 67);
+            this.ipPanel2.Location = new System.Drawing.Point(75, 100);
             this.ipPanel2.Name = "ipPanel2";
             this.ipPanel2.Size = new System.Drawing.Size(136, 19);
             this.ipPanel2.TabIndex = 7;
@@ -144,7 +146,7 @@
             // portBox1
             // 
             this.portBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.portBox1.Location = new System.Drawing.Point(80, 92);
+            this.portBox1.Location = new System.Drawing.Point(75, 125);
             this.portBox1.MaxLength = 5;
             this.portBox1.Name = "portBox1";
             this.portBox1.Size = new System.Drawing.Size(38, 13);
@@ -157,16 +159,16 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(10, 9);
+            this.label1.Location = new System.Drawing.Point(28, 49);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(210, 17);
+            this.label1.Size = new System.Drawing.Size(155, 17);
             this.label1.TabIndex = 9;
-            this.label1.Text = "Сетевые настройки агента";
+            this.label1.Text = "Сетевые настройки";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(10, 45);
+            this.label2.Location = new System.Drawing.Point(5, 78);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(50, 13);
             this.label2.TabIndex = 10;
@@ -175,7 +177,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(10, 70);
+            this.label3.Location = new System.Drawing.Point(5, 103);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(66, 13);
             this.label3.TabIndex = 11;
@@ -184,7 +186,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(10, 92);
+            this.label4.Location = new System.Drawing.Point(5, 125);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(32, 13);
             this.label4.TabIndex = 12;
@@ -192,7 +194,7 @@
             // 
             // saveButton
             // 
-            this.saveButton.Location = new System.Drawing.Point(78, 111);
+            this.saveButton.Location = new System.Drawing.Point(73, 144);
             this.saveButton.Name = "saveButton";
             this.saveButton.Size = new System.Drawing.Size(75, 23);
             this.saveButton.TabIndex = 13;
@@ -204,17 +206,39 @@
             // 
             this.ipComboBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
             this.ipComboBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-            this.ipComboBox.Location = new System.Drawing.Point(80, 42);
+            this.ipComboBox.Location = new System.Drawing.Point(75, 75);
             this.ipComboBox.Name = "ipComboBox";
             this.ipComboBox.Size = new System.Drawing.Size(136, 21);
             this.ipComboBox.TabIndex = 14;
             this.ipComboBox.TextChanged += new System.EventHandler(this.ipComboBox_TextChanged);
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label5.Location = new System.Drawing.Point(28, 9);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(174, 17);
+            this.label5.TabIndex = 15;
+            this.label5.Text = "Системные настройки";
+            // 
+            // autoRunCheckBox
+            // 
+            this.autoRunCheckBox.AutoSize = true;
+            this.autoRunCheckBox.Location = new System.Drawing.Point(22, 29);
+            this.autoRunCheckBox.Name = "autoRunCheckBox";
+            this.autoRunCheckBox.Size = new System.Drawing.Size(150, 17);
+            this.autoRunCheckBox.TabIndex = 17;
+            this.autoRunCheckBox.Text = "Автозапуск приложения";
+            this.autoRunCheckBox.UseVisualStyleBackColor = true;
+            // 
             // SettingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(227, 142);
+            this.ClientSize = new System.Drawing.Size(227, 171);
+            this.Controls.Add(this.autoRunCheckBox);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.ipComboBox);
             this.Controls.Add(this.saveButton);
             this.Controls.Add(this.label4);
@@ -230,7 +254,6 @@
             this.Name = "SettingForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Настройки";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SettingForm_FormClosing);
             this.ipPanel2.ResumeLayout(false);
             this.ipPanel2.PerformLayout();
             this.ResumeLayout(false);
@@ -254,5 +277,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.ComboBox ipComboBox;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.CheckBox autoRunCheckBox;
     }
 }

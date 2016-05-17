@@ -3,6 +3,8 @@ using System.IO;
 using System.Windows.Forms;
 using Agent.Model;
 using Agent.Enums;
+using System.Net;
+using System.Threading;
 
 namespace Agent.View
 {
@@ -89,13 +91,11 @@ namespace Agent.View
                 }
                 if(agent.refreshContractor==false)
                 {
-                    this.machineInfoPanel.Enabled = true;
                     this.refreshButton.Enabled = true;
                     this.refreshButton.Text = "Обновить список";
                 }
                 else
                 {
-                    this.machineInfoPanel.Enabled = false;
                     this.refreshButton.Enabled = false;
                     this.refreshButton.Text = "Идет обновление списка";
                 }
@@ -110,8 +110,8 @@ namespace Agent.View
             }
             else
             {
-                int sumRam = 0;
-                int sumCpu = 0;
+                int sumRam = agent.InfoMe.vRam;
+                int sumCpu = agent.InfoMe.vCPU;
                 this.selectedMachineListBox.Items.Clear();       // очищаем список выбранных машин
                 foreach (Contractor i in agent.GetAllContractor()) // заполняем список выбранных машин
                 {
@@ -172,9 +172,11 @@ namespace Agent.View
 
         private void CalculateForm_FormClosed(object sender, FormClosedEventArgs e) // закрытие формы рассчетов (не закончено)
         {
-            agent.Status = StatusMachine.Free; // меняем статус на "свободен"
-            if(started == true)
+            if (started == true)
+            {
+                Log.Write("Перезагрузка т.к. форма рассчетов закрыта");
                 Programm.Reset();
+            }
         }
 
         private void selectRunFileButton_Click(object sender, EventArgs e) // установка файла exe
@@ -267,7 +269,6 @@ namespace Agent.View
                 }
             }
         }
-
         private void dataDiffFileList_KeyDown(object sender, KeyEventArgs e) // Пытаемся удалить файл данных
         {
             if(e.KeyCode==Keys.Delete && this.dataDiffFileList.Text.CompareTo("Добавить файл") != 0) // нажали на Delete, но при этом выбрал не "Добавить файл"
@@ -275,6 +276,7 @@ namespace Agent.View
                 agent.RemoveDiffDataFile(this.dataDiffFileList.Text);   // удаляем файл
             }
         }
+
         private void dataNotDiffFileList_MouseDoubleClick(object sender, MouseEventArgs e) // Пытаемся добавить или заменить файл данных
         {
             if (this.openDataFileDialog.ShowDialog() == DialogResult.OK)
@@ -296,14 +298,14 @@ namespace Agent.View
                 }
             }
         }
-
         private void dataNotDiffFileList_KeyDown(object sender, KeyEventArgs e) // Пытаемся удалить файл данных
         {
-            if (e.KeyCode == Keys.Delete && this.dataDiffFileList.Text.CompareTo("Добавить файл") != 0) // нажали на Delete, но при этом выбрал не "Добавить файл"
+            if (e.KeyCode == Keys.Delete && this.dataNotDiffFileList.Text.CompareTo("Добавить файл") != 0) // нажали на Delete, но при этом выбрал не "Добавить файл"
             {
-                agent.RemoveNotDiffDataFile(this.dataDiffFileList.Text);   // удаляем файл
+                agent.RemoveNotDiffDataFile(this.dataNotDiffFileList.Text);   // удаляем файл
             }
         }
+
 
         private void unselectButton_Click(object sender, EventArgs e) // отменить выбор отмеченных машин
         {
@@ -342,6 +344,11 @@ namespace Agent.View
             CheckedListBox clb = (CheckedListBox)sender;
             if(clb.SelectedIndex!=-1)
                 checkedMechineListBox.SetItemChecked(clb.SelectedIndex, !clb.GetItemChecked(clb.SelectedIndex));
+        }
+
+        private void loadFromDataBaseButton_Click(object sender, EventArgs e)
+        {
+            agent.LoadAllContractorFromDB();
         }
     }
 }

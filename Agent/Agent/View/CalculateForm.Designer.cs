@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.machineSelectPanel = new System.Windows.Forms.Panel();
+            this.loadFromDataBaseButton = new System.Windows.Forms.Button();
             this.findIP = new System.Windows.Forms.Button();
             this.checkLabel = new System.Windows.Forms.Label();
             this.refreshButton = new System.Windows.Forms.Button();
@@ -68,6 +69,7 @@
             // 
             // machineSelectPanel
             // 
+            this.machineSelectPanel.Controls.Add(this.loadFromDataBaseButton);
             this.machineSelectPanel.Controls.Add(this.findIP);
             this.machineSelectPanel.Controls.Add(this.checkLabel);
             this.machineSelectPanel.Controls.Add(this.refreshButton);
@@ -79,11 +81,21 @@
             this.machineSelectPanel.Size = new System.Drawing.Size(195, 313);
             this.machineSelectPanel.TabIndex = 0;
             // 
+            // loadFromDataBaseButton
+            // 
+            this.loadFromDataBaseButton.Location = new System.Drawing.Point(103, 225);
+            this.loadFromDataBaseButton.Name = "loadFromDataBaseButton";
+            this.loadFromDataBaseButton.Size = new System.Drawing.Size(89, 23);
+            this.loadFromDataBaseButton.TabIndex = 8;
+            this.loadFromDataBaseButton.Text = "Загр. из БД";
+            this.loadFromDataBaseButton.UseVisualStyleBackColor = true;
+            this.loadFromDataBaseButton.Click += new System.EventHandler(this.loadFromDataBaseButton_Click);
+            // 
             // findIP
             // 
             this.findIP.Location = new System.Drawing.Point(3, 225);
             this.findIP.Name = "findIP";
-            this.findIP.Size = new System.Drawing.Size(188, 23);
+            this.findIP.Size = new System.Drawing.Size(90, 23);
             this.findIP.TabIndex = 6;
             this.findIP.Text = "Найти по IP";
             this.findIP.UseVisualStyleBackColor = true;
@@ -189,9 +201,9 @@
             this.generalSelectLabel.AutoSize = true;
             this.generalSelectLabel.Location = new System.Drawing.Point(22, 4);
             this.generalSelectLabel.Name = "generalSelectLabel";
-            this.generalSelectLabel.Size = new System.Drawing.Size(189, 13);
+            this.generalSelectLabel.Size = new System.Drawing.Size(183, 13);
             this.generalSelectLabel.TabIndex = 9;
-            this.generalSelectLabel.Text = "Мощность всех выборанных машин";
+            this.generalSelectLabel.Text = "Мощность всех выбранных машин";
             // 
             // cpuTextBox
             // 
@@ -283,7 +295,7 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(10, 147);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(157, 13);
+            this.label1.Size = new System.Drawing.Size(154, 13);
             this.label1.TabIndex = 16;
             this.label1.Text = "Файлы данных (неделимые):";
             // 
@@ -366,6 +378,7 @@
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(100, 16);
             this.progressBar.Step = 1;
+            this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             // 
             // cureProcessStatusLabel
             // 
@@ -433,5 +446,6 @@
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripProgressBar progressBar;
         private System.Windows.Forms.ToolStripStatusLabel cureProcessStatusLabel;
+        private System.Windows.Forms.Button loadFromDataBaseButton;
     }
 }
