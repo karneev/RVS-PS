@@ -29,7 +29,7 @@ namespace Agent.Model
             set { locked = value; }
             get { return locked; }
         }
-
+        public bool Live { get; private set; }
         public bool Selected
         {
             get { return selected; }
@@ -51,20 +51,20 @@ namespace Agent.Model
             // ждем ответа 5 секунд, иначе отбрасываем этого клиента (возможно, на другой стороне не Агент)
             try
             {
-                bool connected = false;
+                Live = false;
                 Thread th2 = new Thread(delegate ()
                 {
                     Thread.Sleep(5000);
-                    if (connected == false)
+                    if (Live == false)
                     {
                         mainStream.Close();
-                        throw (new Exception("Не получен ответ от исполнителя"));
+                        return;
                     }
                 });
                 th2.IsBackground = true;
                 th2.Start();
                 this.info = (MachineInfo)bf.Deserialize(mainStream);
-                connected = true;
+                Live = true;
                 th = new Thread(RunPacketExchange);
                 th.IsBackground = true;
                 th.Start();

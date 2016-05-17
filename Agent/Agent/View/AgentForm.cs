@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using System.Threading;
 using Agent.Model;
 using Agent.Enums;
+using System.IO;
 
 namespace Agent.View
 {
@@ -23,10 +24,23 @@ namespace Agent.View
             // Загрузить настройки. Если их нет - принудительно запросить
             try
             {
-                if (Properties.Settings.Default.IP.CompareTo("127.0.0.1") == 0)
+                string md = Environment.GetFolderPath(Environment.SpecialFolder.Personal);//путь к Документам
+                if (File.Exists(md + "\\Agent\\" + "Settings.conf") == false)
                 {
-                    MessageBox.Show("Настройки не заданы!\nЗадайте настройки перед началом работы!");
-                    (new SettingForm(ref this.agent)).ShowDialog();
+                    if (Properties.Settings.Default.IP.CompareTo("127.0.0.1") == 0)
+                    {
+                        MessageBox.Show("Настройки не заданы!\nЗадайте настройки перед началом работы!");
+                        (new SettingForm(ref this.agent)).ShowDialog();
+                    }
+                    else
+                    {
+                        SettingForm.SaveSettingInFile();
+                    }
+                }
+                else
+                {
+                    SettingForm.LoadSettingFromFile();
+                    agent.UpdateAutoRun();
                 }
             }
             catch (Exception ex)

@@ -254,7 +254,6 @@
             this.Name = "SettingForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Настройки";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SettingForm_FormClosing);
             this.ipPanel2.ResumeLayout(false);
             this.ipPanel2.PerformLayout();
             this.ResumeLayout(false);

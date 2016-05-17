@@ -369,9 +369,12 @@ namespace Agent.Model
             try
             {
                 Contractor contractor = new Contractor(this, client);
-                allContractor.Add(contractor);                    // в случае удачи досбавляем в список исполнителей
-                allContractor[allContractor.Count - 1].NewMessage += GetPacket;
-                RefreshView();
+                if (contractor.Live == true)
+                {
+                    allContractor.Add(contractor);                    // в случае удачи досбавляем в список исполнителей
+                    allContractor[allContractor.Count - 1].NewMessage += GetPacket;
+                    RefreshView();
+                }
             }
             catch(Exception ex)
             {

@@ -162,12 +162,40 @@ namespace Agent.View
                 port = 56001;
             Properties.Settings.Default.Port = port;
             Properties.Settings.Default.Save();
+            SaveSettingInFile();
             agent.NetworkSettingsChange();
             this.Close();
         }
-
-        private void SettingForm_FormClosing(object sender, FormClosingEventArgs e)
+        static public void SaveSettingInFile()
         {
+            string md = Environment.GetFolderPath(Environment.SpecialFolder.Personal);//путь к Документам
+            if (Directory.Exists(md + "\\Agent") == false)
+            {
+                Directory.CreateDirectory(md + "\\Agent");
+            }
+            FileInfo fi = new FileInfo(md + "\\Agent\\"+"Settings.conf");
+            if (fi.Exists == true)
+                fi.Delete();
+            StreamWriter sw=new StreamWriter(fi.Create());
+            sw.WriteLine(Properties.Settings.Default.IP);
+            sw.WriteLine(Properties.Settings.Default.Mask);
+            sw.WriteLine(Properties.Settings.Default.Port);
+            sw.WriteLine(Properties.Settings.Default.AutoRun);
+            sw.Close();
+        }
+        static public void LoadSettingFromFile()
+        {
+            string md = Environment.GetFolderPath(Environment.SpecialFolder.Personal);//путь к Документам
+            FileInfo fi = new FileInfo(md + "\\Agent\\" + "Settings.conf");
+            if (fi.Exists == true)
+            {
+                StreamReader sw = new StreamReader(fi.Open(FileMode.Open));
+                Properties.Settings.Default.IP=sw.ReadLine();
+                Properties.Settings.Default.Mask=sw.ReadLine();
+                Properties.Settings.Default.Port=int.Parse(sw.ReadLine());
+                Properties.Settings.Default.AutoRun=bool.Parse(sw.ReadLine());
+                sw.Close();
+            }
         }
     }
 }
