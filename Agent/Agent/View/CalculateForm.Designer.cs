@@ -201,9 +201,9 @@
             this.generalSelectLabel.AutoSize = true;
             this.generalSelectLabel.Location = new System.Drawing.Point(22, 4);
             this.generalSelectLabel.Name = "generalSelectLabel";
-            this.generalSelectLabel.Size = new System.Drawing.Size(189, 13);
+            this.generalSelectLabel.Size = new System.Drawing.Size(183, 13);
             this.generalSelectLabel.TabIndex = 9;
-            this.generalSelectLabel.Text = "Мощность всех выборанных машин";
+            this.generalSelectLabel.Text = "Мощность всех выбранных машин";
             // 
             // cpuTextBox
             // 

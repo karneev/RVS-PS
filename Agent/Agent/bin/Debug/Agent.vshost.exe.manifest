@@ -4,7 +4,7 @@
   <description asmv2:iconFile="mainIcon.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="Agent" version="1.0.5982.4757" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="Agent" version="1.0.5982.8379" language="neutral" processorArchitecture="msil" />
     <commandLine file="Agent.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Agent.exe" size="988072">
-      <assemblyIdentity name="Agent" version="1.0.5982.4757" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Agent.exe" size="990632">
+      <assemblyIdentity name="Agent" version="1.0.5982.8379" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>1iHt2GLD8wWI5U/tx2fYG3dfRQa4VAqvo/1TYZFipsg=</dsig:DigestValue>
+        <dsig:DigestValue>30x5q4N1cgNUWOnQeQrnZpy74TrjB1G06Dn041cZc3k=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

@@ -172,9 +172,11 @@ namespace Agent.View
 
         private void CalculateForm_FormClosed(object sender, FormClosedEventArgs e) // закрытие формы рассчетов (не закончено)
         {
-            agent.Status = StatusMachine.Free; // меняем статус на "свободен"
-            if(started == true)
+            if (started == true)
+            {
+                Log.Write("Перезагрузка т.к. форма рассчетов закрыта");
                 Programm.Reset();
+            }
         }
 
         private void selectRunFileButton_Click(object sender, EventArgs e) // установка файла exe

@@ -19,6 +19,7 @@ namespace Agent.Model
         #region События системы
         public event RefreshData RefreshView;
         public event UpdateProgressBar UpdProgress;
+        
         #endregion
 
         #region Основные переменные
@@ -41,6 +42,7 @@ namespace Agent.Model
         private Initiator initiator;            // информация о инициаторе
         private Process mainProc;           // основной процесс вычислений
 
+        private StatusMachine status;
         private MachineInfo infoMe;         // Информация о себе
         #endregion
 
@@ -56,26 +58,16 @@ namespace Agent.Model
         }
         public StatusMachine Status
         {
-            get { return infoMe.Status; }
+            get
+            {
+                return this.status;
+            }
+        }
+        public bool StatusInitiator
+        {
             set
             {
-                infoMe.Status = value;
-                if (initiator != null)
-                {
-                    if (infoMe.Status == StatusMachine.Initiator)
-                    {
-                        isInitiator = true;
-                        initiator.Stop();
-                    }
-                    else
-                    {
-                        if (infoMe.Status == StatusMachine.Free)
-                        {
-                            initiator.Start();
-                            isInitiator = false;
-                        }
-                    }
-                }
+                status.Initiator = value;
             }
         }
         public MachineInfo InfoMe
@@ -112,27 +104,17 @@ namespace Agent.Model
         #endregion
 
         #region Запуск системы и добавление/удаление слушателей
-        public AgentSystem() { }
-        internal void AddListener(SetStat listener) // добавить слушателя изменения статуса машины
-        {
-            infoMe.StatusChange += listener;
-        }
-        internal void RemoveListener(SetStat listener) // удалить слушателя изменения статуса машины
-        {
-            infoMe.StatusChange -= listener;
-        }
+        public AgentSystem() { StatusMachine.StatusChange += SetStatus; }
         #endregion
 
         #region Тестирование системы и инициализация подключения
         public void TestSystem() // тестирование системы
         {
-            infoMe.Status = StatusMachine.Testing; // начало тестирования
+            status.Testing = true; // начало тестирования
             infoMe.id = GetMachineGuid().GetHashCode(); // получение хеш-кода GUID 
             infoMe.vRam = GetMachineRAM(); // получение доступного объема RAM
             infoMe.vCPU = GetMachineCPUMHz(); // получаение тактовой частоты процессора
-            if(Properties.Settings.Default.IP.CompareTo("127.0.0.1")!=0)
-                InitConnect();      // инициализируем подключение
-            infoMe.Status = StatusMachine.Free; // свободен           
+            status.Testing = false; // свободен           
         }
         public void UpdateAutoRun() // изменить состояние ключа
         {
@@ -206,12 +188,12 @@ namespace Agent.Model
         }
         public void NetworkSettingsChange() // сетевые настройки изменены
         {
-            Status = StatusMachine.LoadSettings;
+            status.LoadSettings = true;
             if (this.initiator != null)
                 this.initiator.Restart(); // перезапускаем сервер
             else
                 this.InitConnect();
-            Status = StatusMachine.Free;
+            status.LoadSettings = false;
         }
         public void InitConnect() // начальный запуск сервера
         {
@@ -224,6 +206,15 @@ namespace Agent.Model
         public void Stop() // остановить всё
         {
             initiator.Stop();
+        }
+        public void SetStatus()
+        {
+            if (Status.Free == true && initiator==null)
+                InitConnect();      // инициализируем подключение
+            if (status.Initiator == true)
+                initiator.Stop();
+            else if (initiator!=null && initiator.IsStart == false && status.LoadSettings==false)
+                this.initiator.Restart(); // перезапускаем сервер
         }
         #endregion
 
@@ -732,7 +723,7 @@ namespace Agent.Model
         #region Работа с инициатором в качестве исполнителя
         void RunExe() // запускаем полученный или имеющийся exe
         {
-            Status = StatusMachine.Calculate;
+            status.Calculate = true;
             mainProc = new Process();
             Thread.Sleep(1000);
             mainProc.StartInfo.FileName = exeFile.FullName;
@@ -747,9 +738,10 @@ namespace Agent.Model
             try
             {
                 Thread.Sleep(1000);
+                status.Calculate = false;
                 if (isInitiator == false)
                 {
-                    Status = StatusMachine.WaitEndCalc;
+                    status.WaitEndCalc=true;
                     initiator.SendMessage(new Packet() { type = PacketType.FinishCalc, id = infoMe.id }); // отправляем сообщение о завершении вычислений    
                 }
                 else
@@ -771,6 +763,7 @@ namespace Agent.Model
                     notDiffDataFile.Clear();
                     diffDataFile.Clear();
                 }
+                status.WaitEndCalc = false;
             }
             catch (Exception ex)
             {
@@ -791,7 +784,7 @@ namespace Agent.Model
                 switch (pkt.type)
                 {
                     case PacketType.Hello:
-                        Status = StatusMachine.Wait;
+                        status.Wait=true;
                         ((Initiator)sender).SendInfoMe();
                         sender.Locked = false;
                         break;
@@ -812,9 +805,9 @@ namespace Agent.Model
                             foreach (var t in allContractor)
                                 t.SendMessage(new Packet() { type = PacketType.Free, id = infoMe.id });
                             allContractor.Clear();
-                            CalculateTimeEnd=AllTimeEnd = DateTime.Now;
+                            CalculateTimeEnd = AllTimeEnd = DateTime.Now;
                             isCalculate = false;
-                            UpdProgress(2,2, "Вычисления завершены");
+                            UpdProgress(2, 2, "Вычисления завершены");
                             RefreshView();
                             Log.ShowMessage("Общее время вычислений: " + (AllTimeEnd - AllTimeStart).TotalSeconds + " сек\nВремя на передачу файлов: " + (UploadTimeEnd - UploadTimeStart).TotalSeconds + " сек\nВремя рассчетов: " + (CalculateTimeEnd - CalculateTimeStart).TotalSeconds + " сек");
                         }
@@ -826,12 +819,18 @@ namespace Agent.Model
                         break;
                     case PacketType.StopCalc:
                         BreakCalculate();
+                        status.WaitEndCalc = false;
+                        status.Wait = false;
+                        status.Calculate = false;
+                        Log.Write("Перезапускаем приложение по причине прерывания вычислений");
                         Programm.Reset();
                         sender.Locked = false;
                         break;
                     case PacketType.Free:
-                        Status = StatusMachine.Free;
+                        status.WaitEndCalc = false;
+                        status.Wait = false;
                         Programm.Reset();
+                        Log.Write("Перезапускаем приложение по причине освобождения от вычислений");
                         sender.Locked = false;
                         break;
                     case PacketType.NotDeleteFiles:
@@ -844,7 +843,7 @@ namespace Agent.Model
                 }
             }
             else if (message.CompareTo("ConnectToInit") == 0)
-                Status = StatusMachine.Wait;
+                status.Wait = true;
         }
         #endregion
     }

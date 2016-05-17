@@ -59,8 +59,11 @@ namespace Agent.Model
             catch (Exception ex)
             {
                 Log.Write(ex);
-                if (agent.Status == StatusMachine.Wait || agent.Status == StatusMachine.WaitEndCalc)
+                if (agent.Status.Free == false && agent.Status.Initiator==false && agent.Status.LoadSettings == false)
+                {
+                    Log.Write("Перезагрузка по причине потери инициатора и мы не свободны");
                     Programm.Reset();
+                }
                 if(mainStream!=null)
                     mainStream.Close();
             }
