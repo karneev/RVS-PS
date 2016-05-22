@@ -482,7 +482,7 @@
     <value>CenterScreen</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-    <value>Агент</value>
+    <value>Агент РВС ПС</value>
   </data>
   <data name="&gt;&gt;agentNotifyIcon.Name" xml:space="preserve">
     <value>agentNotifyIcon</value>

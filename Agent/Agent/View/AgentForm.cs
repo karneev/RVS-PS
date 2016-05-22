@@ -9,11 +9,13 @@ namespace Agent.View
 {
     public partial class AgentForm : Form
     {
+        public SilentUpdater SilentUpdater { get; set; }
         AgentSystem agent;
         FormWindowState formerState; // Статус окна (свернуто/развернуто)
         internal AgentForm(AgentSystem agent)
         {
             InitializeComponent();
+            SilentUpdater = new SilentUpdater(agent);
             this.Visible = true;
             this.agent = agent;
             StatusMachine.StatusChange+=setStatus;
@@ -40,7 +42,6 @@ namespace Agent.View
                 else
                 {
                     SettingForm.LoadSettingFromFile();
-                    agent.UpdateAutoRun();
                 }
             }
             catch (Exception ex)
@@ -48,6 +49,10 @@ namespace Agent.View
                 Log.Write(ex);
                 MessageBox.Show("Настройки не заданы!\nЗадайте настройки перед началом работы!");
                 (new SettingForm(ref this.agent)).ShowDialog();
+            }
+            finally
+            {
+                agent.UpdateAutoRun();
             }
         }
         private void setStatus()

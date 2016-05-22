@@ -342,8 +342,18 @@ namespace Agent.View
         private void checkedMechineListBox_MouseClick(object sender, MouseEventArgs e)
         {
             CheckedListBox clb = (CheckedListBox)sender;
-            if(clb.SelectedIndex!=-1)
+            if (e.Button == MouseButtons.Right && clb.Items.Count != 0)
+            {
+                bool en = checkedMechineListBox.GetItemChecked(0);
+                for (int i = 0; i < clb.Items.Count; i++)
+                {
+                    checkedMechineListBox.SetItemChecked(i, !en);
+                }
+            }
+            else if (e.Button == MouseButtons.Left && clb.SelectedIndex != -1)
+            {
                 checkedMechineListBox.SetItemChecked(clb.SelectedIndex, !clb.GetItemChecked(clb.SelectedIndex));
+            }
         }
 
         private void loadFromDataBaseButton_Click(object sender, EventArgs e)

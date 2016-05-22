@@ -119,16 +119,21 @@ namespace Agent.Model
         public void UpdateAutoRun() // изменить состояние ключа
         {
             RegistryKey rkApp = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            rkApp.DeleteValue("Agent", false);
+            string userDir = Environment.GetFolderPath(Environment.SpecialFolder.Programs)+ @"\НГТУ АВТФ\РВС ПС\Агент РВС ПС.appref-ms";
+            //Log.ShowMessage(userDir);
             if (Properties.Settings.Default.AutoRun)
             {
-                // Add the value in the registry so that the application runs at startup
-                rkApp.SetValue("Agent", Application.ExecutablePath.ToString());
-                rkApp.SetValue("Agent", "\"" + Application.ExecutablePath.ToString() + "\" -autorun");
+                FileInfo fi = new FileInfo(userDir);
+                fi.CopyTo(Environment.GetFolderPath(Environment.SpecialFolder.Startup)+ @"\Агент РВС ПС.appref-ms",true);
             }
             else
             {
-                // Remove the value from the registry so that the application doesn't start
-                rkApp.DeleteValue("Agent", false);
+                FileInfo fi = new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + @"\Агент РВС ПС.appref-ms");
+                if(fi.Exists)
+                {
+                    fi.Delete();
+                }
             }
 
         }
@@ -538,14 +543,12 @@ namespace Agent.Model
             DirectoryInfo DI = new DirectoryInfo(Application.StartupPath + "\\Temp\\");
             DI.Create();
             CopyFile(exeFile, source + exeFile.Name);
-            countCopy++;
-            UpdProgress(countCopy, countAllFiles, name);
+            UpdProgress(++countCopy, countAllFiles, name);
             exeFile = new FileInfo(source + exeFile.Name);
             foreach (var t in notDiffDataFile)
             {
                 CopyFile(t, source + t.Name);
-                countCopy++;
-                UpdProgress(countCopy, countAllFiles, name);
+                UpdProgress(++countCopy, countAllFiles, name);
                 newNotDiffDataList.Add(new FileInfo(source + t.Name));
             }
             notDiffDataFile.Clear();
@@ -553,11 +556,9 @@ namespace Agent.Model
             foreach (var t in diffDataFile)
             {
                 CopyFile(t.data, source + t.data.Name);
-                countCopy++;
-                UpdProgress(countCopy, countAllFiles, name);
+                UpdProgress(++countCopy, countAllFiles, name);
                 CopyFile(t.splitExe, source + t.splitExe.Name);
-                countCopy++;
-                UpdProgress(countCopy, countAllFiles, name);
+                UpdProgress(++countCopy, countAllFiles, name);
                 newDiffDataList.Add(new DiffFile() { data = new FileInfo(source + t.data.Name), splitExe = new FileInfo(source + t.splitExe.Name) });
             }
             diffDataFile.Clear();
@@ -599,10 +600,8 @@ namespace Agent.Model
                     endSplitFile = false;
                     SplitOneFile(t, countParts);
                     while (endSplitFile != true) ;
-                    count++;
-                    UpdProgress(count, diffDataFile.Count, "Комплектация файла " + (count + 1) + " из " + countAll);
+                    UpdProgress(count++, diffDataFile.Count, "Комплектация файла " + (count + 1) + " из " + countAll);
                     ComplectFileParts(t.data, countParts);
-                    count++;
                 }
             }
             UpdProgress(1, 1, "Деление файлов завершено");
@@ -640,13 +639,21 @@ namespace Agent.Model
                 countAll = allContractor.Count;
                 foreach (var t in allContractor) // всем отправляем файлы
                 {
-                    UpdProgress(count, countAll, name + (count + 1) + "из" + countAll);
-                    if (notDeleteFiles)
-                        t.SendMessage(new Packet() { type = PacketType.NotDeleteFiles, id = infoMe.id });
-                    t.AddFileList(notDiffDataFile); // добавляем к отправке неделимые файлы (в т.ч. iplist.txt)
-                                                    // TODO: добавление части
-                    t.SetExeAndDataFile(); // отправляем файлы
-                    count++;
+                    try
+                    {
+                        UpdProgress(count++, countAll, name + " " + count + " из " + countAll);
+                        if (notDeleteFiles)
+                            t.SendMessage(new Packet() { type = PacketType.NotDeleteFiles, id = infoMe.id });
+                        t.AddFileList(notDiffDataFile); // добавляем к отправке неделимые файлы (в т.ч. iplist.txt)
+                                                        // TODO: добавление части
+                        t.SetExeAndDataFile(); // отправляем файлы
+                    }
+                    catch(Exception ex)
+                    {
+                        Log.Write(ex);
+                        Log.Write("Передача прервалась из-за ошибки соединения с IP: " + t.GetIPServer().ToString());
+                        BreakCalculate();
+                    }
                 }
                 // запустить удаленно EXE
                 name = "Запускаем вычисления";
@@ -697,6 +704,8 @@ namespace Agent.Model
         }
         internal void BreakCalculate() // обрыв вычислений
         {
+            if (mainProc == null)
+                return;
             if (Process.GetProcessesByName(mainProc.ProcessName).Length != 0) // если процесс не завершился
             {
                 try

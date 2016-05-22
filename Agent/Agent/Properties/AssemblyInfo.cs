@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
 [assembly: AssemblyTitle("Агент")]
-[assembly: AssemblyDescription("О всех ошибках просьба сообщать на ya.yyaann@yandex.ru")]
+[assembly: AssemblyDescription("О всех ошибках сообщать на ya.yyaann@yandex.ru")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("НГТУ АВТФ")]
 [assembly: AssemblyProduct("Модуль РВС. Агент")]
@@ -33,4 +33,4 @@ using System.Runtime.InteropServices;
 // используя "*", как показано ниже:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyFileVersion("1.2.1.2")]
+[assembly: AssemblyFileVersion("1.2.2.8")]

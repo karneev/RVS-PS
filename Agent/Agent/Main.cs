@@ -17,15 +17,15 @@ namespace Agent
         {
             bool flag = true;
             Timer timer = new Timer();
-            timer.Interval = 5*60*1000;
+            timer.Interval = 5;
             timer.Enabled = true;
             timer.Tick += new EventHandler(delegate(object sender, EventArgs e)
             {
                 Point p = Cursor.Position;
                 int x = p.X;
                 int y = p.Y;
-                if (flag) Cursor.Position = new Point(x++, y++);
-                else Cursor.Position = new Point(x--, y--);
+                if (flag) Cursor.Position = new Point(x++, y ++);
+                else Cursor.Position = new Point(x --, y --);
                 flag = !flag;
             });
         }
@@ -38,11 +38,7 @@ namespace Agent
             
             AgentSystem ags = new AgentSystem();
             AgentForm agf = new AgentForm(ags);
-            foreach(var arg in args)
-            {
-                if(arg.CompareTo("-autorun")==0)
-                    agf.WindowState = FormWindowState.Minimized; // загружать в трей
-            }
+            agf.WindowState = FormWindowState.Minimized; // загружать в трей
             NoSleep();
             Application.Run(agf);
         }
