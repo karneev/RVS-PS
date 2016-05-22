@@ -54,11 +54,11 @@ namespace Agent.View
             {
                 this.dataDiffFileList.Items.Clear(); // очищаем старый список
                 this.dataNotDiffFileList.Items.Clear(); // очищаем старый список
-                foreach (var t in agent.GetAllDiffDataFile()) // выводим всё, что есть в агенте
+                foreach (var t in agent.GetAllDiffDataFile()) // выводим все делимые файлы, что есть в агенте
                 {
-                    this.dataDiffFileList.Items.Add(t.data.Name);
+                    this.dataDiffFileList.Items.Add(t.data.Name + @" \"+t.splitExe.Name+@"\");
                 }
-                foreach (var t in agent.GetAllNotDiffDataFile()) // выводим всё, что есть в агенте
+                foreach (var t in agent.GetAllNotDiffDataFile()) // выводим все неделимые файлы, что есть в агенте
                 {
                     this.dataNotDiffFileList.Items.Add(t.Name);
                 }
@@ -259,7 +259,7 @@ namespace Agent.View
                         agent.AddDiffDataFile(txt,exe);             // добавляем файл
                     else
                     {
-                        string old = this.dataDiffFileList.Text;
+                        string old = this.dataDiffFileList.Text.Split('\\')[0].Replace(" ", "");
                         agent.ReplaceDiffDataFile(old, txt, exe);   // заменяем файл
                     }
                 }
@@ -273,7 +273,7 @@ namespace Agent.View
         {
             if(e.KeyCode==Keys.Delete && this.dataDiffFileList.Text.CompareTo("Добавить файл") != 0) // нажали на Delete, но при этом выбрал не "Добавить файл"
             {
-                agent.RemoveDiffDataFile(this.dataDiffFileList.Text);   // удаляем файл
+                agent.RemoveDiffDataFile(this.dataDiffFileList.Text.Split('\\')[0].Replace(" ", ""));   // удаляем файл
             }
         }
 

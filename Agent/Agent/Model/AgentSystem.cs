@@ -245,7 +245,7 @@ namespace Agent.Model
         {
             foreach (var t in diffDataFile) // удалем файл
             {
-                if (t.data.Name == removedFileName)
+                if (t.data.Name.Replace(" ", "").CompareTo(removedFileName)==0)
                 {
                     diffDataFile.Remove(t);
                     break;
@@ -699,7 +699,14 @@ namespace Agent.Model
         {
             if (Process.GetProcessesByName(mainProc.ProcessName).Length != 0) // если процесс не завершился
             {
-                mainProc.Kill();
+                try
+                {
+                    mainProc.Kill();
+                }
+                catch(Exception ex)
+                {
+                    Log.Write(ex);
+                }
             }
             if(isInitiator==true) 
             {
