@@ -3,11 +3,24 @@ using System.Windows.Forms;
 using Agent.Model;
 using Agent.View;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace Agent
 {
     public static class Programm 
     {
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE flags);
+
+        [FlagsAttribute]
+        public enum EXECUTION_STATE : uint
+        {
+            ES_SYSTEM_REQUIRED = 0x00000001,
+            ES_DISPLAY_REQUIRED = 0x00000002,
+            ES_CONTINUOUS = 0x80000000
+        }
+
+
         public static void Reset()
         {
             Application.Restart();
@@ -15,18 +28,13 @@ namespace Agent
         }
         private static void NoSleep()
         {
-            bool flag = true;
             Timer timer = new Timer();
-            timer.Interval = 5;
+            timer.Interval = 30;
             timer.Enabled = true;
             timer.Tick += new EventHandler(delegate(object sender, EventArgs e)
             {
-                Point p = Cursor.Position;
-                int x = p.X;
-                int y = p.Y;
-                if (flag) Cursor.Position = new Point(x++, y ++);
-                else Cursor.Position = new Point(x --, y --);
-                flag = !flag;
+                SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_CONTINUOUS); //  | EXECUTION_STATE.ES_DISPLAY_REQUIRED
+                SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS);
             });
         }
         /// <summary>
