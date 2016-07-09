@@ -4,7 +4,7 @@
     <PublishUrlHistory>D:\Apache24\htdocs\|D:\Apache24\htdocs\testPublication\|http://rvs-ps.noip.me:56002/|publish\</PublishUrlHistory>
     <InstallUrlHistory>http://rvs-ps.noip.me/|http://rvs-ps.noip.me/testPublication/|http://rvs-ps.noip.me:56002/</InstallUrlHistory>
     <SupportUrlHistory />
-    <UpdateUrlHistory>http://rvs-ps.noip.me/testPublication/|http://rvs-ps.noip.me/|http://rvs-ps.noip.me:56002/</UpdateUrlHistory>
+    <UpdateUrlHistory>http://rvs-ps.noip.me/|http://rvs-ps.noip.me/testPublication/|http://rvs-ps.noip.me:56002/</UpdateUrlHistory>
     <BootstrapperUrlHistory />
     <ErrorReportUrlHistory />
     <FallbackCulture>ru-RU</FallbackCulture>

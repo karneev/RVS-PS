@@ -23,8 +23,16 @@ namespace Agent
 
         public static void Reset()
         {
-            Application.Restart();
-            System.Environment.Exit(0);
+            try
+            {
+                Application.Restart();
+                Environment.Exit(0);
+            }
+            catch(Exception ex)
+            {
+                Log.Write("Ошибка при перезапуске");
+                Log.Write(ex);
+            }
         }
         private static void NoSleep()
         {

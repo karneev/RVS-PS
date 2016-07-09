@@ -38,7 +38,7 @@ namespace Agent.Model
             started = false;
             this.Start();   // запускаем сервер 
         }
-        void run()  // работа сервера
+        void Run()  // работа сервера
         {
             try
             {
@@ -135,7 +135,7 @@ namespace Agent.Model
                 {
                     started = true;
                     server = new TcpListener(IPAddress.Any, Properties.Settings.Default.Port);
-                    th = new Thread(run);
+                    th = new Thread(Run);
                     th.IsBackground = true;
                     th.Start();
                 }

@@ -8,7 +8,7 @@ namespace Agent.Model
     {
         private AgentSystem m_agent;
         private readonly ApplicationDeployment applicationDeployment; // Ссылка на приложение (ClickOnce)
-        private readonly System.Timers.Timer timer = new System.Timers.Timer(5000); // таймер проверки обновления
+        private readonly System.Timers.Timer timer = new System.Timers.Timer(60000); // таймер проверки обновления
         private bool processing;
         public event EventHandler<EventArgs> Completed; // обновление завершено
         public event PropertyChangedEventHandler PropertyChanged;
@@ -63,12 +63,10 @@ namespace Agent.Model
             timer.Start();
         }
         
-
         private void CheckForUpdateCompleted(object sender, CheckForUpdateCompletedEventArgs e)
         {
             if (e.Error != null || e.Cancelled || !e.UpdateAvailable)
             {
-                Log.Write("Check for update failed.");
                 processing = false;
                 return;
             }

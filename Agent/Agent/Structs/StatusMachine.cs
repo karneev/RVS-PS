@@ -22,7 +22,7 @@ namespace Agent.Enums
             set
             {
                 m_wait = value;
-                checkFree();
+                СheckFree();
                 StatusChange();
             }
         }
@@ -35,7 +35,7 @@ namespace Agent.Enums
             set
             {
                 m_initiator = value;
-                checkFree();
+                СheckFree();
                 StatusChange();
             }
         }
@@ -48,7 +48,7 @@ namespace Agent.Enums
             set
             {
                 m_calculate = value;
-                checkFree();
+                СheckFree();
                 StatusChange();
             }
         }
@@ -61,7 +61,7 @@ namespace Agent.Enums
             set
             {
                 m_testing = value;
-                checkFree();
+                СheckFree();
                 StatusChange();
             }
         }
@@ -74,7 +74,7 @@ namespace Agent.Enums
             set
             {
                 m_loadSettings = value;
-                checkFree();
+                СheckFree();
                 StatusChange();
             }
         }
@@ -87,12 +87,12 @@ namespace Agent.Enums
             set
             {
                 m_waitEndCalc = value;
-                checkFree();
+                СheckFree();
                 StatusChange();
             }
         }
 
-        private void checkFree()
+        private void СheckFree()
         {
             if (Wait || Initiator || Calculate || Testing || LoadSettings || WaitEndCalc)
                 Free = false;

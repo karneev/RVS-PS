@@ -124,17 +124,17 @@ namespace Agent.Model
             lock (agent)
             {
                 bf.Serialize(mainStream, new Packet() { type = PacketType.RunFile, id = agent.InfoMe.id }); // сообщаем о том, что будет передача EXE
-                sendFile(agent.ExeFile); // передача exe
+                SendFile(agent.ExeFile); // передача exe
 
                 foreach (var t in dataFile) // передача dataFiles
                 {
                     bf.Serialize(mainStream, new Packet() { type = PacketType.Data, id = agent.InfoMe.id }); // сообщаем о том, что будет передача Data
-                    sendFile(t);
+                    SendFile(t);
                 }
             }
             //Programm.ShowMessage("файлы исполнителю отправили");
         }
-        private void sendFile(FileInfo file) // отправка файла
+        private void SendFile(FileInfo file) // отправка файла
         {
             FileStream fin = file.OpenRead(); // открываем файл для передачи
             HandleFile hf = new HandleFile() { fileName = file.Name, size = fin.Length };

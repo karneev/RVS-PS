@@ -9,8 +9,8 @@ namespace Agent.Model
 {
     class SQLiteDriver
     {
-
-        private string dbFileName="Agent.db3";
+        private static string md = Environment.GetFolderPath(Environment.SpecialFolder.Personal)+"\\Agent"; //путь в Документах
+        private static string dbFileName = md+ "\\iplist.db3";
         private SQLiteFactory sqlFactory;
         private SQLiteConnection connection;
 
@@ -18,11 +18,17 @@ namespace Agent.Model
         {
             try
             {
+                
+                if (Directory.Exists(md) == false)
+                {
+                    Directory.CreateDirectory(md);
+                }
+
                 bool dbcreate = false;
-                if (!File.Exists(this.dbFileName))
+                if (!File.Exists(dbFileName))
                 {
                     dbcreate = true;
-                    SQLiteConnection.CreateFile(this.dbFileName);
+                    SQLiteConnection.CreateFile(dbFileName);
                 }
                 this.sqlFactory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
                 this.connection = (SQLiteConnection)this.sqlFactory.CreateConnection();

@@ -802,17 +802,14 @@ namespace Agent.Model
                     case PacketType.Hello:
                         status.Wait=true;
                         ((Initiator)sender).SendInfoMe();
-                        sender.Locked = false;
                         break;
                     case PacketType.RunFile:
                         DirectoryInfo DI = new DirectoryInfo(Application.StartupPath + "\\Temp\\");
                         DI.Create();
                         initiator.GetExeAndDataFile(true);
-                        sender.Locked = false;
                         break;
                     case PacketType.Data:
                         initiator.GetExeAndDataFile(false);
-                        sender.Locked = false;
                         break;
                     case PacketType.FinishCalc:
                         countFinished++;
@@ -827,10 +824,8 @@ namespace Agent.Model
                             RefreshView();
                             Log.ShowMessage("Общее время вычислений: " + (AllTimeEnd - AllTimeStart).TotalSeconds + " сек\nВремя на передачу файлов: " + (UploadTimeEnd - UploadTimeStart).TotalSeconds + " сек\nВремя рассчетов: " + (CalculateTimeEnd - CalculateTimeStart).TotalSeconds + " сек");
                         }
-                        sender.Locked = false;
                         break;
                     case PacketType.StartCalc:
-                        sender.Locked = false;
                         RunExe();
                         break;
                     case PacketType.StopCalc:
@@ -840,23 +835,20 @@ namespace Agent.Model
                         status.Calculate = false;
                         Log.Write("Перезапускаем приложение по причине прерывания вычислений");
                         Programm.Reset();
-                        sender.Locked = false;
                         break;
                     case PacketType.Free:
                         status.WaitEndCalc = false;
                         status.Wait = false;
                         Programm.Reset();
                         Log.Write("Перезапускаем приложение по причине освобождения от вычислений");
-                        sender.Locked = false;
                         break;
                     case PacketType.NotDeleteFiles:
                         notDeleteFiles = true;
-                        sender.Locked = false;
                         break;
                     case PacketType.Empty:
-                        sender.Locked = false;
                         break;
                 }
+                sender.Locked = false;
             }
             else if (message.CompareTo("ConnectToInit") == 0)
                 status.Wait = true;
