@@ -166,35 +166,35 @@ namespace Agent.View
             agent.NetworkSettingsChange();
             this.Close();
         }
-        static public void SaveSettingInFile()
+        public static void SaveSettingInFile()
         {
-            string md = Environment.GetFolderPath(Environment.SpecialFolder.Personal);//путь к Документам
-            if (Directory.Exists(md + "\\Agent") == false)
+            if (Directory.Exists(AgentSystem.WorkingFolder) == false)
             {
-                Directory.CreateDirectory(md + "\\Agent");
+                Directory.CreateDirectory(AgentSystem.WorkingFolder);
             }
-            FileInfo fi = new FileInfo(md + "\\Agent\\"+"Settings.conf");
+            FileInfo fi = new FileInfo(AgentSystem.WorkingFolder + "\\Settings.conf");
             if (fi.Exists == true)
                 fi.Delete();
-            StreamWriter sw=new StreamWriter(fi.Create());
-            sw.WriteLine(Properties.Settings.Default.IP);
-            sw.WriteLine(Properties.Settings.Default.Mask);
-            sw.WriteLine(Properties.Settings.Default.Port);
-            sw.WriteLine(Properties.Settings.Default.AutoRun);
-            sw.Close();
+            using (StreamWriter sw = new StreamWriter(fi.Create()))
+            {
+                sw.WriteLine(Properties.Settings.Default.IP);
+                sw.WriteLine(Properties.Settings.Default.Mask);
+                sw.WriteLine(Properties.Settings.Default.Port);
+                sw.WriteLine(Properties.Settings.Default.AutoRun);
+            }
         }
-        static public void LoadSettingFromFile()
+        public static void LoadSettingFromFile()
         {
-            string md = Environment.GetFolderPath(Environment.SpecialFolder.Personal);//путь к Документам
-            FileInfo fi = new FileInfo(md + "\\Agent\\" + "Settings.conf");
+            FileInfo fi = new FileInfo(AgentSystem.WorkingFolder + "\\Settings.conf");
             if (fi.Exists == true)
             {
-                StreamReader sw = new StreamReader(fi.Open(FileMode.Open));
-                Properties.Settings.Default.IP=sw.ReadLine();
-                Properties.Settings.Default.Mask=sw.ReadLine();
-                Properties.Settings.Default.Port=int.Parse(sw.ReadLine());
-                Properties.Settings.Default.AutoRun=bool.Parse(sw.ReadLine());
-                sw.Close();
+                using (StreamReader sw = new StreamReader(fi.Open(FileMode.Open)))
+                {
+                    Properties.Settings.Default.IP = sw.ReadLine();
+                    Properties.Settings.Default.Mask = sw.ReadLine();
+                    Properties.Settings.Default.Port = int.Parse(sw.ReadLine());
+                    Properties.Settings.Default.AutoRun = bool.Parse(sw.ReadLine());
+                }
             }
         }
     }

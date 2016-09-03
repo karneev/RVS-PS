@@ -11,6 +11,7 @@ namespace Agent.Enums
         private bool m_testing;
         private bool m_loadSettings;
         private bool m_waitEndCalc;
+        private bool m_connectedFail;
 
         public bool Free { get; private set; }
         public bool Wait
@@ -22,7 +23,7 @@ namespace Agent.Enums
             set
             {
                 m_wait = value;
-                СheckFree();
+                CheckFree();
                 StatusChange();
             }
         }
@@ -35,7 +36,7 @@ namespace Agent.Enums
             set
             {
                 m_initiator = value;
-                СheckFree();
+                CheckFree();
                 StatusChange();
             }
         }
@@ -48,7 +49,7 @@ namespace Agent.Enums
             set
             {
                 m_calculate = value;
-                СheckFree();
+                CheckFree();
                 StatusChange();
             }
         }
@@ -61,7 +62,7 @@ namespace Agent.Enums
             set
             {
                 m_testing = value;
-                СheckFree();
+                CheckFree();
                 StatusChange();
             }
         }
@@ -74,7 +75,7 @@ namespace Agent.Enums
             set
             {
                 m_loadSettings = value;
-                СheckFree();
+                CheckFree();
                 StatusChange();
             }
         }
@@ -87,14 +88,27 @@ namespace Agent.Enums
             set
             {
                 m_waitEndCalc = value;
-                СheckFree();
+                CheckFree();
+                StatusChange();
+            }
+        }
+        public bool ConnectedFail
+        {
+            get
+            {
+                return m_connectedFail;
+            }
+            set
+            {
+                m_connectedFail = value;
+                CheckFree();
                 StatusChange();
             }
         }
 
-        private void СheckFree()
+        private void CheckFree()
         {
-            if (Wait || Initiator || Calculate || Testing || LoadSettings || WaitEndCalc)
+            if (Wait || Initiator || Calculate || Testing || LoadSettings || WaitEndCalc || ConnectedFail)
                 Free = false;
             else
                 Free = true;
@@ -105,6 +119,8 @@ namespace Agent.Enums
                 return "Тестирование";
             if (LoadSettings)
                 return "Загрузка настроек";
+            if (ConnectedFail)
+                return "Ошибка подключения";
             if (Calculate)
                 return "Считает";
             if (WaitEndCalc)

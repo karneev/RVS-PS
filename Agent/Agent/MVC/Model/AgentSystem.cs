@@ -60,7 +60,7 @@ namespace Agent.Model
         {
             get
             {
-                return this.status;
+                return status;
             }
         }
         public bool StatusInitiator
@@ -101,10 +101,18 @@ namespace Agent.Model
                 return notDiffDataFile;
             }
         }
+        public static readonly string WorkingFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "\\Agent";
         #endregion
 
-        #region Запуск системы и добавление/удаление слушателей
-        public AgentSystem() { StatusMachine.StatusChange += SetStatus; }
+        #region Запуск системы
+        public AgentSystem()
+        {
+            StatusMachine.StatusChange += SetStatus;
+        }
+        public void SetFailStatus(bool status)
+        {
+            this.status.ConnectedFail = status;
+        }
         #endregion
 
         #region Тестирование системы и инициализация подключения
@@ -120,16 +128,18 @@ namespace Agent.Model
         {
             RegistryKey rkApp = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
             rkApp.DeleteValue("Agent", false);
-            string userDir = Environment.GetFolderPath(Environment.SpecialFolder.Programs)+ @"\НГТУ АВТФ\РВС ПС\Агент РВС ПС.appref-ms";
+            string userRef = Environment.GetFolderPath(Environment.SpecialFolder.Programs)+ @"\НГТУ АВТФ\РВС ПС\Агент РВС ПС.appref-ms";
+            string startupRef = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + @"\Агент РВС ПС.appref-ms";
             //Log.ShowMessage(userDir);
             if (Properties.Settings.Default.AutoRun)
             {
-                FileInfo fi = new FileInfo(userDir);
-                fi.CopyTo(Environment.GetFolderPath(Environment.SpecialFolder.Startup)+ @"\Агент РВС ПС.appref-ms",true);
+                FileInfo fi = new FileInfo(userRef);
+                fi.CopyTo(startupRef, true);
+                
             }
             else
             {
-                FileInfo fi = new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + @"\Агент РВС ПС.appref-ms");
+                FileInfo fi = new FileInfo(startupRef);
                 if(fi.Exists)
                 {
                     fi.Delete();
@@ -194,17 +204,18 @@ namespace Agent.Model
         public void NetworkSettingsChange() // сетевые настройки изменены
         {
             status.LoadSettings = true;
-            if (this.initiator != null)
-                this.initiator.Restart(); // перезапускаем сервер
+            if (initiator != null)
+                initiator.Restart(); // перезапускаем сервер
             else
-                this.InitConnect();
+                InitConnect();
             status.LoadSettings = false;
         }
         public void InitConnect() // начальный запуск сервера
         {
+            // status.ConnectedFail = false;
             if (initiator == null)
             {
-                initiator = new Initiator(this); // 56000
+                initiator = new Initiator(this); // 56001
                 initiator.NewMessage += GetPacket;
             }
         }
@@ -212,14 +223,14 @@ namespace Agent.Model
         {
             initiator.Stop();
         }
-        public void SetStatus()
+        public void SetStatus() // ПЕРЕКОПАТЬ!!!!
         {
             if (Status.Free == true && initiator==null)
                 InitConnect();      // инициализируем подключение
             if (status.Initiator == true)
                 initiator.Stop();
-            else if (initiator!=null && initiator.IsStart == false && status.LoadSettings==false)
-                this.initiator.Restart(); // перезапускаем сервер
+            else if (initiator!=null && initiator.IsStart == false && status.LoadSettings==false && status.ConnectedFail==false)
+                initiator.Restart(); // перезапускаем сервер
         }
         #endregion
 
@@ -539,8 +550,8 @@ namespace Agent.Model
             UpdProgress(countCopy,countAllFiles, name);
             List<DiffFile> newDiffDataList = new List<DiffFile>();
             List<FileInfo> newNotDiffDataList = new List<FileInfo>();
-            string source = Application.StartupPath + "\\Temp\\";
-            DirectoryInfo DI = new DirectoryInfo(Application.StartupPath + "\\Temp\\");
+            string source = AgentSystem.WorkingFolder + "\\Temp\\";
+            DirectoryInfo DI = new DirectoryInfo(source);
             DI.Create();
             CopyFile(exeFile, source + exeFile.Name);
             UpdProgress(++countCopy, countAllFiles, name);
@@ -571,7 +582,7 @@ namespace Agent.Model
             splitter.StartInfo = new ProcessStartInfo(file.splitExe.FullName, file.data.Name + " " + countParts);
             splitter.EnableRaisingEvents = true;
             splitter.Exited += new EventHandler(EndSplitOneFile);
-            splitter.StartInfo.WorkingDirectory = Application.StartupPath + "\\TEMP";
+            splitter.StartInfo.WorkingDirectory = AgentSystem.WorkingFolder + "\\TEMP";
             splitter.Start();
         }
         void EndSplitOneFile(object sender, EventArgs e) 
@@ -581,12 +592,12 @@ namespace Agent.Model
         }
         void ComplectFileParts(FileInfo file, int countParts) // Распределение частей файла по исполнителям
         {
-            string PathName= Application.StartupPath + "\\TEMP\\"+file.Name.Remove(file.Name.LastIndexOf('.'));
+            string PathName= AgentSystem.WorkingFolder + "\\TEMP\\"+file.Name.Remove(file.Name.LastIndexOf('.'));
             for(int i=1; i<countParts; i++)
             {
                 allContractor[i - 1].AddFile(new FileInfo(PathName + "\\" + i + "\\" + file.Name));
             }
-            CopyFile(new FileInfo(PathName + "\\" + 0 + "\\" + file.Name), Application.StartupPath + "\\Temp\\"+ file.Name);
+            CopyFile(new FileInfo(PathName + "\\" + 0 + "\\" + file.Name), AgentSystem.WorkingFolder + "\\Temp\\"+ file.Name);
         }
         void DiffFileList(List<DiffFile> files, int countParts) // разделение набора файлов
         {
@@ -609,7 +620,7 @@ namespace Agent.Model
         void CreateFileIP() // собрать файл из всех IP в системе
         {
             int countMachines;
-            FileInfo ipfile = new FileInfo("TEMP\\iplist.txt");
+            FileInfo ipfile = new FileInfo(AgentSystem.WorkingFolder+"\\TEMP\\iplist.txt");
             if (ipfile.Exists) // если файл уже есть - пересоздать
                 ipfile.Delete();
             StreamWriter sw = new StreamWriter(ipfile.Create());
@@ -728,7 +739,7 @@ namespace Agent.Model
             }
             if (notDeleteFiles == false)
             {
-                Directory.Delete(Application.StartupPath + "\\Temp", true);
+                Directory.Delete(AgentSystem.WorkingFolder + "\\Temp", true);
                 exeFile = null;
                 notDiffDataFile.Clear();
                 diffDataFile.Clear();
@@ -774,7 +785,7 @@ namespace Agent.Model
                 }
                 if (notDeleteFiles == false)
                 {
-                    Directory.Delete(Application.StartupPath + "\\Temp", true);
+                    Directory.Delete(AgentSystem.WorkingFolder + "\\Temp", true);
                     exeFile = null;
                     notDiffDataFile.Clear();
                     diffDataFile.Clear();
@@ -804,7 +815,7 @@ namespace Agent.Model
                         ((Initiator)sender).SendInfoMe();
                         break;
                     case PacketType.RunFile:
-                        DirectoryInfo DI = new DirectoryInfo(Application.StartupPath + "\\Temp\\");
+                        DirectoryInfo DI = new DirectoryInfo(AgentSystem.WorkingFolder + "\\Temp\\");
                         DI.Create();
                         initiator.GetExeAndDataFile(true);
                         break;

@@ -34,6 +34,7 @@ namespace Agent.View
             str.Append("Частота процессора: " + agent.InfoMe.vCPU).Append("MHz\n");
             str.Append("Число ядер процессора: " + Environment.ProcessorCount).Append("\n");
             str.Append("Командная строка текущего процесса: " + Environment.CommandLine).Append("\n");
+            str.Append("Рабочая папка: " + Model.AgentSystem.WorkingFolder).Append("\n");
             this.textBoxDescription.Text = str.ToString();
             this.textBoxDescription.Text += AssemblyDescription;
         }

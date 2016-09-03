@@ -26,8 +26,7 @@ namespace Agent.View
             // Загрузить настройки. Если их нет - принудительно запросить
             try
             {
-                string md = Environment.GetFolderPath(Environment.SpecialFolder.Personal);//путь к Документам
-                if (File.Exists(md + "\\Agent\\" + "Settings.conf") == false)
+                if (File.Exists(AgentSystem.WorkingFolder + "\\Settings.conf") == false)
                 {
                     if (Properties.Settings.Default.IP.CompareTo("127.0.0.1") == 0)
                     {
@@ -101,11 +100,13 @@ namespace Agent.View
             {
                 this.ShowInTaskbar = false;
                 agentNotifyIcon.Visible = true;
+                this.FormBorderStyle = FormBorderStyle.FixedToolWindow;
             }
             else
             {
                 this.ShowInTaskbar = true;
                 agentNotifyIcon.Visible = false;
+                this.FormBorderStyle = FormBorderStyle.FixedDialog;
             }
         }
         private void AgentForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -147,6 +148,11 @@ namespace Agent.View
         {
             Log.Write("Нажали кнопку перезагрузки приложения");
             Programm.Reset();
+        }
+
+        private void повторитьПопыткуПодключенияToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            agent.NetworkSettingsChange();
         }
     }
 }

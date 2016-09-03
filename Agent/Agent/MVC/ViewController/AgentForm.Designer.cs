@@ -43,6 +43,7 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.infoButton = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.повторитьПопыткуПодключенияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -82,6 +83,7 @@
             this.fileToolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.fileToolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.startCalculateToolStripMenuItem,
+            this.повторитьПопыткуПодключенияToolStripMenuItem,
             this.resetToolStripMenuItem,
             this.toolStripSeparator1,
             this.settingsToolStripMenuItem,
@@ -133,6 +135,12 @@
             resources.ApplyResources(this.toolStrip1, "toolStrip1");
             this.toolStrip1.Name = "toolStrip1";
             // 
+            // повторитьПопыткуПодключенияToolStripMenuItem
+            // 
+            this.повторитьПопыткуПодключенияToolStripMenuItem.Name = "повторитьПопыткуПодключенияToolStripMenuItem";
+            resources.ApplyResources(this.повторитьПопыткуПодключенияToolStripMenuItem, "повторитьПопыткуПодключенияToolStripMenuItem");
+            this.повторитьПопыткуПодключенияToolStripMenuItem.Click += new System.EventHandler(this.повторитьПопыткуПодключенияToolStripMenuItem_Click);
+            // 
             // AgentForm
             // 
             resources.ApplyResources(this, "$this");
@@ -167,6 +175,7 @@
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem повторитьПопыткуПодключенияToolStripMenuItem;
     }
 }
 

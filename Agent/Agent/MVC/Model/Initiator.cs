@@ -36,12 +36,13 @@ namespace Agent.Model
         {
             this.agent = agent;
             started = false;
-            this.Start();   // запускаем сервер 
+            Start();   // запускаем сервер 
         }
         void Run()  // работа сервера
         {
             try
             {
+                agent.SetFailStatus(false);
                 Packet pkt;
                 server.Start();                      // запускаем сервер
                 client = server.AcceptTcpClient();   // ожидаем инициатора
@@ -63,6 +64,10 @@ namespace Agent.Model
                 {
                     Log.Write("Перезагрузка по причине потери инициатора и мы не свободны");
                     Programm.Reset();
+                }
+                if(agent.Status.Free==true)
+                {
+                    agent.SetFailStatus(true);
                 }
                 if(mainStream!=null)
                     mainStream.Close();
@@ -91,7 +96,7 @@ namespace Agent.Model
 
             FileStream fout;
             HandleFile hf = (HandleFile)bf.Deserialize(mainStream); // считываем загаловок файла
-            FileInfo file = new FileInfo(Application.StartupPath + "\\Temp\\"+hf.fileName);
+            FileInfo file = new FileInfo(AgentSystem.WorkingFolder + "\\Temp\\"+hf.fileName);
             if (file.Exists) // Создаем файл с заданным именем
                 file.Delete();
             fout = file.Create();
@@ -154,8 +159,8 @@ namespace Agent.Model
         }
         public void Restart() // останавливаем и запускаем сервер
         {
-            this.Stop();
-            this.Start();
+            Stop();
+            Start();
         }
     }
 }
