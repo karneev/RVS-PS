@@ -19,10 +19,11 @@ namespace Agent.Model
         #region События системы
         public event RefreshData RefreshView;
         public event UpdateProgressBar UpdProgress;
-        
+
         #endregion
 
         #region Основные переменные
+        TcpClient telemetryClient;
         private bool isInitiator=false; // Является ли инициатором
         private bool isCalculate=false; // начались ли вычисления
         private bool notDeleteFiles = false; // Не удалять файлы
@@ -108,6 +109,29 @@ namespace Agent.Model
         public AgentSystem()
         {
             StatusMachine.StatusChange += SetStatus;
+            RunTelemetry();
+        }
+        private void RunTelemetry()
+        {
+            Thread th = new Thread(delegate()
+              {
+                  bool check = false;
+                  do
+                  {
+                      try
+                      {
+                          telemetryClient = new TcpClient(Dns.GetHostAddresses("rvs-ps.noip.me")[0].ToString(), 57033);
+                          check = true;
+                      }
+                      catch (Exception ex)
+                      {
+                          Log.Write(ex);
+                      }
+                      Thread.Sleep(2000);
+                  } while (!check);
+              });
+            th.IsBackground = true;
+            th.Start();
         }
         public void SetFailStatus(bool status)
         {
