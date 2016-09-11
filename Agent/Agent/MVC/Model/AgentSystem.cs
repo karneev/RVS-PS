@@ -115,20 +115,31 @@ namespace Agent.Model
         {
             Thread th = new Thread(delegate()
               {
-                  bool check = false;
-                  do
+                  while (true)
                   {
+                      bool check = false;
+                      do
+                      {
+                          try
+                          {
+                              telemetryClient = new TcpClient(Dns.GetHostAddresses("rvs-ps.noip.me")[0].ToString(), 57033);
+                              check = true;
+                          }
+                          catch (Exception ex)
+                          {
+                              Log.Write(ex);
+                          }
+                          Thread.Sleep(5000);
+                      } while (!check);
                       try
                       {
-                          telemetryClient = new TcpClient(Dns.GetHostAddresses("rvs-ps.noip.me")[0].ToString(), 57033);
-                          check = true;
+                          telemetryClient.GetStream().ReadByte();
                       }
-                      catch (Exception ex)
+                      catch(Exception ex)
                       {
                           Log.Write(ex);
                       }
-                      Thread.Sleep(2000);
-                  } while (!check);
+                  }
               });
             th.IsBackground = true;
             th.Start();
