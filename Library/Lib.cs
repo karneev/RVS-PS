@@ -10,8 +10,14 @@ namespace Library
     /// <summary>
     /// Базовый класс библиотеки
     /// </summary>
-    public partial class Work
+    public partial class Work : ILoggable
     {
+        public void log(string message)
+        {
+            StreamWriter sw = File.AppendText("LibraryLog.txt");
+            sw.WriteLine(DateTime.Now.ToString() + " " + message);
+            sw.Close();
+        }
         /// <summary>
         /// Делегат для функции прерывания
         /// </summary>
@@ -20,8 +26,9 @@ namespace Library
         /// <summary>
         /// Конструктор класса
         /// </summary>
-        public Work()
+        public Work(int prt = 8002)
         {
+            this.port = prt;
             Iplist = new List<IPEndPoint>();
             if (File.Exists("iplist.txt"))
             {
@@ -43,19 +50,18 @@ namespace Library
                 {
                     string s = R.ReadLine();
                     if (myIP.Contains(s) || s.Equals("127.0.0.1")) currentIndex = i;
-                    Iplist.Add(new IPEndPoint(IPAddress.Parse(s), 8002));
+                    Iplist.Add(new IPEndPoint(IPAddress.Parse(s), this.port));
                 }
                 R.Close();
             }
             else
             {
                 currentIndex = 0;
-                Iplist.Add(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8002));
+                Iplist.Add(new IPEndPoint(IPAddress.Parse("127.0.0.1"), this.port));
             }
             mainSpindle = new Spindle();
             anB = new bool[256];
             for (int i = 0; i < anB.Length; anB[i] = false, i++) ;
-            port = 8002;
             breakF = -1;
             breakData = null;
             sup = null;
@@ -130,7 +136,13 @@ namespace Library
         {
             if (i < 0 || i > Iplist.Count)
                 return null;
+#if DEBUG
+            log("Discret send data to " + i + " start");
+#endif
             DiscretSendData d = new DiscretSendData(Iplist[i], data);
+#if DEBUG
+            log("Discret send data to " + i + " stop");
+#endif
             return d;
         }
         /// <summary>
@@ -140,12 +152,18 @@ namespace Library
         /// <returns></returns>
         public DiscretRecipientData GetData(int I)
         {
+#if DEBUG
+            log("Discret receive data from " + I + " start");
+#endif
             Recipient r = new Recipient(I, 1);
             DiscretRecipientData rd = new DiscretRecipientData(r);
             lock (mainSpindle)
             {
                 mainSpindle.Get(r);
             }
+#if DEBUG
+            log("Discret receive data from " + I + " stop");
+#endif
             return rd;
         }
         #endregion
@@ -183,7 +201,13 @@ namespace Library
         /// <returns></returns>
         public TrunsSendData TrunsSend(object data)
         {
+#if DEBUG
+            log("Truns send data start");
+#endif
             TrunsSendData t = new TrunsSendData(Iplist, currentIndex, data);
+#if DEBUG
+            log("Truns send data stop");
+#endif
             return t;
         }
         /// <summary>
@@ -193,12 +217,18 @@ namespace Library
         /// <returns></returns>
         public TrunsRecipientData TransGetData(int I)
         {
+#if DEBUG
+            log("Truns receive data from " + I + " start");
+#endif
             Recipient r = new Recipient(I, 2);
             TrunsRecipientData rd = new TrunsRecipientData(r);
             lock (mainSpindle)
             {
                 mainSpindle.Get(r);
             }
+#if DEBUG
+            log("Truns receive data from " + I + " stop");
+#endif
             return rd;
         }
 
@@ -241,7 +271,13 @@ namespace Library
         {
             if (i < 0 || i > Iplist.Count) return null;
             if (i == currentIndex) return null;
+#if DEBUG
+            log("Collect send data to " + i + " start");
+#endif
             CollectSendData t = new CollectSendData(Iplist[i], data);
+#if DEBUG
+            log("Collect send data to " + i + " stop");
+#endif
             return t;
         }
 
@@ -256,11 +292,17 @@ namespace Library
             {
                 if (currentIndex != i)
                 {
+#if DEBUG
+                    log("Collect receive data from " + i + " start");
+#endif
                     data[i] = new Recipient(i, 3);
                     lock (mainSpindle)
                     {
                         mainSpindle.Get(data[i]);
                     }
+#if DEBUG
+                    log("Collect receive data from " + i + " stop");
+#endif
                 }
                 else data[i] = null;
             }
@@ -323,6 +365,7 @@ namespace Library
                     int r = s.ReadByte();
                     s.Close();
                     rezalt = rezalt && (r != 0);
+                    c.Close();
                 }
                 else
                 {
@@ -361,6 +404,7 @@ namespace Library
                 s.Write(m, 0, m.Length);
             }
             s.Close();
+            c.Close();
             return true;
         }
 
@@ -523,7 +567,7 @@ namespace Library
             }
             catch (ThreadAbortException e)
             {
-                Console.WriteLine(e.Message);
+                log(e.Message);
             }
         }
         /// <summary>

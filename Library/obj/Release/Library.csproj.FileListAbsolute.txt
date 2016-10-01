@@ -1,6 +1,0 @@
-E:\Projects\DCN\Library\bin\Release\Library.dll.config
-E:\Projects\DCN\Library\bin\Release\Library.dll
-E:\Projects\DCN\Library\bin\Release\Library.pdb
-E:\Projects\DCN\Library\obj\Release\Library.dll
-E:\Projects\DCN\Library\obj\Release\Library.pdb
-E:\Projects\DCN\Library\obj\Release\Library.csprojResolveAssemblyReference.cache

@@ -70,6 +70,7 @@ namespace Library
                 ew.Set();
                 s.Close();
                 ew.Close();
+                c.Close();
             }
 
             /// <summary>

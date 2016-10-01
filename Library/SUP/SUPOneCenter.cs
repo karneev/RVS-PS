@@ -110,6 +110,7 @@ namespace Library
                     buffer[2] = (rbool) ? (byte)1 : (byte)0;
                     s.Write(buffer, 0, 255);
                     s.Close();
+                    c.Close();
                 }
             }
             w = false;

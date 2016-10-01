@@ -44,6 +44,7 @@ namespace Library
             buffer[2] = (self) ? (byte)1 : (byte)0;
             s.Write(buffer, 0, 255);
             s.Close();
+            c.Close();
         }
 
         /// <summary>

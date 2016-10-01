@@ -65,6 +65,7 @@ namespace Library
                     }
                 }
                 s.Close();
+                c.Close();
             }
 
             /// <summary>
