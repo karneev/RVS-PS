@@ -12,25 +12,26 @@ class mainFrame : Work
     /// <summary>
     /// Реалиация алгоритма
     /// </summary>
+    public mainFrame(int port = 8002) : base(port){}
     public override void slaveFun()
     {
         DateTime time1 = System.DateTime.Now;
         #region Чтение из файла
         Console.WriteLine("Reading");
         StreamReader R = new StreamReader("Work.txt");
-        double er = (double)Convert.ToDouble(R.ReadLine());
+        float er = (float)Convert.ToSingle(R.ReadLine());
         int N = Convert.ToInt32(R.ReadLine());
-        double[][] A = new double[N / getCount()][];
+        float[][] A = new float[N / getCount()][];
         //for (; ic < (N / getCount()) * getIndex(); R.ReadLine(), ic++) ;
         for (int i = 0; i < (N / getCount()); i++)
         {
-            A[i] = R.ReadLine().Split(new char[] { ' ' }).Select(Double.Parse).ToArray();
+            A[i] = R.ReadLine().Split(new char[] { ' ' }).Select(float.Parse).ToArray();
         }
         //for (; ic < N; R.ReadLine(), ic++) ;
-        double[] F = R.ReadLine().Split(new char[] { ' ' }).Select(Double.Parse).ToArray();
-        double[] X = new double[F.Length];
-        double[] timeX = new double[F.Length];
-        double[] buffer;
+        float[] F = R.ReadLine().Split(new char[] { ' ' }).Select(float.Parse).ToArray();
+        float[] X = new float[F.Length];
+        float[] timeX = new float[F.Length];
+        float[] buffer;
         bool end = true;
         int JJJ = N / getCount();
         int JJJ1 = getIndex() * JJJ;
@@ -66,7 +67,7 @@ class mainFrame : Work
                 w = (w + 1 == getCount()) ? 0 : w + 1;
                 R1.block();
 
-                buffer = (double[])R1.getData();
+                buffer = (float[])R1.getData();
 
             }
             end = true;
@@ -96,7 +97,7 @@ class mainFrame : Work
             }
             for (int i = 1; i < getCount(); i++)
             {
-                double[] data = (double[])r.getData(i);
+                float[] data = (float[])r.getData(i);
                 for (int j = 0; j < JJJ; j++)
                 {
                     sw.WriteLine("X{0:D}:{1:E}", i * JJJ + j, data[j]);
@@ -120,7 +121,11 @@ class Program
 {
     public static void Main(string[] args)
     {
-        mainFrame m = new mainFrame();
+        mainFrame m;
+        if (args.Length == 0)
+            m = new mainFrame();
+        else
+            m = new mainFrame(Convert.ToInt32(args[1]));
         m.setSUP(0);
         m.start();
     }
