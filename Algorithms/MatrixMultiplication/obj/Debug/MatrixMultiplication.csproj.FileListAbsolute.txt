@@ -1,7 +1,0 @@
-E:\Projects\DCN\Algorithms\MatrixMultiplication\bin\Debug\MatrixMultiplication.exe.config
-E:\Projects\DCN\Algorithms\MatrixMultiplication\obj\Debug\MatrixMultiplication.csprojResolveAssemblyReference.cache
-E:\Projects\DCN\Algorithms\MatrixMultiplication\bin\Debug\MatrixMultiplication.exe
-E:\Projects\DCN\Algorithms\MatrixMultiplication\bin\Debug\MatrixMultiplication.pdb
-E:\Projects\DCN\Algorithms\MatrixMultiplication\bin\Debug\Library.dll
-E:\Projects\DCN\Algorithms\MatrixMultiplication\obj\Debug\MatrixMultiplication.exe
-E:\Projects\DCN\Algorithms\MatrixMultiplication\obj\Debug\MatrixMultiplication.pdb
