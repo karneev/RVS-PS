@@ -13,14 +13,21 @@ namespace SpliterSLAU
             double err = (double)Convert.ToDouble(R.ReadLine());
             int N = Convert.ToInt32(R.ReadLine());
             StreamWriter[] files = new StreamWriter[count];
+            int cntI = N/count;   //Сколько дать каждой машине (по умолчанию)
             for (int i = 0; i < count; i++)
             {
                 string mdir = args[0].Split('.')[0];
                 Directory.CreateDirectory(mdir+"/"+i.ToString());
                 files[i] = new StreamWriter("./"+ mdir + "/" + i + "/"+args[0]);
                 files[i].WriteLine(err);
-                files[i].WriteLine(N);
-                for (int j = 0; j < N / count; j++)
+                if (args.Length == 2)
+                    files[i].WriteLine(N/count);
+                else
+                {   //Части не равны
+                    cntI = Convert.ToInt32(args[i + 2]);
+                    files[i].WriteLine(cntI);
+                }
+                for (int j = 0; j < cntI; j++)
                 {
                     files[i].WriteLine(R.ReadLine());
                 }
@@ -29,7 +36,7 @@ namespace SpliterSLAU
             R.Close();
             for (int i = 0; i < count; i++)
             {
-                string[] s = str.Split(new char[] { ' ' }).Skip(i * N / count).Take(N / count).ToArray();
+                string[] s = str.Split(new char[] { ' ' }).Skip(i * cntI).Take(cntI).ToArray();
                 files[i].WriteLine(String.Join(" ", s));
                 files[i].Close();
             }

@@ -19,21 +19,21 @@ class mainFrame : Work
         #region Чтение из файла
         Console.WriteLine("Reading");
         StreamReader R = new StreamReader("Work.txt");
-        float er = (float)Convert.ToSingle(R.ReadLine());
+        double er = (double)Convert.ToDouble(R.ReadLine());
         int N = Convert.ToInt32(R.ReadLine());
-        float[][] A = new float[N / getCount()][];
-        //for (; ic < (N / getCount()) * getIndex(); R.ReadLine(), ic++) ;
-        for (int i = 0; i < (N / getCount()); i++)
+        double[][] A = new double[N][];
+        //for (; ic < (N) * getIndex(); R.ReadLine(), ic++) ;
+        for (int i = 0; i < N; i++)
         {
-            A[i] = R.ReadLine().Split(new char[] { ' ' }).Select(float.Parse).ToArray();
+            A[i] = R.ReadLine().Split(new char[] { ' ' }).Select(double.Parse).ToArray();
         }
         //for (; ic < N; R.ReadLine(), ic++) ;
-        float[] F = R.ReadLine().Split(new char[] { ' ' }).Select(float.Parse).ToArray();
-        float[] X = new float[F.Length];
-        float[] timeX = new float[F.Length];
-        float[] buffer;
+        double[] F = R.ReadLine().Split(new char[] { ' ' }).Select(double.Parse).ToArray();
+        double[] X = new double[F.Length];
+        double[] timeX = new double[F.Length];
+        double[] buffer;
         bool end = true;
-        int JJJ = N / getCount();
+        int JJJ = N;
         int JJJ1 = getIndex() * JJJ;
         #endregion
         Console.WriteLine("Start");
@@ -67,7 +67,7 @@ class mainFrame : Work
                 w = (w + 1 == getCount()) ? 0 : w + 1;
                 R1.block();
 
-                buffer = (float[])R1.getData();
+                buffer = (double[])R1.getData();
 
             }
             end = true;
@@ -97,7 +97,7 @@ class mainFrame : Work
             }
             for (int i = 1; i < getCount(); i++)
             {
-                float[] data = (float[])r.getData(i);
+                double[] data = (double[])r.getData(i);
                 for (int j = 0; j < JJJ; j++)
                 {
                     sw.WriteLine("X{0:D}:{1:E}", i * JJJ + j, data[j]);
