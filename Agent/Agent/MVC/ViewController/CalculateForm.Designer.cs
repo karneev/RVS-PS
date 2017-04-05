@@ -112,6 +112,7 @@
             // 
             // refreshButton
             // 
+            this.refreshButton.Enabled = false;
             this.refreshButton.Location = new System.Drawing.Point(4, 283);
             this.refreshButton.Name = "refreshButton";
             this.refreshButton.Size = new System.Drawing.Size(188, 23);
