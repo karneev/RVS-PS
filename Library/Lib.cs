@@ -77,7 +77,7 @@ namespace Library
         /// <param name="i"> Номер типа перехода </param>
         public void setSUP(int i)
         {
-            if (i < 0 && i >= Iplist.Count)
+            if (i < 0 || i >= Iplist.Count)
                 sup = new SUPAll(Iplist.Count, Iplist);
             else if (i == currentIndex)
                 sup = new SUPOneCenter(Iplist.Count, Iplist);
@@ -348,8 +348,7 @@ namespace Library
         /// <returns> Обобщенный признак признаков других машин </returns>
         public bool AGCJ(byte a)
         {
-            if (a < 0 || a > 255) return false;
-            bool rezalt = true;
+            bool result = true;
             for (int i = 0; i < Iplist.Count; i++)
             {
                 if (i != currentIndex)
@@ -364,15 +363,15 @@ namespace Library
                     s.Write(buffer, 0, 255);
                     int r = s.ReadByte();
                     s.Close();
-                    rezalt = rezalt && (r != 0);
+                    result = result && (r != 0);
                     c.Close();
                 }
                 else
                 {
-                    rezalt = rezalt && anB[a];
+                    result = result && anB[a];
                 }
             }
-            return rezalt;
+            return result;
         }
 
         #endregion

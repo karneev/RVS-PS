@@ -645,7 +645,7 @@ namespace Agent.Model
                     UpdProgress(count, diffDataFile.Count, name + (count+1) + " из " + countAll);
                     endSplitFile = false;
                     SplitOneFile(t, countParts);
-                    while (endSplitFile != true) ;
+                    while (endSplitFile != true) Thread.Sleep(500);
                     UpdProgress(count++, diffDataFile.Count, "Комплектация файла " + (count + 1) + " из " + countAll);
                     ComplectFileParts(t.data, countParts);
                 }

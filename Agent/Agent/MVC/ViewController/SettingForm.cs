@@ -94,14 +94,7 @@ namespace Agent.View
                 int dec;
                 if (Int32.TryParse(tb.Text, out dec))
                 {
-                    if (dec >= Int32.MinValue && dec <= Int32.MaxValue)
-                    {
-                        oldString = tb.Text;
-                    }
-                    else
-                    {
-                        tb.Text = oldString;
-                    }
+                    oldString = tb.Text;
                 }
                 else
                 {

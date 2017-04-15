@@ -43,7 +43,7 @@
             public object getData(int i)
             {
                 if (i == I) return null;
-                if (i < 0 && i >= data.Length) return null;
+                if (i < 0 || i >= data.Length) return null;
                 return data[i].getData();
             }
 

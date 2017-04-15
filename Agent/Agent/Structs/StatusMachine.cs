@@ -24,7 +24,7 @@ namespace Agent.Enums
             {
                 m_wait = value;
                 CheckFree();
-                StatusChange();
+                StatusChange?.Invoke();
             }
         }
         public bool Initiator
